@@ -7,11 +7,19 @@ const socketHandler = (server) => {
     },
   });
 
+  socketHandler.io = io;
+
   io.on('connection', (socket) => {
     console.log('Socket connected:', socket.id);
 
     socket.on('join-room', (roomId) => {
       socket.join(roomId);
+    });
+
+    socket.on('join-user', (userId) => {
+      if (userId) {
+        socket.join(String(userId));
+      }
     });
 
     socket.on('disconnect', () => {
@@ -20,6 +28,14 @@ const socketHandler = (server) => {
   });
 
   return io;
+};
+
+socketHandler.emitNotification = (userId, notification) => {
+  if (!userId || !socketHandler.io) {
+    return;
+  }
+
+  socketHandler.io.to(String(userId)).emit('new-notification', notification);
 };
 
 module.exports = socketHandler;

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import SearchFilters from '../components/SearchFilters';
 import GamerCard from '../components/GamerCard';
 import { getNearbyGamers } from '../services/gamerService';
+import { sendTeamRequest } from '../services/teamService';
 
 const defaultFilters = {
   game: '',
@@ -16,6 +17,22 @@ const FindGamers = () => {
   const [gamers, setGamers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [games, setGames] = useState([]);
+
+  const handleRequest = async (gamer) => {
+    try {
+      const payload = {
+        receiverId: gamer._id,
+        game: gamer.games?.[0] || filters.game || 'Among Us',
+        message: `Hi ${gamer.username}, I want to squad up for ${gamer.games?.[0] || 'this game'}.`,
+      };
+
+      await sendTeamRequest(payload);
+      window.alert(`Team request sent to ${gamer.username}.`);
+    } catch (error) {
+      console.error('Failed to send request', error);
+      window.alert('Unable to send the team request right now.');
+    }
+  };
 
   const loadGamers = async (nextFilters = filters) => {
     setLoading(true);
@@ -66,7 +83,11 @@ const FindGamers = () => {
         ) : (
           <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
             {gamers.map((gamer) => (
-              <GamerCard key={gamer._id || gamer.username} gamer={{ ...gamer, distance: gamer.distanceLabel || 'Nearby' }} />
+              <GamerCard
+                key={gamer._id || gamer.username}
+                gamer={{ ...gamer, distance: gamer.distanceLabel || 'Nearby' }}
+                onRequest={handleRequest}
+              />
             ))}
           </div>
         )}

@@ -1,10 +1,31 @@
+import { useEffect, useState } from 'react';
+import { getNotifications } from '../services/notificationService';
+
 const NotificationBell = () => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const fetchCount = async () => {
+      try {
+        const response = await getNotifications();
+        const unread = (response.data || []).filter((item) => !item.read).length;
+        setCount(unread);
+      } catch (error) {
+        console.error('Unable to fetch notifications', error);
+      }
+    };
+
+    fetchCount();
+  }, []);
+
   return (
     <button className="relative rounded-xl border border-slate-700 bg-slate-900 p-2 text-lg text-slate-100 hover:border-brand-500">
       🔔
-      <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
-        3
-      </span>
+      {count > 0 && (
+        <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+          {count}
+        </span>
+      )}
     </button>
   );
 };

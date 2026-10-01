@@ -1,4 +1,4 @@
-const GamerCard = ({ gamer }) => {
+const GamerCard = ({ gamer, onRequest }) => {
   const { username, games = ['Among Us'], preferredLanguages = ['English'], gamingStatus = 'Looking for Team', distance = '2.4 km' } = gamer || {};
 
   return (
@@ -19,7 +19,11 @@ const GamerCard = ({ gamer }) => {
         <p>🎤 Mic available</p>
       </div>
 
-      <button className="mt-5 w-full rounded-xl bg-brand-600 px-4 py-3 font-medium text-white hover:bg-brand-500">
+      <button
+        type="button"
+        onClick={() => onRequest?.(gamer)}
+        className="mt-5 w-full rounded-xl bg-brand-600 px-4 py-3 font-medium text-white hover:bg-brand-500"
+      >
         Request to Team Up
       </button>
     </article>
