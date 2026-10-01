@@ -1,10 +1,33 @@
-import { createContext, useContext, useMemo, useState } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { getCurrentUser } from '../services/authService';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('gamemate_token') || '');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const restoreSession = async () => {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await getCurrentUser();
+        setUser(response.data.user);
+      } catch (error) {
+        localStorage.removeItem('gamemate_token');
+        setToken('');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    restoreSession();
+  }, [token]);
 
   const login = (userData, authToken) => {
     setUser(userData);
@@ -19,8 +42,8 @@ export const AuthProvider = ({ children }) => {
   };
 
   const value = useMemo(
-    () => ({ user, token, login, logout, setUser }),
-    [user, token]
+    () => ({ user, token, loading, login, logout, setUser }),
+    [user, token, loading]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
