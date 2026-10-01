@@ -1,5 +1,10 @@
 import api from './api';
 
+export const getProfile = async () => {
+  const { data } = await api.get('/gamers/me');
+  return data;
+};
+
 export const getNearbyGamers = async (params) => {
   const { data } = await api.get('/gamers/nearby', { params });
   return data;
@@ -7,5 +12,15 @@ export const getNearbyGamers = async (params) => {
 
 export const getGamers = async () => {
   const { data } = await api.get('/gamers');
+  return data;
+};
+
+export const updateProfile = async (payload) => {
+  const { data } = await api.put('/gamers/profile', payload);
+  return data;
+};
+
+export const updateStatus = async (gamingStatus) => {
+  const { data } = await api.put('/gamers/status', { gamingStatus });
   return data;
 };

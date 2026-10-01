@@ -1,15 +1,148 @@
+import { useEffect, useState } from 'react';
+import { getProfile, updateProfile, updateStatus } from '../services/gamerService';
+import { useAuth } from '../context/AuthContext';
+
 const Settings = () => {
+  const { user, setUser } = useAuth();
+  const [formData, setFormData] = useState({
+    username: '',
+    bio: '',
+    games: '',
+    preferredLanguages: '',
+    microphoneAvailable: false,
+    gamingStatus: 'Looking for Team',
+    skillLevel: 'Intermediate',
+  });
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await getProfile();
+        const profile = response.data;
+        setFormData({
+          username: profile.username || '',
+          bio: profile.bio || '',
+          games: Array.isArray(profile.games) ? profile.games.join(', ') : '',
+          preferredLanguages: Array.isArray(profile.preferredLanguages) ? profile.preferredLanguages.join(', ') : '',
+          microphoneAvailable: Boolean(profile.microphoneAvailable),
+          gamingStatus: profile.gamingStatus || 'Looking for Team',
+          skillLevel: profile.skillLevel || 'Intermediate',
+        });
+      } catch (error) {
+        console.error('Unable to load profile', error);
+      }
+    };
+
+    if (user) {
+      fetchProfile();
+    }
+  }, [user]);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setSaving(true);
+
+    try {
+      const payload = {
+        username: formData.username,
+        bio: formData.bio,
+        games: formData.games.split(',').map((item) => item.trim()).filter(Boolean),
+        preferredLanguages: formData.preferredLanguages.split(',').map((item) => item.trim()).filter(Boolean),
+        microphoneAvailable: formData.microphoneAvailable,
+        skillLevel: formData.skillLevel,
+      };
+
+      const profileResponse = await updateProfile(payload);
+      await updateStatus(formData.gamingStatus);
+      setUser(profileResponse.data);
+    } catch (error) {
+      console.error('Profile update failed', error);
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
-    <div className="mx-auto max-w-3xl space-y-6 rounded-3xl border border-slate-800 bg-slate-900/70 p-8">
+    <div className="mx-auto max-w-3xl rounded-3xl border border-slate-800 bg-slate-900/70 p-8">
       <h1 className="text-3xl font-bold text-white">Settings</h1>
-      <div className="space-y-4">
-        <div className="card p-4">
-          <h2 className="text-lg font-semibold text-white">Profile</h2>
+      <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+        <div className="grid gap-5 md:grid-cols-2">
+          <label className="block text-sm text-slate-300 md:col-span-1">
+            <span className="mb-2 block">Username</span>
+            <input
+              value={formData.username}
+              onChange={(event) => setFormData({ ...formData, username: event.target.value })}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            />
+          </label>
+          <label className="block text-sm text-slate-300 md:col-span-1">
+            <span className="mb-2 block">Skill Level</span>
+            <select
+              value={formData.skillLevel}
+              onChange={(event) => setFormData({ ...formData, skillLevel: event.target.value })}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            >
+              <option>Beginner</option>
+              <option>Intermediate</option>
+              <option>Advanced</option>
+              <option>Pro</option>
+            </select>
+          </label>
+          <label className="block text-sm text-slate-300 md:col-span-2">
+            <span className="mb-2 block">Bio</span>
+            <textarea
+              value={formData.bio}
+              onChange={(event) => setFormData({ ...formData, bio: event.target.value })}
+              className="h-28 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            />
+          </label>
+          <label className="block text-sm text-slate-300 md:col-span-1">
+            <span className="mb-2 block">Games</span>
+            <input
+              value={formData.games}
+              onChange={(event) => setFormData({ ...formData, games: event.target.value })}
+              placeholder="Among Us, Valorant"
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            />
+          </label>
+          <label className="block text-sm text-slate-300 md:col-span-1">
+            <span className="mb-2 block">Preferred Languages</span>
+            <input
+              value={formData.preferredLanguages}
+              onChange={(event) => setFormData({ ...formData, preferredLanguages: event.target.value })}
+              placeholder="English, Telugu"
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            />
+          </label>
+          <label className="block text-sm text-slate-300 md:col-span-1">
+            <span className="mb-2 block">Gaming Status</span>
+            <select
+              value={formData.gamingStatus}
+              onChange={(event) => setFormData({ ...formData, gamingStatus: event.target.value })}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            >
+              <option>Online</option>
+              <option>Looking for Team</option>
+              <option>In Game</option>
+              <option>Offline</option>
+            </select>
+          </label>
+          <label className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-300 md:col-span-1">
+            <input
+              type="checkbox"
+              checked={formData.microphoneAvailable}
+              onChange={(event) => setFormData({ ...formData, microphoneAvailable: event.target.checked })}
+              className="h-4 w-4 accent-brand-600"
+            />
+            Microphone available
+          </label>
         </div>
-        <div className="card p-4">
-          <h2 className="text-lg font-semibold text-white">Privacy</h2>
-        </div>
-      </div>
+
+        <button type="submit" disabled={saving} className="rounded-xl bg-brand-600 px-5 py-3 font-medium text-white hover:bg-brand-500 disabled:opacity-70">
+          {saving ? 'Saving...' : 'Save Profile'}
+        </button>
+      </form>
     </div>
   );
 };

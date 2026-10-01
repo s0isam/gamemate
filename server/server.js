@@ -11,6 +11,7 @@ const notificationRoutes = require('./routes/notificationRoutes');
 const chatRoutes = require('./routes/chatRoutes');
 const { errorHandler } = require('./middleware/errorMiddleware');
 const socketHandler = require('./socket/socketHandler');
+const seedGames = require('./utils/seedGames');
 
 dotenv.config({ path: './.env' });
 
@@ -51,7 +52,11 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
-connectDB();
+connectDB().then((connection) => {
+  if (connection) {
+    seedGames();
+  }
+});
 socketHandler(server);
 
 server.listen(port, () => {
