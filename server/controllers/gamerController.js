@@ -1,5 +1,46 @@
 const User = require('../models/User');
 
+const calculateDistanceKm = (fromCoordinates, toCoordinates) => {
+  if (!fromCoordinates || !toCoordinates || fromCoordinates.length < 2 || toCoordinates.length < 2) {
+    return null;
+  }
+
+  const [fromLon, fromLat] = fromCoordinates;
+  const [toLon, toLat] = toCoordinates;
+
+  const toRadians = (value) => (value * Math.PI) / 180;
+  const earthRadiusKm = 6371;
+
+  const dLat = toRadians(toLat - fromLat);
+  const dLon = toRadians(toLon - fromLon);
+
+  const lat1 = toRadians(fromLat);
+  const lat2 = toRadians(toLat);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadiusKm * c;
+};
+
+const formatDistanceLabel = (distanceKm) => {
+  if (distanceKm === null || Number.isNaN(distanceKm)) {
+    return 'Nearby';
+  }
+
+  if (distanceKm < 1) {
+    return 'Nearby';
+  }
+
+  if (distanceKm < 10) {
+    return `Within ${distanceKm.toFixed(1)} km`;
+  }
+
+  return `Within ${Math.round(distanceKm)} km`;
+};
+
 const getProfile = async (req, res) => {
   const user = await User.findById(req.user._id).select('-password');
 
@@ -14,7 +55,7 @@ const getProfile = async (req, res) => {
 };
 
 const getAllGamers = async (req, res) => {
-  const users = await User.find({ _id: { $ne: req.user._id } }).select('-password').sort({ createdAt: -1 });
+  const users = await User.find({ _id: { $ne: req.user._id } }).select('-password -location').sort({ createdAt: -1 });
 
   return res.status(200).json({
     success: true,
@@ -23,7 +64,7 @@ const getAllGamers = async (req, res) => {
 };
 
 const getGamerById = async (req, res) => {
-  const user = await User.findById(req.params.id).select('-password');
+  const user = await User.findById(req.params.id).select('-password -location');
 
   if (!user) {
     return res.status(404).json({ success: false, message: 'Gamer not found' });
@@ -106,38 +147,42 @@ const updateLocation = async (req, res) => {
 const getNearbyGamers = async (req, res) => {
   const { game, radius = 10, language, microphone, skillLevel } = req.query;
 
-  const filter = {
+  if (!req.user.location || !Array.isArray(req.user.location.coordinates) || req.user.location.coordinates.length !== 2) {
+    return res.status(200).json({ success: true, data: [] });
+  }
+
+  const query = {
     _id: { $ne: req.user._id },
     location: {
       $near: {
         $geometry: {
           type: 'Point',
-          coordinates: req.user.location?.coordinates || [0, 0],
+          coordinates: req.user.location.coordinates,
         },
         $maxDistance: Number(radius) * 1000,
       },
     },
   };
 
-  if (game) filter.games = game;
-  if (language) filter.preferredLanguages = language;
-  if (microphone !== undefined) filter.microphoneAvailable = microphone === 'true';
-  if (skillLevel) filter.skillLevel = skillLevel;
+  if (game) query.games = game;
+  if (language) query.preferredLanguages = language;
+  if (microphone !== undefined) query.microphoneAvailable = microphone === 'true';
+  if (skillLevel) query.skillLevel = skillLevel;
 
-  const users = await User.find(filter).select('-password');
+  const users = await User.find(query).select('-password');
 
   const payload = users.map((user) => {
-    const distanceKm = user.location?.coordinates?.length
-      ? Math.round(
-          ((user.location.coordinates[0] - (req.user.location?.coordinates?.[0] || 0)) ** 2 +
-            (user.location.coordinates[1] - (req.user.location?.coordinates?.[1] || 0)) ** 2) ** 0.5 * 111.32
-        )
-      : 0;
+    const safeUser = user.toObject();
+    const distanceKm = calculateDistanceKm(req.user.location.coordinates, safeUser.location?.coordinates || req.user.location.coordinates);
+    const distanceLabel = formatDistanceLabel(distanceKm);
+
+    delete safeUser.location;
 
     return {
-      ...user.toObject(),
-      distance: `${distanceKm} km away`,
-      matchScore: 85,
+      ...safeUser,
+      distanceKm: distanceKm === null ? 0 : Number(distanceKm.toFixed(1)),
+      distanceLabel,
+      matchScore: Math.max(70, 100 - Math.round((distanceKm || 0) * 2)),
     };
   });
 

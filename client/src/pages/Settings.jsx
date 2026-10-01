@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getProfile, updateProfile, updateStatus } from '../services/gamerService';
+import { getProfile, updateLocation, updateProfile, updateStatus } from '../services/gamerService';
 import { useAuth } from '../context/AuthContext';
 
 const Settings = () => {
@@ -13,6 +13,7 @@ const Settings = () => {
     gamingStatus: 'Looking for Team',
     skillLevel: 'Intermediate',
   });
+  const [locationData, setLocationData] = useState({ latitude: '', longitude: '' });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -39,6 +40,24 @@ const Settings = () => {
     }
   }, [user]);
 
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setLocationData({
+          latitude: position.coords.latitude.toString(),
+          longitude: position.coords.longitude.toString(),
+        });
+      },
+      () => {
+        console.error('Location access denied');
+      }
+    );
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSaving(true);
@@ -55,6 +74,11 @@ const Settings = () => {
 
       const profileResponse = await updateProfile(payload);
       await updateStatus(formData.gamingStatus);
+
+      if (locationData.latitude && locationData.longitude) {
+        await updateLocation(Number(locationData.latitude), Number(locationData.longitude));
+      }
+
       setUser(profileResponse.data);
     } catch (error) {
       console.error('Profile update failed', error);
@@ -137,6 +161,37 @@ const Settings = () => {
             />
             Microphone available
           </label>
+        </div>
+
+        <div className="rounded-2xl border border-slate-700 bg-slate-950 p-4">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-white">Location</h2>
+            <button
+              type="button"
+              onClick={handleUseCurrentLocation}
+              className="rounded-xl border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-100 hover:border-brand-500"
+            >
+              Use My Location
+            </button>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="block text-sm text-slate-300">
+              <span className="mb-2 block">Latitude</span>
+              <input
+                value={locationData.latitude}
+                onChange={(event) => setLocationData({ ...locationData, latitude: event.target.value })}
+                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-3 text-white"
+              />
+            </label>
+            <label className="block text-sm text-slate-300">
+              <span className="mb-2 block">Longitude</span>
+              <input
+                value={locationData.longitude}
+                onChange={(event) => setLocationData({ ...locationData, longitude: event.target.value })}
+                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-3 text-white"
+              />
+            </label>
+          </div>
         </div>
 
         <button type="submit" disabled={saving} className="rounded-xl bg-brand-600 px-5 py-3 font-medium text-white hover:bg-brand-500 disabled:opacity-70">

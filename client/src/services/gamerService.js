@@ -24,3 +24,8 @@ export const updateStatus = async (gamingStatus) => {
   const { data } = await api.put('/gamers/status', { gamingStatus });
   return data;
 };
+
+export const updateLocation = async (latitude, longitude) => {
+  const { data } = await api.put('/gamers/location', { latitude, longitude });
+  return data;
+};
