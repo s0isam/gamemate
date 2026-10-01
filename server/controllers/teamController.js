@@ -14,6 +14,66 @@ const createNotificationForUser = async (userId, message, type = 'teamRequest') 
   return notification;
 };
 
+const getMyTeams = async (req, res) => {
+  const teams = await Team.find({
+    $or: [{ leader: req.user._id }, { members: req.user._id }],
+  })
+    .populate('leader', 'username profileImage gamingStatus')
+    .populate('members', 'username profileImage gamingStatus')
+    .sort({ updatedAt: -1 });
+
+  return res.status(200).json({
+    success: true,
+    data: teams,
+  });
+};
+
+const getTeamById = async (req, res) => {
+  const team = await Team.findById(req.params.id)
+    .populate('leader', 'username profileImage gamingStatus')
+    .populate('members', 'username profileImage gamingStatus');
+
+  if (!team) {
+    return res.status(404).json({ success: false, message: 'Team not found' });
+  }
+
+  const isMember = team.leader._id.toString() === req.user._id.toString() || team.members.some((member) => member._id.toString() === req.user._id.toString());
+
+  if (!isMember) {
+    return res.status(403).json({ success: false, message: 'You are not a member of this team' });
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: team,
+  });
+};
+
+const leaveTeam = async (req, res) => {
+  const team = await Team.findById(req.params.id);
+
+  if (!team) {
+    return res.status(404).json({ success: false, message: 'Team not found' });
+  }
+
+  if (team.leader.toString() === req.user._id.toString()) {
+    return res.status(400).json({ success: false, message: 'Team leader must transfer leadership before leaving' });
+  }
+
+  team.members = team.members.filter((member) => member.toString() !== req.user._id.toString());
+
+  if (team.members.length === 0) {
+    team.status = 'closed';
+  }
+
+  await team.save();
+
+  return res.status(200).json({
+    success: true,
+    data: team,
+  });
+};
+
 const getTeamRequests = async (req, res) => {
   const requests = await TeamRequest.find({
     $or: [{ sender: req.user._id }, { receiver: req.user._id }],
@@ -165,6 +225,9 @@ const rejectTeamRequest = async (req, res) => {
 };
 
 module.exports = {
+  getMyTeams,
+  getTeamById,
+  leaveTeam,
   getTeamRequests,
   createTeamRequest,
   acceptTeamRequest,

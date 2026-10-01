@@ -22,6 +22,12 @@ const socketHandler = (server) => {
       }
     });
 
+    socket.on('join-team', (teamId) => {
+      if (teamId) {
+        socket.join(String(teamId));
+      }
+    });
+
     socket.on('disconnect', () => {
       console.log('Socket disconnected:', socket.id);
     });
@@ -36,6 +42,14 @@ socketHandler.emitNotification = (userId, notification) => {
   }
 
   socketHandler.io.to(String(userId)).emit('new-notification', notification);
+};
+
+socketHandler.emitTeamMessage = (teamId, message) => {
+  if (!teamId || !socketHandler.io) {
+    return;
+  }
+
+  socketHandler.io.to(String(teamId)).emit('team-message', message);
 };
 
 module.exports = socketHandler;

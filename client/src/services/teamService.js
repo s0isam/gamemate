@@ -24,3 +24,8 @@ export const rejectTeamRequest = async (id) => {
   const { data } = await api.put(`/teams/requests/${id}/reject`);
   return data;
 };
+
+export const leaveTeam = async (teamId) => {
+  const { data } = await api.post(`/teams/${teamId}/leave`);
+  return data;
+};

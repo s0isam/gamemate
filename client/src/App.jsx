@@ -60,6 +60,14 @@ const App = () => {
               }
             />
             <Route
+              path="/chat/:teamId"
+              element={
+                <ProtectedRoute>
+                  <Chat />
+                </ProtectedRoute>
+              }
+            />
+            <Route
               path="/settings"
               element={
                 <ProtectedRoute>
