@@ -14,7 +14,7 @@ const GamerCard = ({ gamer, onRequest }) => {
     <article className="card p-5 transition-transform duration-200 hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-[0_0_18px_rgba(139,92,246,0.10)]">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center border border-[#ff1744]/60 bg-[#111111] text-lg font-black text-[#ffd2da] shadow-[0_0_18px_rgba(255,23,68,0.18)]">
+          <div className="flex h-12 w-12 items-center justify-center border border-brand-400/60 bg-[#11151C] text-lg font-black text-brand-200 shadow-[0_0_18px_rgba(139,92,246,0.18)]">
             {username?.slice(0, 1).toUpperCase() || 'G'}
           </div>
           <div>
