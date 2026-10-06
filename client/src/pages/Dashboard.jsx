@@ -98,22 +98,22 @@ const Dashboard = () => {
         <article className="card p-5">
           <p className="text-sm text-slate-400">Favorite game</p>
           <h2 className="mt-2 text-xl font-bold text-white">{user?.games?.[0] || 'Add a game'}</h2>
-          <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-[#ff9aad] hover:text-white">Update profile</Link>
+          <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-white">Update profile</Link>
         </article>
         <article className="card p-5">
           <p className="text-sm text-slate-400">Availability</p>
           <h2 className="mt-2 text-xl font-bold text-brand-300">{user?.gamingStatus || 'Online'}</h2>
-          <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-[#ff9aad] hover:text-white">Change status</Link>
+          <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-white">Change status</Link>
         </article>
         <article className="card p-5">
           <p className="text-sm text-slate-400">Your squads</p>
           <h2 className="mt-2 text-xl font-bold text-white">{loading ? '...' : teams.length}</h2>
-          <Link to="/my-teams" className="mt-4 inline-flex text-sm font-medium text-[#ff9aad] hover:text-white">Manage teams</Link>
+          <Link to="/my-teams" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-white">Manage teams</Link>
         </article>
         <article className="card p-5">
           <p className="text-sm text-slate-400">Team invitations</p>
           <h2 className="mt-2 text-xl font-bold text-white">{loading ? '...' : incomingRequests.length}</h2>
-          <Link to="/notifications" className="mt-4 inline-flex text-sm font-medium text-[#ff9aad] hover:text-white">Review invitations</Link>
+          <Link to="/notifications" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-white">Review invitations</Link>
         </article>
       </section>
 
