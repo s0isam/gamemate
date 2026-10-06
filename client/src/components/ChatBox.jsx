@@ -1,18 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
-import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
 import { getTeamMessages, sendTeamMessage } from '../services/chatService';
 
 const ChatBox = ({ teamId }) => {
   const { user } = useAuth();
+  const { socket } = useSocket();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
-  const socketRef = useRef(null);
   const endRef = useRef(null);
 
   useEffect(() => {
     if (!teamId) {
+      setMessages([]);
       return undefined;
     }
 
@@ -31,23 +32,30 @@ const ChatBox = ({ teamId }) => {
     };
 
     fetchMessages();
+  }, [teamId]);
 
-    const socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000');
-    socketRef.current = socket;
-    socket.emit('join-team', teamId);
-    socket.on('team-message', (message) => {
+  useEffect(() => {
+    if (!teamId || !socket) {
+      return undefined;
+    }
+
+    socket.emit('join-team', String(teamId));
+
+    const handleTeamMessage = (message) => {
       if (message.team === teamId || message.team?._id === teamId) {
         setMessages((prev) => {
           const exists = prev.some((item) => item._id === message._id);
           return exists ? prev : [...prev, message];
         });
       }
-    });
+    };
+
+    socket.on('team-message', handleTeamMessage);
 
     return () => {
-      socket.disconnect();
+      socket.off('team-message', handleTeamMessage);
     };
-  }, [teamId]);
+  }, [teamId, socket]);
 
   useEffect(() => {
     endRef.current?.scrollIntoView({ behavior: 'smooth' });

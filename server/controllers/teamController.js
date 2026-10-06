@@ -3,6 +3,9 @@ const TeamRequest = require('../models/TeamRequest');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
 const socketHandler = require('../socket/socketHandler');
+const crypto = require('crypto');
+
+const generateLobbyCode = () => crypto.randomBytes(5).toString('hex').toUpperCase();
 
 const createNotificationForUser = async (userId, message, type = 'teamRequest') => {
   const notification = await Notification.create({ user: userId, message, type });
@@ -21,6 +24,13 @@ const getMyTeams = async (req, res) => {
     .populate('leader', 'username profileImage gamingStatus')
     .populate('members', 'username profileImage gamingStatus')
     .sort({ updatedAt: -1 });
+
+  for (const team of teams) {
+    if (!team.lobbyCode) {
+      team.lobbyCode = generateLobbyCode();
+      await team.save();
+    }
+  }
 
   return res.status(200).json({
     success: true,
@@ -60,10 +70,18 @@ const leaveTeam = async (req, res) => {
     return res.status(400).json({ success: false, message: 'Team leader must transfer leadership before leaving' });
   }
 
+  const isMember = team.members.some((member) => member.toString() === req.user._id.toString());
+  if (!isMember) {
+    return res.status(403).json({ success: false, message: 'You are not a member of this team' });
+  }
+
   team.members = team.members.filter((member) => member.toString() !== req.user._id.toString());
 
-  if (team.members.length === 0) {
-    team.status = 'closed';
+  const memberIds = new Set([team.leader.toString(), ...team.members.map((member) => member.toString())]);
+  if (memberIds.size >= team.maxPlayers) {
+    team.status = 'full';
+  } else if (team.status === 'full') {
+    team.status = 'active';
   }
 
   await team.save();
@@ -72,6 +90,81 @@ const leaveTeam = async (req, res) => {
     success: true,
     data: team,
   });
+};
+
+const transferTeamLeadership = async (req, res) => {
+  const memberId = req.body?.memberId;
+  const team = await Team.findById(req.params.id);
+
+  if (!team) {
+    return res.status(404).json({ success: false, message: 'Team not found' });
+  }
+
+  if (team.leader.toString() !== req.user._id.toString()) {
+    return res.status(403).json({ success: false, message: 'Only the team leader can transfer leadership' });
+  }
+
+  if (!memberId || memberId === req.user._id.toString()) {
+    return res.status(400).json({ success: false, message: 'Choose another team member to become leader' });
+  }
+
+  const isMember = team.members.some((member) => member.toString() === memberId);
+  if (!isMember) {
+    return res.status(400).json({ success: false, message: 'The new leader must already be a team member' });
+  }
+
+  const previousLeaderId = team.leader.toString();
+  if (!team.members.some((member) => member.toString() === previousLeaderId)) {
+    team.members.push(team.leader);
+  }
+  team.leader = memberId;
+  await team.save();
+
+  const updatedTeam = await Team.findById(team._id)
+    .populate('leader', 'username profileImage gamingStatus')
+    .populate('members', 'username profileImage gamingStatus');
+
+  return res.status(200).json({ success: true, data: updatedTeam });
+};
+
+const joinTeamByLobbyCode = async (req, res) => {
+  const lobbyCode = String(req.body?.lobbyCode || '').trim().toUpperCase();
+
+  if (!/^[A-F0-9]{10}$/.test(lobbyCode)) {
+    return res.status(400).json({ success: false, message: 'Enter a valid 10-character lobby code' });
+  }
+
+  const team = await Team.findOne({ lobbyCode });
+  if (!team) {
+    return res.status(404).json({ success: false, message: 'No team was found for that lobby code' });
+  }
+
+  if (team.status !== 'active') {
+    return res.status(400).json({ success: false, message: 'This lobby is not accepting new players' });
+  }
+
+  const memberIds = new Set([team.leader.toString(), ...team.members.map((member) => member.toString())]);
+  if (memberIds.has(req.user._id.toString())) {
+    return res.status(409).json({ success: false, message: 'You are already in this team' });
+  }
+
+  if (memberIds.size >= team.maxPlayers) {
+    team.status = 'full';
+    await team.save();
+    return res.status(400).json({ success: false, message: 'This lobby is full' });
+  }
+
+  team.members.push(req.user._id);
+  if (memberIds.size + 1 >= team.maxPlayers) {
+    team.status = 'full';
+  }
+  await team.save();
+
+  const joinedTeam = await Team.findById(team._id)
+    .populate('leader', 'username profileImage gamingStatus')
+    .populate('members', 'username profileImage gamingStatus');
+
+  return res.status(200).json({ success: true, data: joinedTeam });
 };
 
 const getTeamRequests = async (req, res) => {
@@ -152,14 +245,30 @@ const acceptTeamRequest = async (req, res) => {
     return res.status(400).json({ success: false, message: 'This request is no longer pending' });
   }
 
-  request.status = 'accepted';
-  await request.save();
-
   let team = await Team.findOne({
     game: request.game,
     status: { $ne: 'closed' },
     members: { $in: [request.sender._id, request.receiver._id] },
   });
+
+  if (team) {
+    if (team.status !== 'active') {
+      return res.status(400).json({ success: false, message: 'This team is not accepting new players' });
+    }
+
+    const memberIds = new Set([
+      team.leader.toString(),
+      ...team.members.map((member) => member.toString()),
+      request.sender._id.toString(),
+      request.receiver._id.toString(),
+    ]);
+    if (memberIds.size > team.maxPlayers) {
+      return res.status(400).json({ success: false, message: 'There is not enough room in this team' });
+    }
+  }
+
+  request.status = 'accepted';
+  await request.save();
 
   if (!team) {
     team = await Team.create({
@@ -176,7 +285,8 @@ const acceptTeamRequest = async (req, res) => {
     if (!team.members.some((member) => member.toString() === request.receiver._id.toString())) {
       team.members.push(request.receiver._id);
     }
-    if (team.members.length >= team.maxPlayers) {
+    const memberIds = new Set([team.leader.toString(), ...team.members.map((member) => member.toString())]);
+    if (memberIds.size >= team.maxPlayers) {
       team.status = 'full';
     }
     await team.save();
@@ -228,6 +338,8 @@ module.exports = {
   getMyTeams,
   getTeamById,
   leaveTeam,
+  transferTeamLeadership,
+  joinTeamByLobbyCode,
   getTeamRequests,
   createTeamRequest,
   acceptTeamRequest,

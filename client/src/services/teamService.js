@@ -29,3 +29,13 @@ export const leaveTeam = async (teamId) => {
   const { data } = await api.post(`/teams/${teamId}/leave`);
   return data;
 };
+
+export const transferTeamLeadership = async (teamId, memberId) => {
+  const { data } = await api.put(`/teams/${teamId}/leadership`, { memberId });
+  return data;
+};
+
+export const joinTeamByLobbyCode = async (lobbyCode) => {
+  const { data } = await api.post('/teams/join', { lobbyCode });
+  return data;
+};

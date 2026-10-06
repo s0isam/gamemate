@@ -27,7 +27,14 @@ const App = () => {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/find-gamers" element={<FindGamers />} />
-              <Route path="/gamer/:id" element={<GamerProfile />} />
+              <Route
+                path="/gamer/:id"
+                element={
+                  <ProtectedRoute>
+                    <GamerProfile />
+                  </ProtectedRoute>
+                }
+              />
 
               <Route
                 path="/dashboard"

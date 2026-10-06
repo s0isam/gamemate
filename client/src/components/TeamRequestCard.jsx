@@ -1,14 +1,18 @@
-const TeamRequestCard = ({ request, onAccept, onReject }) => {
-  const senderName = request?.sender?.username || request?.sender || 'Player';
+const TeamRequestCard = ({ request, onAccept, onReject, direction = 'incoming', showActions = true }) => {
+  const playerName = direction === 'incoming'
+    ? request?.sender?.username || request?.sender || 'Player'
+    : request?.receiver?.username || request?.receiver || 'Player';
   const gameName = request?.game || 'a game';
 
   return (
     <article className="card p-4">
       <p className="text-sm text-slate-300">
-        {senderName} wants to team up with you for {gameName}.
+        {direction === 'incoming'
+          ? `${playerName} wants to team up with you for ${gameName}.`
+          : `You invited ${playerName} to team up for ${gameName}.`}
       </p>
       {request?.message && <p className="mt-2 text-sm text-slate-400">“{request.message}”</p>}
-      <div className="mt-4 flex gap-3">
+      {showActions ? <div className="mt-4 flex gap-3">
         <button
           type="button"
           onClick={() => onAccept?.(request)}
@@ -23,7 +27,7 @@ const TeamRequestCard = ({ request, onAccept, onReject }) => {
         >
           Reject
         </button>
-      </div>
+      </div> : <p className="mt-3 text-xs font-medium capitalize text-slate-500">Status: {request.status}</p>}
     </article>
   );
 };

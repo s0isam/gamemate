@@ -1,7 +1,10 @@
 import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
 
 const Navbar = () => {
+  const { user, logout } = useAuth();
+
   return (
     <header className="border-b border-slate-800 bg-slate-950/90 backdrop-blur-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
@@ -15,18 +18,33 @@ const Navbar = () => {
         <nav className="hidden items-center gap-6 text-sm text-slate-300 md:flex">
           <Link to="/">Home</Link>
           <Link to="/find-gamers">Find Gamers</Link>
-          <Link to="/dashboard">Dashboard</Link>
-          <Link to="/my-teams">My Teams</Link>
+          {user && (
+            <>
+              <Link to="/dashboard">Dashboard</Link>
+              <Link to="/my-teams">My Teams</Link>
+              <Link to={`/gamer/${user._id}`}>My Profile</Link>
+            </>
+          )}
         </nav>
 
         <div className="flex items-center gap-3">
-          <NotificationBell />
-          <Link
-            to="/login"
-            className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-100 hover:border-brand-500"
-          >
-            Login
-          </Link>
+          {user && <NotificationBell />}
+          {user ? (
+            <button
+              type="button"
+              onClick={logout}
+              className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-100 hover:border-brand-500"
+            >
+              Sign out
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-slate-100 hover:border-brand-500"
+            >
+              Login
+            </Link>
+          )}
         </div>
       </div>
     </header>

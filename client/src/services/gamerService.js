@@ -15,6 +15,11 @@ export const getGamers = async () => {
   return data;
 };
 
+export const getGamerById = async (gamerId) => {
+  const { data } = await api.get(`/gamers/${gamerId}`);
+  return data;
+};
+
 export const updateProfile = async (payload) => {
   const { data } = await api.put('/gamers/profile', payload);
   return data;
