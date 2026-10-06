@@ -16,10 +16,10 @@ const Navbar = () => {
   ];
 
   return (
-    <header className="sticky top-0 z-50 border-b border-slate-800/80 bg-[#070707]/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-[#221b19] bg-[#050505]/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-3 text-white">
-          <span className="logo-mark inline-flex h-10 w-10 items-center justify-center border border-brand-400 bg-brand-400 text-lg font-black text-black shadow-[0_0_18px_rgba(223,255,0,0.35)]">
+          <span className="logo-mark inline-flex h-10 w-10 items-center justify-center border border-[#dfff00] bg-[#dfff00] text-lg font-black text-black shadow-[0_0_18px_rgba(223,255,0,0.35)]">
             G
           </span>
           <div className="leading-none">
@@ -28,7 +28,7 @@ const Navbar = () => {
           </div>
         </Link>
 
-        <nav className="hidden items-center gap-1 rounded-full border border-slate-800 bg-slate-950/70 p-1 md:flex">
+        <nav className="hidden items-center gap-1 rounded-full border border-[#2b2b2b] bg-[#111111]/80 p-1 md:flex">
           {navItems.map(({ to, label }) => (
             <NavLink
               key={to}
@@ -36,8 +36,8 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `rounded-full px-4 py-2 text-xs font-medium uppercase tracking-[0.18em] transition-all ${
                   isActive
-                    ? 'bg-brand-400 text-black shadow-[0_0_18px_rgba(223,255,0,0.35)]'
-                    : 'text-slate-300 hover:border-slate-700 hover:text-white'
+                    ? 'bg-[#dfff00] text-black shadow-[0_0_18px_rgba(223,255,0,0.35)]'
+                    : 'text-slate-300 hover:text-white'
                 }`
               }
             >
@@ -52,14 +52,14 @@ const Navbar = () => {
             <button
               type="button"
               onClick={logout}
-              className="rounded-none border border-slate-700 bg-slate-900 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-100 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300"
+              className="rounded-[8px] border border-[#2d2d2d] bg-[#121212] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#dfff00] hover:text-[#dfff00]"
             >
               Sign out
             </button>
           ) : (
             <Link
               to="/login"
-              className="rounded-none border border-brand-400 bg-brand-400 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-black hover:-translate-y-0.5 hover:shadow-[0_0_18px_rgba(223,255,0,0.35)]"
+              className="rounded-[8px] border border-[#dfff00] bg-[#dfff00] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-black shadow-[0_0_18px_rgba(223,255,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#f4ff00]"
             >
               Login
             </Link>
