@@ -117,23 +117,23 @@ const FindGamers = () => {
           <div
             className="pointer-events-none absolute inset-0 opacity-60"
             style={{
-              backgroundImage: 'linear-gradient(rgba(223,255,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(223,255,0,0.06) 1px, transparent 1px)',
+              backgroundImage: 'linear-gradient(rgba(139,92,246,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,0.07) 1px, transparent 1px)',
               backgroundSize: '32px 32px',
             }}
           />
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,23,68,0.10),transparent_55%)]" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,168,255,0.08),transparent_55%)]" />
           <div className="relative flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="mono text-xs uppercase tracking-[0.18em] text-[#ff9aad]">Squad signal grid</p>
+              <p className="mono text-xs uppercase tracking-[0.18em] text-[#C4A3FF]">Squad signal grid</p>
               <p className="mt-1 text-sm text-slate-300">Approximate player activity · exact locations are never shown</p>
             </div>
             <div className="flex gap-4 text-xs text-slate-400">
-              <span className="inline-flex items-center gap-2"><i className="h-2 w-2 bg-brand-400 shadow-[0_0_8px_rgba(223,255,0,0.5)]" />Available</span>
+              <span className="inline-flex items-center gap-2"><i className="h-2 w-2 bg-neon-green shadow-[0_0_8px_rgba(57,255,20,0.5)]" />Available</span>
               <span className="inline-flex items-center gap-2"><i className="h-2 w-2 bg-danger-500 shadow-[0_0_8px_rgba(255,23,68,0.5)]" />In game</span>
             </div>
           </div>
           <div className="relative mt-5 h-48 border-y border-[#28231c]/80 sm:h-56">
-            <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 border border-[#dfff00]/20" />
+            <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 border border-brand-400/20" />
             <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 border border-[#ff1744]/25" />
             {gamers.map((gamer, index) => {
               const point = getActivityPosition(index);
@@ -144,7 +144,7 @@ const FindGamers = () => {
                   to={`/gamer/${gamer._id}`}
                   title={`${gamer.username || 'Player'} · ${gamer.distanceLabel || 'Nearby'}`}
                   aria-label={`Open ${gamer.username || 'player'} profile, ${gamer.distanceLabel || 'nearby'}`}
-                  className={`absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center border text-[10px] font-bold text-black transition-transform hover:z-10 hover:scale-125 ${inGame ? 'border-danger-500 bg-danger-500' : 'border-brand-400 bg-brand-400'}`}
+                  className={`absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center border text-[10px] font-bold text-black transition-transform hover:z-10 hover:scale-125 ${inGame ? 'border-danger-500 bg-danger-500' : 'border-neon-green bg-neon-green'}`}
                   style={{ left: point.left, top: point.top }}
                 >
                   {gamer.username?.slice(0, 1).toUpperCase() || 'G'}

@@ -5,22 +5,26 @@
 @tailwind utilities;
 
 :root {
-  color: #f5f5f5;
-  background-color: #050505;
+  color: #F5F7FA;
+  background-color: #080A0F;
   font-family: 'Inter', sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  --bg: #050505;
-  --bg-soft: #0a0a0a;
-  --panel: rgba(17, 17, 17, 0.96);
-  --panel-alt: rgba(23, 23, 23, 0.96);
-  --border: rgba(223, 255, 0, 0.12);
-  --text: #f5f5f5;
-  --muted: #a3a3a3;
-  --yellow: #dfff00;
-  --yellow-soft: rgba(223, 255, 0, 0.14);
-  --red: #ff1744;
+  --bg: #080A0F;
+  --bg-soft: #11151C;
+  --panel: rgba(17, 21, 28, 0.96);
+  --panel-alt: rgba(27, 32, 41, 0.96);
+  --border: rgba(139, 92, 246, 0.18);
+  --text: #F5F7FA;
+  --muted: #8A919F;
+  --purple: #8B5CF6;
+  --purple-soft: rgba(139, 92, 246, 0.14);
+  --blue: #00A8FF;
+  --yellow: #FFE600;
+  --orange: #FF6B00;
+  --red: #FF1744;
   --red-soft: rgba(255, 23, 68, 0.14);
+  --green: #39FF14;
 }
 
 html {
@@ -31,9 +35,10 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top, rgba(223, 255, 0, 0.08), transparent 28%),
-    radial-gradient(circle at 80% 20%, rgba(255, 23, 68, 0.09), transparent 18%),
-    linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+    radial-gradient(circle at top, rgba(139, 92, 246, 0.10), transparent 28%),
+    radial-gradient(circle at 80% 20%, rgba(0, 168, 255, 0.05), transparent 18%),
+    radial-gradient(circle at 75% 70%, rgba(255, 23, 68, 0.06), transparent 20%),
+    linear-gradient(180deg, #080A0F 0%, #0D1017 100%);
   color: var(--text);
   position: relative;
   overflow-x: hidden;
@@ -85,11 +90,11 @@ select:focus-visible,
 textarea:focus-visible,
 a:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(223, 255, 0, 0.7), 0 0 0 6px rgba(223, 255, 0, 0.12);
+  box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.75), 0 0 0 6px rgba(139, 92, 246, 0.16);
 }
 
 .radiant-red {
-  background: linear-gradient(135deg, #ffd2da 0%, #ff3f6a 28%, #ff1744 52%, #ff9aad 100%);
+  background: linear-gradient(135deg, #FF9AAD 0%, #FF5473 28%, #FF1744 52%, #FF9AAD 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -97,11 +102,19 @@ a:focus-visible {
 }
 
 .radiant-yellow {
-  background: linear-gradient(135deg, #ffffe0 0%, #dfff00 35%, #f4ff00 100%);
+  background: linear-gradient(135deg, #FFF9A8 0%, #FFE600 45%, #FFB800 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 22px rgba(223, 255, 0, 0.28);
+  text-shadow: 0 0 22px rgba(255, 230, 0, 0.28);
+}
+
+.radiant-purple {
+  background: linear-gradient(135deg, #D8C2FF 0%, #8B5CF6 50%, #6D28D9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 22px rgba(139, 92, 246, 0.32);
 }
 
 h1,
@@ -125,7 +138,7 @@ h6,
 }
 
 .card {
-  @apply rounded-none border border-[#29251f] bg-[#111111] shadow-soft;
+  @apply rounded-none border border-[#292334] bg-[#11151C] shadow-soft;
   position: relative;
   overflow: hidden;
 }
@@ -136,7 +149,7 @@ h6,
   inset: 0 auto auto 0;
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, rgba(223, 255, 0, 0.5), transparent 65%);
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0.65), rgba(0, 168, 255, 0.3), transparent 75%);
   opacity: 0.45;
 }
 
@@ -151,7 +164,7 @@ h6,
 }
 
 .neon-border {
-  box-shadow: 0 0 0 1px rgba(223, 255, 0, 0.25), 0 0 24px rgba(223, 255, 0, 0.08);
+  box-shadow: 0 0 0 1px rgba(139, 92, 246, 0.3), 0 0 24px rgba(139, 92, 246, 0.1);
 }
 
 .red-border {
@@ -159,7 +172,7 @@ h6,
 }
 
 .gradient-line {
-  background: linear-gradient(90deg, rgba(223, 255, 0, 0.8), rgba(255, 23, 68, 0.5), transparent);
+  background: linear-gradient(90deg, rgba(139, 92, 246, 0.85), rgba(0, 168, 255, 0.6), rgba(255, 230, 0, 0.45), transparent);
 }
 
 @media (prefers-reduced-motion: reduce) {

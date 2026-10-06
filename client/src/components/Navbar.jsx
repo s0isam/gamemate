@@ -26,14 +26,14 @@ const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-[#221b19] bg-[#050505]/90 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-[#2b2439] bg-[#080A0F]/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:flex-nowrap lg:px-8">
         <Link to="/" className="flex items-center gap-3 text-white">
-          <span className="logo-mark inline-flex h-10 w-10 items-center justify-center border border-[#ff1744] bg-[#111111] text-lg font-black text-[#ffd2da] shadow-[0_0_18px_rgba(255,23,68,0.35)]">
+          <span className="logo-mark inline-flex h-10 w-10 items-center justify-center border border-brand-400 bg-[#11151C] text-lg font-black text-brand-200 shadow-[0_0_18px_rgba(139,92,246,0.35)]">
             G
           </span>
           <div className="leading-none">
-            <span className="radiant-red block text-lg font-black tracking-tight">GameMate</span>
+            <span className="radiant-purple block text-lg font-black tracking-tight">GameMate</span>
             <span className="mono block text-[10px] uppercase tracking-[0.28em] text-slate-400">Squad network</span>
           </div>
         </Link>
@@ -61,7 +61,7 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] transition-all ${
                   isActive
-                    ? 'bg-[#dfff00] text-black shadow-[0_0_18px_rgba(223,255,0,0.35)]'
+                    ? 'bg-brand-600 text-white shadow-[0_0_18px_rgba(139,92,246,0.35)]'
                     : 'text-slate-300 hover:text-brand-300'
                 }`
               }
@@ -75,7 +75,7 @@ const Navbar = () => {
           {user && (
             <>
               <NotificationBell />
-              <Link to={`/gamer/${user._id}`} aria-label="View your profile" className="flex h-10 w-10 items-center justify-center overflow-hidden border border-[#ff1744]/50 bg-[#171717] font-bold text-[#ffd2da] hover:border-[#ff1744]">
+              <Link to={`/gamer/${user._id}`} aria-label="View your profile" className="flex h-10 w-10 items-center justify-center overflow-hidden border border-brand-400/50 bg-[#171B24] font-bold text-brand-200 hover:border-brand-400">
                 {user.profileImage ? (
                   <img src={user.profileImage} alt="" className="h-full w-full object-cover" />
                 ) : user.username?.charAt(0)?.toUpperCase() || 'G'}
@@ -86,14 +86,14 @@ const Navbar = () => {
             <button
               type="button"
               onClick={logout}
-              className="rounded-[8px] border border-[#2d2d2d] bg-[#121212] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:border-[#dfff00] hover:text-[#dfff00]"
+              className="rounded-[8px] border border-[#343946] bg-[#121720] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300"
             >
               Sign out
             </button>
           ) : (
             <Link
               to="/login"
-              className="rounded-[8px] border border-[#dfff00] bg-[#dfff00] px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-black shadow-[0_0_18px_rgba(223,255,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#f4ff00]"
+              className="rounded-[8px] border border-brand-400 bg-brand-600 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-white shadow-[0_0_18px_rgba(139,92,246,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500"
             >
               Login
             </Link>

@@ -83,12 +83,12 @@ const GamerProfile = () => {
     ? 'border-slate-700 bg-slate-800 text-slate-300'
     : normalizedStatus === 'in game'
       ? 'border-danger-500/40 bg-danger-500/10 text-red-200'
-      : 'border-brand-400/40 bg-brand-400/10 text-brand-200';
+      : 'border-neon-green/40 bg-neon-green/10 text-neon-green';
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
       <section className="overflow-hidden rounded-none border border-[#30291f] bg-[#111111]">
-        <div className="relative h-28 bg-[linear-gradient(110deg,rgba(255,23,68,0.42),rgba(17,17,17,0.95)_55%,rgba(223,255,0,0.18))]">
+        <div className="relative h-28 bg-[linear-gradient(110deg,rgba(255,23,68,0.38),rgba(17,21,28,0.95)_55%,rgba(139,92,246,0.24))]">
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-danger-500/70 via-brand-400/50 to-transparent" />
         </div>
         <div className="px-6 pb-7 sm:px-8">
