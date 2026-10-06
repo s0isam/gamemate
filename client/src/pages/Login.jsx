@@ -20,7 +20,11 @@ const Login = () => {
       login(response.data.user, response.data.token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Unable to login. Please try again.');
+      setError(err.response?.data?.message || (
+        err.code === 'ERR_NETWORK'
+          ? 'Cannot reach the GameMate server. Check the server is running and reload this page.'
+          : 'Unable to login. Please try again.'
+      ));
     } finally {
       setLoading(false);
     }

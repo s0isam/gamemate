@@ -1,14 +1,30 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import GameCard from '../components/GameCard';
-
-const games = [
-  { name: 'Among Us', category: 'Social Strategy', description: 'Quick matches, teamwork, and intense bluffing rounds.' },
-  { name: 'Valorant', category: 'Tactical Shooter', description: 'Coordinate with your squad and outplay the enemy team.' },
-  { name: 'Fortnite', category: 'Battle Royale', description: 'Build, loot, and survive with your perfect duo or squad.' },
-  { name: 'BGMI', category: 'Battle Arena', description: 'Find reliable friends for ranked pushes and scrims.' },
-];
+import { getGames } from '../services/gameService';
 
 const Home = () => {
+  const [games, setGames] = useState([]);
+  const [gamesLoading, setGamesLoading] = useState(true);
+  const [gamesError, setGamesError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+
+    getGames()
+      .then((response) => {
+        if (active) setGames(response.data || []);
+      })
+      .catch((error) => {
+        if (active) setGamesError(error.response?.data?.message || 'Unable to load games from the server.');
+      })
+      .finally(() => {
+        if (active) setGamesLoading(false);
+      });
+
+    return () => { active = false; };
+  }, []);
+
   return (
     <div className="space-y-16 pb-10">
       <section className="grid items-center gap-8 rounded-none border border-[#3d2a26] bg-[#111111]/95 p-8 shadow-[0_0_0_1px_rgba(223,255,0,0.08),0_0_22px_rgba(223,255,0,0.12)] lg:grid-cols-[1.55fr_1fr] lg:p-10 xl:p-12">
@@ -62,9 +78,15 @@ const Home = () => {
           <Link className="radiant-red text-sm font-semibold transition-opacity hover:opacity-80" to="/games">Browse all</Link>
         </div>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
-          {games.map((game) => (
-            <GameCard key={game.name} {...game} />
-          ))}
+          {gamesLoading ? (
+            <p className="text-sm text-slate-400">Loading games...</p>
+          ) : gamesError ? (
+            <p role="alert" className="border border-danger-500/40 bg-danger-500/10 px-4 py-3 text-sm text-red-200">{gamesError}</p>
+          ) : games.length ? (
+            games.map((game) => <GameCard key={game._id || game.name} {...game} />)
+          ) : (
+            <p className="text-sm text-slate-400">No games are available yet.</p>
+          )}
         </div>
       </section>
 

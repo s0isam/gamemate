@@ -1,9 +1,17 @@
 const socketHandler = (server) => {
   const { Server } = require('socket.io');
+  const isAllowedClientOrigin = require('../config/clientOrigin');
   const io = new Server(server, {
     cors: {
-      origin: process.env.CLIENT_URL || 'http://localhost:5173',
+      origin: (origin, callback) => {
+        if (isAllowedClientOrigin(origin)) {
+          return callback(null, true);
+        }
+
+        return callback(new Error('Client origin is not allowed by CORS'));
+      },
       methods: ['GET', 'POST'],
+      credentials: true,
     },
   });
 

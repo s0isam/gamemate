@@ -1,11 +1,14 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { io } from 'socket.io-client';
 import { useAuth } from './AuthContext';
+import { resolveBackendUrl } from '../services/backendUrl';
 
 export const SocketContext = createContext(null);
 
+const socketUrl = resolveBackendUrl(import.meta.env.VITE_SOCKET_URL, 5000);
+
 export const SocketProvider = ({ children }) => {
-  const [socket] = useState(() => io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000'));
+  const [socket] = useState(() => io(socketUrl));
   const { user } = useAuth();
 
   useEffect(() => {
