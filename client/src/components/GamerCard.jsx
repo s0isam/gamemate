@@ -3,7 +3,12 @@ import { Link } from 'react-router-dom';
 const GamerCard = ({ gamer, onRequest }) => {
   const { username, games = [], preferredLanguages = [], gamingStatus = 'Looking for Team', distance = 'Nearby', microphoneAvailable } = gamer || {};
 
-  const statusClass = gamingStatus?.toLowerCase().includes('offline') ? 'text-slate-300 border-slate-600 bg-slate-800/80' : 'text-brand-300 border-brand-400/50 bg-brand-400/10';
+  const normalizedStatus = gamingStatus?.toLowerCase() || '';
+  const statusClass = normalizedStatus.includes('offline')
+    ? 'text-slate-300 border-slate-600 bg-slate-800/80'
+    : normalizedStatus.includes('in game')
+      ? 'text-red-200 border-danger-500/50 bg-danger-500/10'
+      : 'text-brand-300 border-brand-400/50 bg-brand-400/10';
 
   return (
     <article className="card p-5 transition-transform duration-200 hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-[0_0_18px_rgba(223,255,0,0.08)]">

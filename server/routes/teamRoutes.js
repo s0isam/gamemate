@@ -1,6 +1,7 @@
 const express = require('express');
 const {
   getMyTeams,
+  createTeam,
   getTeamById,
   leaveTeam,
   transferTeamLeadership,
@@ -15,6 +16,7 @@ const { protect } = require('../middleware/authMiddleware');
 const router = express.Router();
 
 router.get('/', protect, getMyTeams);
+router.post('/', protect, createTeam);
 router.get('/requests', protect, getTeamRequests);
 router.post('/requests', protect, createTeamRequest);
 router.put('/requests/:id/accept', protect, acceptTeamRequest);

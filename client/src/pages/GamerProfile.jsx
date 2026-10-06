@@ -77,18 +77,27 @@ const GamerProfile = () => {
   const isOwnProfile = user?._id === gamer._id;
   const games = gamer.games || [];
   const languages = gamer.preferredLanguages || [];
+  const status = gamer.gamingStatus || 'Online';
+  const normalizedStatus = status.toLowerCase();
+  const statusClass = normalizedStatus === 'offline'
+    ? 'border-slate-700 bg-slate-800 text-slate-300'
+    : normalizedStatus === 'in game'
+      ? 'border-danger-500/40 bg-danger-500/10 text-red-200'
+      : 'border-brand-400/40 bg-brand-400/10 text-brand-200';
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <section className="overflow-hidden rounded-3xl border border-slate-800 bg-slate-900">
-        <div className="h-28 bg-gradient-to-r from-brand-700 via-brand-600 to-slate-800" />
+      <section className="overflow-hidden rounded-none border border-[#30291f] bg-[#111111]">
+        <div className="relative h-28 bg-[linear-gradient(110deg,rgba(255,23,68,0.42),rgba(17,17,17,0.95)_55%,rgba(223,255,0,0.18))]">
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-danger-500/70 via-brand-400/50 to-transparent" />
+        </div>
         <div className="px-6 pb-7 sm:px-8">
           <div className="-mt-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
             <div className="flex items-end gap-4">
               {gamer.profileImage ? (
-                <img src={gamer.profileImage} alt="" className="h-24 w-24 rounded-2xl border-4 border-slate-900 object-cover" />
+                <img src={gamer.profileImage} alt="" className="h-24 w-24 rounded-none border-4 border-[#111111] object-cover" />
               ) : (
-                <div className="flex h-24 w-24 items-center justify-center rounded-2xl border-4 border-slate-900 bg-brand-600 text-3xl font-bold text-black">
+                <div className="flex h-24 w-24 items-center justify-center rounded-none border-4 border-[#111111] bg-brand-400 text-3xl font-bold text-black">
                   {gamer.username?.charAt(0)?.toUpperCase() || '?'}
                 </div>
               )}
@@ -113,10 +122,11 @@ const GamerProfile = () => {
             )}
           </div>
           <div className="mt-6 flex flex-wrap gap-2">
-            <span className="rounded-full border border-brand-400/40 bg-brand-400/10 px-3 py-1 text-sm text-brand-200">{gamer.gamingStatus || 'Online'}</span>
+            <span className={`rounded-full border px-3 py-1 text-sm ${statusClass}`}>{status}</span>
             <span className="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-sm text-slate-300">
               {gamer.microphoneAvailable ? 'Microphone available' : 'No microphone listed'}
             </span>
+            <span className="rounded-full border border-danger-500/30 bg-danger-500/10 px-3 py-1 text-sm text-red-200">Location protected</span>
           </div>
           {gamer.bio ? (
             <p className="mt-6 whitespace-pre-wrap leading-relaxed text-slate-300">{gamer.bio}</p>

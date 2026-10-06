@@ -15,6 +15,7 @@ const Settings = () => {
   });
   const [locationData, setLocationData] = useState({ latitude: '', longitude: '' });
   const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState('');
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -42,18 +43,20 @@ const Settings = () => {
 
   const handleUseCurrentLocation = () => {
     if (!navigator.geolocation) {
+      setFeedback('Location access is not supported by this browser.');
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        setFeedback('Location captured. Save your profile to update nearby discovery.');
         setLocationData({
           latitude: position.coords.latitude.toString(),
           longitude: position.coords.longitude.toString(),
         });
       },
-      () => {
-        console.error('Location access denied');
+      (error) => {
+        setFeedback(error.message || 'Location permission was denied.');
       }
     );
   };
@@ -61,6 +64,7 @@ const Settings = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSaving(true);
+    setFeedback('');
 
     try {
       const payload = {
@@ -73,23 +77,26 @@ const Settings = () => {
       };
 
       const profileResponse = await updateProfile(payload);
-      await updateStatus(formData.gamingStatus);
+      const statusResponse = await updateStatus(formData.gamingStatus);
 
       if (locationData.latitude && locationData.longitude) {
         await updateLocation(Number(locationData.latitude), Number(locationData.longitude));
       }
 
-      setUser(profileResponse.data);
+      setUser({ ...profileResponse.data, gamingStatus: statusResponse.data.gamingStatus });
+      setFeedback('Profile saved.');
     } catch (error) {
       console.error('Profile update failed', error);
+      setFeedback(error.response?.data?.message || 'Profile update failed. Please try again.');
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="mx-auto max-w-3xl rounded-3xl border border-slate-800 bg-slate-900/70 p-8">
+    <div className="mx-auto max-w-3xl rounded-none border border-[#30291f] bg-[#111111] p-8">
       <h1 className="text-3xl font-bold text-white">Settings</h1>
+      <p className="mt-2 text-sm text-slate-400">Manage your player identity, games, availability and discovery location.</p>
       <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
         <div className="grid gap-5 md:grid-cols-2">
           <label className="block text-sm text-slate-300 md:col-span-1">
@@ -194,6 +201,7 @@ const Settings = () => {
           </div>
         </div>
 
+        {feedback && <p role="status" className="border border-[#ff1744]/35 bg-[#ff1744]/10 px-4 py-3 text-sm text-red-200">{feedback}</p>}
         <button type="submit" disabled={saving} className="rounded-xl bg-brand-600 px-5 py-3 font-bold text-black hover:bg-brand-500 disabled:opacity-70">
           {saving ? 'Saving...' : 'Save Profile'}
         </button>

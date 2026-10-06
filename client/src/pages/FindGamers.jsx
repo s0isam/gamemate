@@ -4,17 +4,16 @@ import SearchFilters from '../components/SearchFilters';
 import GamerCard from '../components/GamerCard';
 import { getNearbyGamers } from '../services/gamerService';
 import { sendTeamRequest } from '../services/teamService';
+import { getGames } from '../services/gameService';
 
-const activitySpots = [
-  { left: '18%', top: '24%' },
-  { left: '37%', top: '68%' },
-  { left: '55%', top: '34%' },
-  { left: '75%', top: '58%' },
-  { left: '84%', top: '20%' },
-  { left: '28%', top: '46%' },
-  { left: '64%', top: '78%' },
-  { left: '47%', top: '18%' },
-];
+const getActivityPosition = (index) => {
+  const angle = index * 2.399;
+  const radius = 12 + (index % 6) * 5;
+  return {
+    left: `${50 + Math.cos(angle) * radius}%`,
+    top: `${50 + Math.sin(angle) * radius}%`,
+  };
+};
 
 const defaultFilters = {
   game: '',
@@ -33,25 +32,31 @@ const FindGamers = () => {
   const [gamers, setGamers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [games, setGames] = useState([]);
+  const [gamesError, setGamesError] = useState('');
+  const [loadError, setLoadError] = useState('');
+  const [requestFeedback, setRequestFeedback] = useState('');
 
   const handleRequest = async (gamer) => {
+    setRequestFeedback('');
     try {
+      const game = filters.game || gamer.games?.[0] || 'Among Us';
       const payload = {
         receiverId: gamer._id,
-        game: gamer.games?.[0] || filters.game || 'Among Us',
-        message: `Hi ${gamer.username}, I want to squad up for ${gamer.games?.[0] || 'this game'}.`,
+        game,
+        message: `Hi ${gamer.username}, I want to squad up for ${game}.`,
       };
 
       await sendTeamRequest(payload);
-      window.alert(`Team request sent to ${gamer.username}.`);
+      setRequestFeedback(`Invite sent to ${gamer.username}.`);
     } catch (error) {
       console.error('Failed to send request', error);
-      window.alert('Unable to send the team request right now.');
+      setRequestFeedback(error.response?.data?.message || 'Unable to send the team request right now.');
     }
   };
 
   const loadGamers = async (nextFilters = filters) => {
     setLoading(true);
+    setLoadError('');
 
     try {
       const response = await getNearbyGamers({
@@ -62,6 +67,7 @@ const FindGamers = () => {
     } catch (error) {
       console.error('Unable to load nearby gamers', error);
       setGamers([]);
+      setLoadError(error.response?.data?.message || 'Unable to load nearby gamers. Try again in a moment.');
     } finally {
       setLoading(false);
     }
@@ -72,13 +78,16 @@ const FindGamers = () => {
   }, []);
 
   useEffect(() => {
-    setGames([
-      { name: 'Among Us' },
-      { name: 'Valorant' },
-      { name: 'Fortnite' },
-      { name: 'BGMI' },
-      { name: 'PUBG' },
-    ]);
+    let active = true;
+    getGames()
+      .then((response) => {
+        if (active) setGames(response.data || []);
+      })
+      .catch((error) => {
+        if (active) setGamesError(error.response?.data?.message || 'Unable to load game filters.');
+      });
+
+    return () => { active = false; };
   }, []);
 
   return (
@@ -90,6 +99,7 @@ const FindGamers = () => {
       </section>
 
       <SearchFilters filters={filters} setFilters={setFilters} onSubmit={() => loadGamers(filters)} games={games} />
+      {gamesError && <p role="alert" className="border border-danger-500/40 bg-danger-500/10 px-4 py-3 text-sm text-red-200">{gamesError}</p>}
 
       <div className="mt-8">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
@@ -99,6 +109,9 @@ const FindGamers = () => {
           </div>
           {!loading && <p className="text-sm text-slate-400">{gamers.length} player{gamers.length === 1 ? '' : 's'} found</p>}
         </div>
+
+        {requestFeedback && <p role="status" className="mb-4 border border-[#ff1744]/35 bg-[#ff1744]/10 px-4 py-3 text-sm text-red-200">{requestFeedback}</p>}
+        {loadError && <p role="alert" className="mb-4 border border-danger-500/40 bg-danger-500/10 px-4 py-3 text-sm text-red-200">{loadError}</p>}
 
         <section className="relative mb-8 min-h-64 overflow-hidden border border-[#30291f] bg-[#0b0b0b] p-5 sm:p-7" aria-label="Approximate nearby player activity">
           <div
@@ -123,7 +136,7 @@ const FindGamers = () => {
             <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 border border-[#dfff00]/20" />
             <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 border border-[#ff1744]/25" />
             {gamers.map((gamer, index) => {
-              const point = activitySpots[index % activitySpots.length];
+              const point = getActivityPosition(index);
               const inGame = gamer.gamingStatus?.toLowerCase().includes('in game');
               return (
                 <Link

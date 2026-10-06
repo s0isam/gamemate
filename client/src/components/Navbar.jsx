@@ -12,6 +12,7 @@ const Navbar = () => {
     { to: '/games', label: 'Discover' },
     { to: '/find-gamers', label: 'Nearby' },
     ...(user ? [
+      { to: '/dashboard', label: 'Dashboard' },
       { to: '/my-teams', label: 'Squads' },
       { to: '/chat', label: 'Messages' },
     ] : []),

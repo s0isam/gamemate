@@ -38,6 +38,33 @@ const getMyTeams = async (req, res) => {
   });
 };
 
+const createTeam = async (req, res) => {
+  const game = String(req.body?.game || '').trim();
+  const maxPlayers = Number(req.body?.maxPlayers || 4);
+
+  if (!game) {
+    return res.status(400).json({ success: false, message: 'Game is required' });
+  }
+
+  if (!Number.isInteger(maxPlayers) || maxPlayers < 2 || maxPlayers > 10) {
+    return res.status(400).json({ success: false, message: 'Squad size must be between 2 and 10 players' });
+  }
+
+  const team = await Team.create({
+    game,
+    leader: req.user._id,
+    members: [req.user._id],
+    maxPlayers,
+    status: 'active',
+  });
+
+  const createdTeam = await Team.findById(team._id)
+    .populate('leader', 'username profileImage gamingStatus')
+    .populate('members', 'username profileImage gamingStatus');
+
+  return res.status(201).json({ success: true, data: createdTeam });
+};
+
 const getTeamById = async (req, res) => {
   const team = await Team.findById(req.params.id)
     .populate('leader', 'username profileImage gamingStatus')
@@ -336,6 +363,7 @@ const rejectTeamRequest = async (req, res) => {
 
 module.exports = {
   getMyTeams,
+  createTeam,
   getTeamById,
   leaveTeam,
   transferTeamLeadership,

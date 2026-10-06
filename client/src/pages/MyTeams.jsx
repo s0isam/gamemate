@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import {
+  createTeam,
   getMyTeams,
   joinTeamByLobbyCode,
   leaveTeam,
@@ -14,6 +15,9 @@ const MyTeams = () => {
   const [loading, setLoading] = useState(true);
   const [copiedCode, setCopiedCode] = useState('');
   const [lobbyCode, setLobbyCode] = useState('');
+  const [newTeamGame, setNewTeamGame] = useState('');
+  const [newTeamSize, setNewTeamSize] = useState('4');
+  const [creatingTeam, setCreatingTeam] = useState(false);
   const [selectedLeaders, setSelectedLeaders] = useState({});
   const [busyTeamId, setBusyTeamId] = useState('');
   const [feedback, setFeedback] = useState('');
@@ -75,6 +79,27 @@ const MyTeams = () => {
     }
   };
 
+  const handleCreateTeam = async (event) => {
+    event.preventDefault();
+    setFeedback('');
+    setCreatingTeam(true);
+
+    try {
+      const response = await createTeam({
+        game: newTeamGame.trim(),
+        maxPlayers: Number(newTeamSize),
+      });
+      setNewTeamGame('');
+      setNewTeamSize('4');
+      setFeedback(`Your ${response.data.game} squad is ready. Share its lobby code to invite players.`);
+      await loadTeams();
+    } catch (error) {
+      setFeedback(error.response?.data?.message || 'Unable to create your squad right now.');
+    } finally {
+      setCreatingTeam(false);
+    }
+  };
+
   const handleTransferLeadership = async (teamId) => {
     const memberId = selectedLeaders[teamId];
     if (!memberId) {
@@ -120,6 +145,38 @@ const MyTeams = () => {
         </form>
       </section>
 
+      <section className="border border-[#30291f] bg-[#111111] p-5">
+        <div className="mb-4">
+          <p className="mono text-[10px] uppercase tracking-[0.2em] text-brand-300">New lobby</p>
+          <h2 className="mt-1 text-xl font-bold text-white">Create a squad</h2>
+          <p className="mt-1 text-sm text-slate-400">Choose a game and squad size, then share the generated lobby code.</p>
+        </div>
+        <form onSubmit={handleCreateTeam} className="grid gap-3 sm:grid-cols-[1fr_10rem_auto]">
+          <label className="sr-only" htmlFor="new-team-game">Game</label>
+          <input
+            id="new-team-game"
+            value={newTeamGame}
+            onChange={(event) => setNewTeamGame(event.target.value)}
+            placeholder="Game title"
+            required
+            maxLength={80}
+            className="min-w-0 border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white placeholder:text-slate-500"
+          />
+          <label className="sr-only" htmlFor="new-team-size">Maximum squad size</label>
+          <select
+            id="new-team-size"
+            value={newTeamSize}
+            onChange={(event) => setNewTeamSize(event.target.value)}
+            className="border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+          >
+            {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((size) => <option key={size} value={size}>{size} players</option>)}
+          </select>
+          <button type="submit" disabled={!newTeamGame.trim() || creatingTeam} className="border border-brand-400 bg-brand-400 px-5 py-2 text-sm font-bold text-black transition-all hover:bg-brand-300 disabled:cursor-not-allowed disabled:opacity-50">
+            {creatingTeam ? 'Creating...' : 'Create squad'}
+          </button>
+        </form>
+      </section>
+
       {feedback && <p role="status" className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-slate-200">{feedback}</p>}
 
       {loading ? (
@@ -142,7 +199,9 @@ const MyTeams = () => {
             <div key={team._id} className="card p-6">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <h2 className="text-2xl font-bold text-white">{team.game} Squad</h2>
+                  <h2 className="text-2xl font-bold text-white">
+                    <Link to={`/teams/${team._id}`} className="hover:text-brand-300">{team.game} Squad</Link>
+                  </h2>
                   <p className="mt-2 text-slate-400">
                     {teamSize} / {team.maxPlayers || 4} players · Led by {team.leader?.username || 'your team'}
                   </p>
@@ -161,6 +220,9 @@ const MyTeams = () => {
               </div>
 
               <div className="mt-5 flex flex-wrap gap-3">
+                <Link to={`/teams/${team._id}`} className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:border-brand-400 hover:text-brand-300">
+                  Squad details
+                </Link>
                 <Link to={`/chat/${team._id}`} className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-black">
                   Chat
                 </Link>

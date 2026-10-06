@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import FindGamers from './pages/FindGamers';
 import GamerProfile from './pages/GamerProfile';
 import MyTeams from './pages/MyTeams';
+import TeamDetails from './pages/TeamDetails';
 import Notifications from './pages/Notifications';
 import Chat from './pages/Chat';
 import Settings from './pages/Settings';
@@ -30,7 +31,14 @@ const App = () => {
                 <Route path="/games" element={<Games />} />
                 <Route path="/login" element={<Login />} />
                 <Route path="/register" element={<Register />} />
-                <Route path="/find-gamers" element={<FindGamers />} />
+                <Route
+                  path="/find-gamers"
+                  element={
+                    <ProtectedRoute>
+                      <FindGamers />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="/gamer/:id"
                   element={
@@ -53,6 +61,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <MyTeams />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/teams/:teamId"
+                  element={
+                    <ProtectedRoute>
+                      <TeamDetails />
                     </ProtectedRoute>
                   }
                 />
