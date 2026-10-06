@@ -1,10 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
-import useSocket from '../hooks/useSocket';
+import { useSocket } from '../context/SocketContext';
 import { getNotifications } from '../services/notificationService';
 
 const NotificationBell = () => {
-  const { user } = useAuth();
+  const { socket } = useSocket();
   const [count, setCount] = useState(0);
 
   const fetchCount = useCallback(async () => {
@@ -21,10 +20,18 @@ const NotificationBell = () => {
     fetchCount();
   }, [fetchCount]);
 
-  useSocket({
-    userId: user?._id,
-    onNotification: () => fetchCount(),
-  });
+  useEffect(() => {
+    if (!socket) {
+      return undefined;
+    }
+
+    const handleNewNotification = () => fetchCount();
+    socket.on('new-notification', handleNewNotification);
+
+    return () => {
+      socket.off('new-notification', handleNewNotification);
+    };
+  }, [socket, fetchCount]);
 
   return (
     <button className="relative rounded-xl border border-slate-700 bg-slate-900 p-2 text-lg text-slate-100 hover:border-brand-500">

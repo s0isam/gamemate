@@ -1,26 +1,37 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { io } from 'socket.io-client';
+import { useAuth } from './AuthContext';
 
-const SocketContext = createContext(null);
+export const SocketContext = createContext(null);
 
 export const SocketProvider = ({ children }) => {
   const [socket] = useState(() => io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000'));
+  const { user } = useAuth();
 
   useEffect(() => {
-    socket.on('connect', () => {
+    const onConnect = () => {
       console.log('Socket connected');
-    });
+      if (user?._id) {
+        socket.emit('join-user', String(user._id));
+      }
+    };
 
-    socket.on('disconnect', () => {
+    const onDisconnect = () => {
       console.log('Socket disconnected');
-    });
+    };
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+
+    if (socket.connected && user?._id) {
+      socket.emit('join-user', String(user._id));
+    }
 
     return () => {
-      socket.off('connect');
-      socket.off('disconnect');
-      socket.disconnect();
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
     };
-  }, [socket]);
+  }, [socket, user?._id]);
 
   const value = useMemo(() => ({ socket }), [socket]);
 
