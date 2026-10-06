@@ -40,6 +40,10 @@ const Register = () => {
         <label className="block text-sm text-slate-300 md:col-span-1">
           <span className="mb-2 block">Username</span>
           <input
+            type="text"
+            autoComplete="username"
+            required
+            minLength={2}
             value={formData.username}
             onChange={(event) => setFormData({ ...formData, username: event.target.value })}
             className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
@@ -49,6 +53,8 @@ const Register = () => {
           <span className="mb-2 block">Email</span>
           <input
             type="email"
+            autoComplete="email"
+            required
             value={formData.email}
             onChange={(event) => setFormData({ ...formData, email: event.target.value })}
             className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
@@ -58,6 +64,9 @@ const Register = () => {
           <span className="mb-2 block">Password</span>
           <input
             type="password"
+            autoComplete="new-password"
+            required
+            minLength={6}
             value={formData.password}
             onChange={(event) => setFormData({ ...formData, password: event.target.value })}
             className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
@@ -72,7 +81,7 @@ const Register = () => {
           />
         </label>
 
-        {error && <p className="md:col-span-2 text-sm text-red-400">{error}</p>}
+        {error && <p role="alert" className="md:col-span-2 border border-danger-500/40 bg-danger-500/10 px-3 py-2 text-sm text-red-200">{error}</p>}
 
         <button type="submit" disabled={loading} className="md:col-span-2 w-full rounded-xl bg-brand-600 px-4 py-3 font-bold text-black hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-70">
           {loading ? 'Creating account...' : 'Register'}

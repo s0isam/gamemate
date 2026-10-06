@@ -3,6 +3,15 @@ import { getCurrentUser } from '../services/authService';
 
 const AuthContext = createContext();
 
+const normalizeUser = (userData) => {
+  if (!userData) {
+    return userData;
+  }
+
+  const id = userData._id || userData.id;
+  return id ? { ...userData, _id: id } : userData;
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('gamemate_token') || '');
@@ -17,7 +26,7 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const response = await getCurrentUser();
-        setUser(response.data.user);
+        setUser(normalizeUser(response.data.user));
       } catch (error) {
         localStorage.removeItem('gamemate_token');
         setToken('');
@@ -30,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   }, [token]);
 
   const login = (userData, authToken) => {
-    setUser(userData);
+    setUser(normalizeUser(userData));
     setToken(authToken);
     localStorage.setItem('gamemate_token', authToken);
   };
