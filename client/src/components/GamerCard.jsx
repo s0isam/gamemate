@@ -37,15 +37,27 @@ const GamerCard = ({ gamer, onRequest }) => {
           <span className="text-slate-400">Mic</span>
           <span className="font-medium text-white">{microphoneAvailable ? 'Available' : 'Not listed'}</span>
         </div>
+        <div className="flex items-center justify-between">
+          <span className="text-slate-400">Rank / skill</span>
+          <span className="font-medium text-white">{gamer.skillLevel || 'Not listed'}</span>
+        </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => onRequest?.(gamer)}
-        className="mt-5 w-full border border-brand-400 bg-brand-400 px-4 py-3 text-xs font-black uppercase tracking-[0.2em] text-black hover:-translate-y-0.5 hover:shadow-[0_0_18px_rgba(223,255,0,0.35)]"
-      >
-        Request to Team Up
-      </button>
+      <div className="mt-5 grid grid-cols-2 gap-2">
+        <Link
+          to={`/gamer/${gamer._id}`}
+          className="flex items-center justify-center border border-slate-600 bg-slate-900 px-3 py-3 text-center text-[10px] font-black uppercase tracking-[0.14em] text-white transition-colors hover:border-brand-400 hover:text-brand-300"
+        >
+          View Profile
+        </Link>
+        <button
+          type="button"
+          onClick={() => onRequest?.(gamer)}
+          className="border border-brand-400 bg-brand-400 px-3 py-3 text-[10px] font-black uppercase tracking-[0.14em] text-black hover:-translate-y-0.5 hover:shadow-[0_0_18px_rgba(223,255,0,0.35)]"
+        >
+          Invite
+        </button>
+      </div>
     </article>
   );
 };

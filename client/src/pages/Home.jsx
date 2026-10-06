@@ -14,45 +14,44 @@ const Home = () => {
       <section className="grid items-center gap-8 rounded-none border border-[#3d2a26] bg-[#111111]/95 p-8 shadow-[0_0_0_1px_rgba(223,255,0,0.08),0_0_22px_rgba(223,255,0,0.12)] lg:grid-cols-[1.55fr_1fr] lg:p-10 xl:p-12">
         <div className="max-w-[720px]">
           <p className="mb-5 inline-flex border border-[#ff1744]/40 bg-[#171717] px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-[#ff9aad]">
-            Find your squad. Play together.
+          Nearby players. Your next squad.
           </p>
           <h1 className="text-[3.1rem] font-black leading-[0.94] tracking-[-0.06em] text-white md:text-[5.1rem]">
-            Find Your Squad.
-            <span className="radiant-red block">Play Together.</span>
+          Find Your Next
+          <span className="radiant-red block">Squad.</span>
           </h1>
           <p className="mt-6 max-w-[620px] text-xl leading-8 text-slate-300">
-            Connect with gamers around you, find teammates for your favorite games, and start playing.
+          Gamers around you. Games you play. Teams you can join.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <Link to="/find-gamers" className="inline-flex items-center justify-center rounded-[10px] bg-[#dfff00] px-7 py-4 text-base font-bold text-black shadow-[0_0_18px_rgba(223,255,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#f4ff00]">
-              Find Gamers
-            </Link>
-            <Link to="/#popular-games" className="inline-flex items-center justify-center rounded-[10px] border border-[#ff1744]/60 bg-[#171717] px-7 py-4 text-base font-medium text-slate-100 transition-all duration-200 hover:border-[#ff1744] hover:text-[#ffb0be]">
-              Explore Games
-            </Link>
+          <Link to="/find-gamers" className="inline-flex items-center justify-center rounded-[10px] bg-[#dfff00] px-7 py-4 text-base font-bold text-black shadow-[0_0_18px_rgba(223,255,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#f4ff00]">
+            Find Gamers Near Me
+          </Link>
+          <Link to="/my-teams" className="inline-flex items-center justify-center rounded-[10px] border border-white/40 bg-[#171717] px-7 py-4 text-base font-medium text-white transition-all duration-200 hover:border-brand-400 hover:text-brand-300">
+            Create a Squad
+          </Link>
           </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
           <div className="rounded-none border border-[#312d20] bg-[#171717] p-5 shadow-[inset_0_0_0_1px_rgba(223,255,0,0.08)]">
-            <p className="text-sm text-slate-400">Nearby Players</p>
-            <p className="mt-3 text-5xl font-black tracking-[-0.06em] text-[#dfff00]">1.2k</p>
-            <p className="mt-2 text-sm text-[#ff1744]">+18% this week</p>
+          <p className="mono text-xs uppercase tracking-[0.16em] text-slate-400">01 / Discover</p>
+          <p className="mt-4 text-xl font-bold text-white">Players nearby</p>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Find teammates by game, distance, skill and availability.</p>
           </div>
           <div className="rounded-none border border-[#312d20] bg-[#171717] p-5 shadow-[inset_0_0_0_1px_rgba(223,255,0,0.08)]">
-            <p className="text-sm text-slate-400">Active Teams</p>
-            <p className="mt-3 text-5xl font-black tracking-[-0.06em] text-[#dfff00]">480</p>
-            <p className="mt-2 text-sm text-[#ff1744]">Across 12 games</p>
+          <p className="mono text-xs uppercase tracking-[0.16em] text-slate-400">02 / Squad up</p>
+          <p className="mt-4 text-xl font-bold text-white">Build your team</p>
+          <p className="mt-2 text-sm leading-6 text-slate-400">Invite players, manage your lobby and keep the conversation going.</p>
           </div>
           <div className="rounded-none border border-[#312d20] bg-[#171717] p-5 sm:col-span-2">
-            <p className="text-sm text-slate-400">Players online now</p>
-            <div className="mt-4 flex gap-3">
-              {['R', 'A', 'N', 'S'].map((letter, index) => (
-                <div key={index} className="flex h-12 w-12 items-center justify-center rounded-full border border-[#dfff00] bg-[#111111] text-sm font-bold text-[#dfff00] shadow-[0_0_18px_rgba(223,255,0,0.22)]">
-                  {letter}
-                </div>
-              ))}
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="mono text-xs uppercase tracking-[0.16em] text-[#ff9aad]">Privacy first</p>
+              <p className="mt-2 text-sm text-slate-300">Nearby discovery uses approximate distance. Exact locations stay private.</p>
             </div>
+            <span aria-hidden="true" className="hidden h-10 w-10 shrink-0 items-center justify-center border border-[#ff1744]/50 text-[#ff1744] sm:flex">◎</span>
+          </div>
           </div>
         </div>
       </section>
@@ -60,7 +59,7 @@ const Home = () => {
       <section id="popular-games" className="scroll-mt-24">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-4xl font-black tracking-[-0.05em] text-white">Popular games</h2>
-          <Link className="radiant-red text-sm font-semibold transition-opacity hover:opacity-80" to="/find-gamers">Browse all</Link>
+          <Link className="radiant-red text-sm font-semibold transition-opacity hover:opacity-80" to="/games">Browse all</Link>
         </div>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {games.map((game) => (

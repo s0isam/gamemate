@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useSocket } from '../context/SocketContext';
 import { getNotifications } from '../services/notificationService';
 
@@ -34,8 +35,8 @@ const NotificationBell = () => {
   }, [socket, fetchCount]);
 
   return (
-    <button
-      type="button"
+    <Link
+      to="/notifications"
       aria-label="Notifications"
       className="relative flex h-10 w-10 items-center justify-center border border-slate-700 bg-slate-900 text-base text-slate-100 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300"
     >
@@ -45,7 +46,7 @@ const NotificationBell = () => {
           {count}
         </span>
       )}
-    </button>
+    </Link>
   );
 };
 
