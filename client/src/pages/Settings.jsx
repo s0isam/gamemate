@@ -94,7 +94,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="mx-auto max-w-3xl rounded-none border border-[#30291f] bg-[#111111] p-8">
+    <div className="mx-auto max-w-3xl rounded-none border border-[#302a3e] bg-[#11151C] p-8">
       <h1 className="text-3xl font-bold text-white">Settings</h1>
       <p className="mt-2 text-sm text-slate-400">Manage your player identity, games, availability and discovery location.</p>
       <form className="mt-8 space-y-5" onSubmit={handleSubmit}>

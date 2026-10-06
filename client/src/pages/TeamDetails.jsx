@@ -46,7 +46,7 @@ const TeamDetails = () => {
 
   return (
     <div className="mx-auto max-w-4xl space-y-6">
-      <header className="border border-[#30291f] bg-[#111111] p-6 sm:p-8">
+      <header className="border border-[#302a3e] bg-[#11151C] p-6 sm:p-8">
         <p className="mono text-xs uppercase tracking-[0.22em] text-brand-300">Squad details</p>
         <div className="mt-3 flex flex-wrap items-start justify-between gap-5">
           <div>
@@ -77,7 +77,7 @@ const TeamDetails = () => {
             return (
               <li key={memberId} className="flex items-center justify-between gap-3 border border-slate-800 bg-slate-950/70 p-4">
                 <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#ff1744]/40 bg-[#171717] font-bold text-[#ffd2da]">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#8B5CF6]/40 bg-[#171B24] font-bold text-[#C4A3FF]">
                     {username.charAt(0).toUpperCase()}
                   </span>
                   <div className="min-w-0">
@@ -88,7 +88,7 @@ const TeamDetails = () => {
                 {String(memberId) === String(leaderId) ? (
                   <span className="mono text-[10px] uppercase tracking-wider text-brand-300">Leader</span>
                 ) : (
-                  <Link to={`/gamer/${memberId}`} className="text-xs font-semibold uppercase tracking-wider text-[#ff9aad] hover:text-white">Profile</Link>
+                  <Link to={`/gamer/${memberId}`} className="text-xs font-semibold uppercase tracking-wider text-brand-300 hover:text-white">Profile</Link>
                 )}
               </li>
             );
