@@ -9,6 +9,7 @@ export default {
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
+        white: '#2C84A0',
         brand: {
           50: '#F5F0FF',
           100: '#EDE2FF',
