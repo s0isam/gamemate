@@ -1,22 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import useSocket from '../hooks/useSocket';
 import { getNotifications } from '../services/notificationService';
 
 const NotificationBell = () => {
+  const { user } = useAuth();
   const [count, setCount] = useState(0);
 
-  useEffect(() => {
-    const fetchCount = async () => {
-      try {
-        const response = await getNotifications();
-        const unread = (response.data || []).filter((item) => !item.read).length;
-        setCount(unread);
-      } catch (error) {
-        console.error('Unable to fetch notifications', error);
-      }
-    };
-
-    fetchCount();
+  const fetchCount = useCallback(async () => {
+    try {
+      const response = await getNotifications();
+      const unread = (response.data || []).filter((item) => !item.read).length;
+      setCount(unread);
+    } catch (error) {
+      console.error('Unable to fetch notifications', error);
+    }
   }, []);
+
+  useEffect(() => {
+    fetchCount();
+  }, [fetchCount]);
+
+  useSocket({
+    userId: user?._id,
+    onNotification: () => fetchCount(),
+  });
 
   return (
     <button className="relative rounded-xl border border-slate-700 bg-slate-900 p-2 text-lg text-slate-100 hover:border-brand-500">
