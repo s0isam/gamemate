@@ -68,7 +68,7 @@ const Dashboard = () => {
             <h1 className="mt-2 text-3xl font-bold text-white">Welcome back, {user?.username || 'Gamer'}</h1>
             <p className="mt-2 max-w-xl text-slate-400">Your squads, invitations, and profile are all in one place.</p>
             <div className="mt-5 flex flex-wrap gap-3">
-              <Link to="/find-gamers" className="rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-semibold text-white hover:bg-brand-500">
+              <Link to="/find-gamers" className="rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-black hover:bg-brand-500">
                 Find teammates
               </Link>
               <Link to="/my-teams" className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-100 hover:border-slate-500">
@@ -80,7 +80,7 @@ const Dashboard = () => {
             {user?.profileImage ? (
               <img src={user.profileImage} alt="" className="h-12 w-12 rounded-xl object-cover" />
             ) : (
-              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-xl font-bold text-white">
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-xl font-bold text-black">
                 {user?.username?.charAt(0)?.toUpperCase() || 'G'}
               </span>
             )}
@@ -102,7 +102,7 @@ const Dashboard = () => {
         </article>
         <article className="card p-5">
           <p className="text-sm text-slate-400">Availability</p>
-          <h2 className="mt-2 text-xl font-bold text-emerald-300">{user?.gamingStatus || 'Online'}</h2>
+          <h2 className="mt-2 text-xl font-bold text-brand-300">{user?.gamingStatus || 'Online'}</h2>
           <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-brand-200">Change status</Link>
         </article>
         <article className="card p-5">

@@ -74,7 +74,7 @@ const Register = () => {
 
         {error && <p className="md:col-span-2 text-sm text-red-400">{error}</p>}
 
-        <button type="submit" disabled={loading} className="md:col-span-2 w-full rounded-xl bg-brand-600 px-4 py-3 font-medium text-white hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-70">
+        <button type="submit" disabled={loading} className="md:col-span-2 w-full rounded-xl bg-brand-600 px-4 py-3 font-bold text-black hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-70">
           {loading ? 'Creating account...' : 'Register'}
         </button>
       </form>

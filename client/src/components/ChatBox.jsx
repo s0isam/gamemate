@@ -79,7 +79,7 @@ const ChatBox = ({ teamId }) => {
     <div className="card h-[420px] p-4">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-lg font-semibold text-white">Team Chat</h3>
-        <span className="rounded-full bg-emerald-500/15 px-2 py-1 text-xs text-emerald-300">Online</span>
+        <span className="rounded-full border border-brand-400/40 bg-brand-400/10 px-2 py-1 text-xs text-brand-300">Online</span>
       </div>
 
       <div className="flex h-[280px] flex-col gap-3 overflow-y-auto rounded-xl border border-slate-700 bg-slate-950/60 p-3 text-sm text-slate-200">
@@ -92,7 +92,7 @@ const ChatBox = ({ teamId }) => {
             const isMine = message.sender?._id === user?._id || message.sender?.username === user?.username;
             return (
               <div key={message._id} className={isMine ? 'self-end' : 'self-start'}>
-                <div className={`max-w-xs rounded-2xl px-3 py-2 ${isMine ? 'bg-brand-600 text-white' : 'bg-slate-800 text-slate-200'}`}>
+                <div className={`max-w-xs rounded-2xl px-3 py-2 ${isMine ? 'bg-brand-600 font-medium text-black' : 'bg-slate-800 text-slate-200'}`}>
                   {message.text}
                 </div>
               </div>
@@ -114,7 +114,7 @@ const ChatBox = ({ teamId }) => {
           placeholder="Type a message..."
           className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white focus:border-brand-500"
         />
-        <button onClick={handleSend} className="rounded-xl bg-brand-600 px-4 py-2 font-medium text-white hover:bg-brand-500">
+        <button onClick={handleSend} className="rounded-xl bg-brand-600 px-4 py-2 font-bold text-black hover:bg-brand-500">
           Send
         </button>
       </div>

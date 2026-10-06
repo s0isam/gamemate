@@ -24,7 +24,7 @@ const Home = () => {
             Connect with gamers around you, find teammates for your favorite games, and start playing.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <Link to="/find-gamers" className="rounded-xl bg-brand-600 px-6 py-3 font-medium text-white hover:bg-brand-500">
+            <Link to="/find-gamers" className="rounded-xl bg-brand-600 px-6 py-3 font-bold text-black hover:bg-brand-500">
               Find Gamers
             </Link>
             <Link to="/" className="rounded-xl border border-slate-700 bg-slate-800 px-6 py-3 font-medium text-slate-100 hover:border-brand-500">
@@ -37,7 +37,7 @@ const Home = () => {
           <div className="card p-5">
             <p className="text-sm text-slate-400">Nearby Players</p>
             <p className="mt-3 text-4xl font-bold text-white">1.2k</p>
-            <p className="mt-1 text-sm text-emerald-300">+18% this week</p>
+            <p className="mt-1 text-sm text-brand-300">+18% this week</p>
           </div>
           <div className="card p-5">
             <p className="text-sm text-slate-400">Active Teams</p>
@@ -48,7 +48,7 @@ const Home = () => {
             <p className="text-sm text-slate-400">Players online now</p>
             <div className="mt-4 flex -space-x-2">
               {['R', 'A', 'N', 'S'].map((letter, index) => (
-                <div key={index} className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-950 bg-brand-600 text-sm font-bold text-white">
+                <div key={index} className="flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-950 bg-brand-600 text-sm font-bold text-black">
                   {letter}
                 </div>
               ))}
@@ -76,7 +76,7 @@ const Home = () => {
           ['3', 'Send requests & play', 'Invite the right teammate and build a team quickly before your next match starts.'],
         ].map(([step, title, text]) => (
           <div key={step} className="card p-6">
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-brand-600 font-bold text-white">{step}</div>
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-brand-600 font-bold text-black">{step}</div>
             <h3 className="mb-2 text-lg font-semibold text-white">{title}</h3>
             <p className="text-sm text-slate-300">{text}</p>
           </div>

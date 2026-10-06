@@ -16,7 +16,7 @@ const TeamRequestCard = ({ request, onAccept, onReject, direction = 'incoming', 
         <button
           type="button"
           onClick={() => onAccept?.(request)}
-          className="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-medium text-white hover:bg-emerald-500"
+          className="rounded-xl border border-brand-400 bg-brand-400 px-3 py-2 text-sm font-bold text-black hover:bg-brand-300"
         >
           Accept
         </button>

@@ -53,7 +53,7 @@ const Login = () => {
 
         {error && <p className="text-sm text-red-400">{error}</p>}
 
-        <button type="submit" disabled={loading} className="w-full rounded-xl bg-brand-600 px-4 py-3 font-medium text-white hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-70">
+        <button type="submit" disabled={loading} className="w-full rounded-xl bg-brand-600 px-4 py-3 font-bold text-black hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-70">
           {loading ? 'Logging in...' : 'Login'}
         </button>
       </form>

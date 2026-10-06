@@ -114,7 +114,7 @@ const MyTeams = () => {
             autoComplete="off"
             className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm uppercase tracking-widest text-white placeholder:normal-case placeholder:tracking-normal"
           />
-          <button type="submit" disabled={lobbyCode.trim().length !== 10} className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-50">
+          <button type="submit" disabled={lobbyCode.trim().length !== 10} className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-black hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-50">
             Join lobby
           </button>
         </form>
@@ -161,7 +161,7 @@ const MyTeams = () => {
               </div>
 
               <div className="mt-5 flex flex-wrap gap-3">
-                <Link to={`/chat/${team._id}`} className="rounded-xl bg-brand-600 px-4 py-2 text-sm text-white">
+                <Link to={`/chat/${team._id}`} className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-black">
                   Chat
                 </Link>
                 <button
@@ -189,7 +189,7 @@ const MyTeams = () => {
                       type="button"
                       disabled={!selectedLeaders[team._id] || busyTeamId === team._id}
                       onClick={() => handleTransferLeadership(team._id)}
-                      className="rounded-xl border border-amber-500/40 bg-amber-500/10 px-4 py-2 text-sm text-amber-200 disabled:cursor-not-allowed disabled:opacity-50"
+                      className="rounded-xl border border-brand-400/40 bg-brand-400/10 px-4 py-2 text-sm text-brand-200 disabled:cursor-not-allowed disabled:opacity-50"
                     >
                       {busyTeamId === team._id ? 'Transferring...' : 'Transfer leader'}
                     </button>

@@ -194,7 +194,7 @@ const Settings = () => {
           </div>
         </div>
 
-        <button type="submit" disabled={saving} className="rounded-xl bg-brand-600 px-5 py-3 font-medium text-white hover:bg-brand-500 disabled:opacity-70">
+        <button type="submit" disabled={saving} className="rounded-xl bg-brand-600 px-5 py-3 font-bold text-black hover:bg-brand-500 disabled:opacity-70">
           {saving ? 'Saving...' : 'Save Profile'}
         </button>
       </form>

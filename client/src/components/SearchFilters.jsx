@@ -80,7 +80,7 @@ const SearchFilters = ({ filters, setFilters, onSubmit, games = [] }) => {
           <button
             type="button"
             onClick={onSubmit}
-            className="w-full rounded-xl bg-brand-600 px-4 py-2.5 font-medium text-white hover:bg-brand-500"
+            className="w-full rounded-xl bg-brand-600 px-4 py-2.5 font-bold text-black hover:bg-brand-500"
           >
             Find Gamers
           </button>
