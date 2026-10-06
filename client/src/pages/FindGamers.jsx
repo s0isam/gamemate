@@ -113,18 +113,18 @@ const FindGamers = () => {
         {requestFeedback && <p role="status" className="mb-4 border border-[#ff1744]/35 bg-[#ff1744]/10 px-4 py-3 text-sm text-red-200">{requestFeedback}</p>}
         {loadError && <p role="alert" className="mb-4 border border-danger-500/40 bg-danger-500/10 px-4 py-3 text-sm text-red-200">{loadError}</p>}
 
-        <section className="relative mb-8 min-h-64 overflow-hidden border border-[#302a3e] bg-[#0b0d13] p-5 sm:p-7" aria-label="Approximate nearby player activity">
+        <section className="relative mb-8 min-h-64 overflow-hidden border border-[#30303A] bg-[#0b0d13] p-5 sm:p-7" aria-label="Approximate nearby player activity">
           <div
             className="pointer-events-none absolute inset-0 opacity-60"
             style={{
-              backgroundImage: 'linear-gradient(rgba(139,92,246,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(139,92,246,0.07) 1px, transparent 1px)',
+              backgroundImage: 'linear-gradient(rgba(255,230,0,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,230,0,0.07) 1px, transparent 1px)',
               backgroundSize: '32px 32px',
             }}
           />
           <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,168,255,0.08),transparent_55%)]" />
           <div className="relative flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="mono text-xs uppercase tracking-[0.18em] text-[#C4A3FF]">Squad signal grid</p>
+              <p className="mono text-xs uppercase tracking-[0.18em] text-brand-300">Squad signal grid</p>
               <p className="mt-1 text-sm text-slate-300">Approximate player activity · exact locations are never shown</p>
             </div>
             <div className="flex gap-4 text-xs text-slate-400">

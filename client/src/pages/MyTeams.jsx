@@ -145,7 +145,7 @@ const MyTeams = () => {
         </form>
       </section>
 
-      <section className="border border-[#302a3e] bg-[#11151C] p-5">
+      <section className="border border-[#30303A] bg-[#11151C] p-5">
         <div className="mb-4">
           <p className="mono text-[10px] uppercase tracking-[0.2em] text-brand-300">New lobby</p>
           <h2 className="mt-1 text-xl font-bold text-white">Create a squad</h2>

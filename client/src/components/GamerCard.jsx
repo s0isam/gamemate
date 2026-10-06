@@ -11,10 +11,10 @@ const GamerCard = ({ gamer, onRequest }) => {
       : 'text-neon-green border-neon-green/50 bg-neon-green/10';
 
   return (
-    <article className="card p-5 transition-transform duration-200 hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-[0_0_18px_rgba(139,92,246,0.10)]">
+    <article className="card p-5 transition-transform duration-200 hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-[0_0_18px_rgba(255,230,0,0.10)]">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-12 w-12 items-center justify-center border border-brand-400/60 bg-[#11151C] text-lg font-black text-brand-200 shadow-[0_0_18px_rgba(139,92,246,0.18)]">
+          <div className="flex h-12 w-12 items-center justify-center border border-brand-400/60 bg-[#11151C] text-lg font-black text-brand-200 shadow-[0_0_18px_rgba(255,230,0,0.18)]">
             {username?.slice(0, 1).toUpperCase() || 'G'}
           </div>
           <div>
@@ -58,7 +58,7 @@ const GamerCard = ({ gamer, onRequest }) => {
         <button
           type="button"
           onClick={() => onRequest?.(gamer)}
-          className="border border-brand-400 bg-brand-600 px-3 py-3 text-[10px] font-black uppercase tracking-[0.14em] text-white hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[0_0_18px_rgba(139,92,246,0.35)]"
+          className="border border-brand-400 bg-brand-600 px-3 py-3 text-[10px] font-black uppercase tracking-[0.14em] text-white hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[0_0_18px_rgba(255,230,0,0.35)]"
         >
           Invite
         </button>

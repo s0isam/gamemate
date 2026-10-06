@@ -35,7 +35,7 @@ const Games = () => {
 
   return (
     <div className="space-y-8">
-      <header className="border-b border-[#302a3e] pb-6">
+      <header className="border-b border-[#30303A] pb-6">
         <p className="mono text-xs uppercase tracking-[0.24em] text-brand-300">Game directory</p>
         <h1 className="mt-2 text-4xl font-black uppercase tracking-tight text-white sm:text-5xl">Find your game.</h1>
         <p className="mt-3 max-w-2xl text-slate-400">Choose a title to find nearby players who are ready to team up.</p>
