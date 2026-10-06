@@ -19,75 +19,78 @@ const App = () => {
   return (
     <AuthProvider>
       <SocketProvider>
-        <div className="min-h-screen bg-slate-950 text-slate-100">
-          <Navbar />
-          <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/register" element={<Register />} />
-              <Route path="/find-gamers" element={<FindGamers />} />
-              <Route
-                path="/gamer/:id"
-                element={
-                  <ProtectedRoute>
-                    <GamerProfile />
-                  </ProtectedRoute>
-                }
-              />
+        <div className="min-h-screen bg-[#050505] text-slate-100">
+          <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top,_rgba(223,255,0,0.08),_transparent_18%),radial-gradient(circle_at_bottom_right,_rgba(255,23,68,0.06),_transparent_22%)]" />
+          <div className="relative z-10">
+            <Navbar />
+            <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route path="/find-gamers" element={<FindGamers />} />
+                <Route
+                  path="/gamer/:id"
+                  element={
+                    <ProtectedRoute>
+                      <GamerProfile />
+                    </ProtectedRoute>
+                  }
+                />
 
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/my-teams"
-                element={
-                  <ProtectedRoute>
-                    <MyTeams />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/notifications"
-                element={
-                  <ProtectedRoute>
-                    <Notifications />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/chat"
-                element={
-                  <ProtectedRoute>
-                    <Chat />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/chat/:teamId"
-                element={
-                  <ProtectedRoute>
-                    <Chat />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/settings"
-                element={
-                  <ProtectedRoute>
-                    <Settings />
-                  </ProtectedRoute>
-                }
-              />
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </main>
-          <Footer />
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-teams"
+                  element={
+                    <ProtectedRoute>
+                      <MyTeams />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/notifications"
+                  element={
+                    <ProtectedRoute>
+                      <Notifications />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chat"
+                  element={
+                    <ProtectedRoute>
+                      <Chat />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chat/:teamId"
+                  element={
+                    <ProtectedRoute>
+                      <Chat />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
         </div>
       </SocketProvider>
     </AuthProvider>

@@ -3,30 +3,46 @@ import { Link } from 'react-router-dom';
 const GamerCard = ({ gamer, onRequest }) => {
   const { username, games = [], preferredLanguages = [], gamingStatus = 'Looking for Team', distance = 'Nearby', microphoneAvailable } = gamer || {};
 
+  const statusClass = gamingStatus?.toLowerCase().includes('offline') ? 'text-slate-300 border-slate-600 bg-slate-800/80' : 'text-brand-300 border-brand-400/50 bg-brand-400/10';
+
   return (
-    <article className="card p-5">
+    <article className="card p-5 transition-transform duration-200 hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-[0_0_18px_rgba(223,255,0,0.08)]">
       <div className="flex items-start justify-between gap-4">
-        <div>
-          <h3 className="text-lg font-semibold text-white">
-            <Link to={`/gamer/${gamer._id}`} className="hover:text-brand-300">{username}</Link>
-          </h3>
-          <p className="text-sm text-slate-400">{games[0] || 'No games listed'}</p>
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center border border-brand-400/60 bg-slate-950 text-lg font-black text-brand-300">
+            {username?.slice(0, 1).toUpperCase() || 'G'}
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-white">
+              <Link to={`/gamer/${gamer._id}`} className="hover:text-brand-300">{username}</Link>
+            </h3>
+            <p className="mono mt-1 text-[10px] uppercase tracking-[0.18em] text-slate-400">{games[0] || 'No games listed'}</p>
+          </div>
         </div>
-        <span className="rounded-full bg-emerald-500/15 px-2.5 py-1 text-xs font-medium text-emerald-300">
+        <span className={`status-pill border px-2 py-1 text-[10px] uppercase tracking-[0.18em] ${statusClass}`}>
           {gamingStatus}
         </span>
       </div>
 
-      <div className="mt-4 space-y-2 text-sm text-slate-300">
-        <p>{distance} away</p>
-        <p>{preferredLanguages.length ? preferredLanguages.join(', ') : 'No languages listed'}</p>
-        <p>{microphoneAvailable ? 'Microphone available' : 'No microphone listed'}</p>
+      <div className="mt-5 grid gap-2 text-sm text-slate-300">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span className="text-slate-400">Status</span>
+          <span className="font-medium text-white">{distance} away</span>
+        </div>
+        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span className="text-slate-400">Languages</span>
+          <span className="font-medium text-white">{preferredLanguages.length ? preferredLanguages.join(', ') : 'Not listed'}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-slate-400">Mic</span>
+          <span className="font-medium text-white">{microphoneAvailable ? 'Available' : 'Not listed'}</span>
+        </div>
       </div>
 
       <button
         type="button"
         onClick={() => onRequest?.(gamer)}
-        className="mt-5 w-full rounded-xl bg-brand-600 px-4 py-3 font-medium text-white hover:bg-brand-500"
+        className="mt-5 w-full border border-brand-400 bg-brand-400 px-4 py-3 text-xs font-black uppercase tracking-[0.2em] text-black hover:-translate-y-0.5 hover:shadow-[0_0_18px_rgba(223,255,0,0.35)]"
       >
         Request to Team Up
       </button>

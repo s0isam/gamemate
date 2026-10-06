@@ -1,13 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  color: #f8fafc;
-  background: #020817;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #f5f5f5;
+  background-color: #050505;
+  font-family: 'Inter', sans-serif;
   line-height: 1.5;
   font-weight: 400;
+  --bg: #050505;
+  --bg-soft: #0a0a0a;
+  --panel: rgba(17, 17, 17, 0.96);
+  --panel-alt: rgba(23, 23, 23, 0.96);
+  --border: rgba(255, 255, 255, 0.08);
+  --text: #f5f5f5;
+  --muted: #a3a3a3;
+  --yellow: #dfff00;
+  --yellow-soft: rgba(223, 255, 0, 0.14);
+  --red: #ff1744;
+  --red-soft: rgba(255, 23, 68, 0.14);
 }
 
 html {
@@ -18,8 +31,24 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top, rgba(59, 130, 246, 0.2), transparent 20%),
-    linear-gradient(180deg, #020817 0%, #0f172a 100%);
+    radial-gradient(circle at top, rgba(223, 255, 0, 0.08), transparent 28%),
+    radial-gradient(circle at 80% 20%, rgba(255, 23, 68, 0.09), transparent 18%),
+    linear-gradient(180deg, #050505 0%, #0a0a0a 100%);
+  color: var(--text);
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
+  pointer-events: none;
 }
 
 * {
@@ -28,12 +57,85 @@ body {
 
 #root {
   min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+select,
+textarea {
+  @apply transition-all duration-200;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(223, 255, 0, 0.7), 0 0 0 6px rgba(223, 255, 0, 0.12);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.logo-mark {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  letter-spacing: -0.05em;
+}
+
+.mono,
+.status-pill,
+.game-tag,
+.stat-label,
+.kicker,
+.code-text {
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .card {
-  @apply rounded-2xl border border-slate-700 bg-slate-900/80 shadow-soft;
+  @apply rounded-none border border-slate-800/90 bg-slate-900/80 shadow-soft;
+  position: relative;
+  overflow: hidden;
 }
 
-button, input, select {
-  @apply transition-all duration-200;
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(223, 255, 0, 0.5), transparent 65%);
+  opacity: 0.7;
+}
+
+.rounded-3xl,
+.rounded-2xl,
+.rounded-xl {
+  border-radius: 0.5rem !important;
+}
+
+.panel-surface {
+  background: linear-gradient(180deg, rgba(17, 17, 17, 0.96), rgba(10, 10, 10, 0.96));
+}
+
+.neon-border {
+  box-shadow: 0 0 0 1px rgba(223, 255, 0, 0.25), 0 0 24px rgba(223, 255, 0, 0.08);
+}
+
+.red-border {
+  box-shadow: 0 0 0 1px rgba(255, 23, 68, 0.35), 0 0 18px rgba(255, 23, 68, 0.08);
+}
+
+.gradient-line {
+  background: linear-gradient(90deg, rgba(223, 255, 0, 0.8), rgba(255, 23, 68, 0.5), transparent);
 }

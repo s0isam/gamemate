@@ -34,10 +34,14 @@ const NotificationBell = () => {
   }, [socket, fetchCount]);
 
   return (
-    <button className="relative rounded-xl border border-slate-700 bg-slate-900 p-2 text-lg text-slate-100 hover:border-brand-500">
-      🔔
+    <button
+      type="button"
+      aria-label="Notifications"
+      className="relative flex h-10 w-10 items-center justify-center border border-slate-700 bg-slate-900 text-base text-slate-100 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300"
+    >
+      <span className="text-lg">🔔</span>
       {count > 0 && (
-        <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white">
+        <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center border border-black bg-danger-500 px-1 text-[10px] font-bold text-white shadow-[0_0_10px_rgba(255,23,68,0.35)]">
           {count}
         </span>
       )}
