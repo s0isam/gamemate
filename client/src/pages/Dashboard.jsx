@@ -65,7 +65,7 @@ const Dashboard = () => {
         <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm font-semibold uppercase tracking-wider text-brand-300">Player hub</p>
-            <h1 className="mt-2 text-3xl font-bold text-white">Welcome back, {user?.username || 'Gamer'}</h1>
+            <h1 className="mt-2 text-3xl font-bold text-white">Welcome back, <span className="radiant-red">{user?.username || 'Gamer'}</span></h1>
             <p className="mt-2 max-w-xl text-slate-400">Your squads, invitations, and profile are all in one place.</p>
             <div className="mt-5 flex flex-wrap gap-3">
               <Link to="/find-gamers" className="rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-black hover:bg-brand-500">
@@ -98,22 +98,22 @@ const Dashboard = () => {
         <article className="card p-5">
           <p className="text-sm text-slate-400">Favorite game</p>
           <h2 className="mt-2 text-xl font-bold text-white">{user?.games?.[0] || 'Add a game'}</h2>
-          <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-brand-200">Update profile</Link>
+          <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-[#ff9aad] hover:text-white">Update profile</Link>
         </article>
         <article className="card p-5">
           <p className="text-sm text-slate-400">Availability</p>
           <h2 className="mt-2 text-xl font-bold text-brand-300">{user?.gamingStatus || 'Online'}</h2>
-          <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-brand-200">Change status</Link>
+          <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-[#ff9aad] hover:text-white">Change status</Link>
         </article>
         <article className="card p-5">
           <p className="text-sm text-slate-400">Your squads</p>
           <h2 className="mt-2 text-xl font-bold text-white">{loading ? '...' : teams.length}</h2>
-          <Link to="/my-teams" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-brand-200">Manage teams</Link>
+          <Link to="/my-teams" className="mt-4 inline-flex text-sm font-medium text-[#ff9aad] hover:text-white">Manage teams</Link>
         </article>
         <article className="card p-5">
           <p className="text-sm text-slate-400">Team invitations</p>
           <h2 className="mt-2 text-xl font-bold text-white">{loading ? '...' : incomingRequests.length}</h2>
-          <Link to="/notifications" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-brand-200">Review invitations</Link>
+          <Link to="/notifications" className="mt-4 inline-flex text-sm font-medium text-[#ff9aad] hover:text-white">Review invitations</Link>
         </article>
       </section>
 

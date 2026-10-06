@@ -11,14 +11,14 @@ const games = [
 const Home = () => {
   return (
     <div className="space-y-16 pb-10">
-      <section className="grid items-center gap-8 rounded-[18px] border border-[#3d2a26] bg-[#111111]/95 p-8 shadow-[0_0_0_1px_rgba(223,255,0,0.08),0_0_22px_rgba(223,255,0,0.12)] lg:grid-cols-[1.55fr_1fr] lg:p-10 xl:p-12">
+      <section className="grid items-center gap-8 rounded-none border border-[#3d2a26] bg-[#111111]/95 p-8 shadow-[0_0_0_1px_rgba(223,255,0,0.08),0_0_22px_rgba(223,255,0,0.12)] lg:grid-cols-[1.55fr_1fr] lg:p-10 xl:p-12">
         <div className="max-w-[720px]">
-          <p className="mb-5 inline-flex border border-[#dfff00]/45 bg-[#171717] px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-[#dfff00]">
+          <p className="mb-5 inline-flex border border-[#ff1744]/40 bg-[#171717] px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-[#ff9aad]">
             Find your squad. Play together.
           </p>
           <h1 className="text-[3.1rem] font-black leading-[0.94] tracking-[-0.06em] text-white md:text-[5.1rem]">
             Find Your Squad.
-            <span className="block text-[#dfff00]">Play Together.</span>
+            <span className="radiant-red block">Play Together.</span>
           </h1>
           <p className="mt-6 max-w-[620px] text-xl leading-8 text-slate-300">
             Connect with gamers around you, find teammates for your favorite games, and start playing.
@@ -27,24 +27,24 @@ const Home = () => {
             <Link to="/find-gamers" className="inline-flex items-center justify-center rounded-[10px] bg-[#dfff00] px-7 py-4 text-base font-bold text-black shadow-[0_0_18px_rgba(223,255,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-[#f4ff00]">
               Find Gamers
             </Link>
-            <Link to="/" className="inline-flex items-center justify-center rounded-[10px] border border-[#ff1744]/60 bg-[#171717] px-7 py-4 text-base font-medium text-slate-100 transition-all duration-200 hover:border-[#ff1744] hover:text-[#ffb0be]">
+            <Link to="/#popular-games" className="inline-flex items-center justify-center rounded-[10px] border border-[#ff1744]/60 bg-[#171717] px-7 py-4 text-base font-medium text-slate-100 transition-all duration-200 hover:border-[#ff1744] hover:text-[#ffb0be]">
               Explore Games
             </Link>
           </div>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-[12px] border border-[#312d20] bg-[#171717] p-5 shadow-[inset_0_0_0_1px_rgba(223,255,0,0.08)]">
+          <div className="rounded-none border border-[#312d20] bg-[#171717] p-5 shadow-[inset_0_0_0_1px_rgba(223,255,0,0.08)]">
             <p className="text-sm text-slate-400">Nearby Players</p>
             <p className="mt-3 text-5xl font-black tracking-[-0.06em] text-[#dfff00]">1.2k</p>
             <p className="mt-2 text-sm text-[#ff1744]">+18% this week</p>
           </div>
-          <div className="rounded-[12px] border border-[#312d20] bg-[#171717] p-5 shadow-[inset_0_0_0_1px_rgba(223,255,0,0.08)]">
+          <div className="rounded-none border border-[#312d20] bg-[#171717] p-5 shadow-[inset_0_0_0_1px_rgba(223,255,0,0.08)]">
             <p className="text-sm text-slate-400">Active Teams</p>
             <p className="mt-3 text-5xl font-black tracking-[-0.06em] text-[#dfff00]">480</p>
             <p className="mt-2 text-sm text-[#ff1744]">Across 12 games</p>
           </div>
-          <div className="rounded-[12px] border border-[#312d20] bg-[#171717] p-5 sm:col-span-2">
+          <div className="rounded-none border border-[#312d20] bg-[#171717] p-5 sm:col-span-2">
             <p className="text-sm text-slate-400">Players online now</p>
             <div className="mt-4 flex gap-3">
               {['R', 'A', 'N', 'S'].map((letter, index) => (
@@ -57,10 +57,10 @@ const Home = () => {
         </div>
       </section>
 
-      <section>
+      <section id="popular-games" className="scroll-mt-24">
         <div className="mb-8 flex items-center justify-between">
           <h2 className="text-4xl font-black tracking-[-0.05em] text-white">Popular games</h2>
-          <Link className="text-sm font-medium text-[#8ec5ff] transition-colors hover:text-white" to="/find-gamers">Browse all</Link>
+          <Link className="radiant-red text-sm font-semibold transition-opacity hover:opacity-80" to="/find-gamers">Browse all</Link>
         </div>
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {games.map((game) => (
@@ -75,8 +75,8 @@ const Home = () => {
           ['2', 'Find nearby gamers', 'Match with players close to your current location and check their online status.'],
           ['3', 'Send requests & play', 'Invite the right teammate and build a team quickly before your next match starts.'],
         ].map(([step, title, text]) => (
-          <div key={step} className="rounded-[12px] border border-[#1d2b3d] bg-[#0b1625] p-6">
-            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-lg bg-[#1d8bff] font-bold text-white shadow-[0_0_18px_rgba(31,108,255,0.22)]">{step}</div>
+          <div key={step} className="relative overflow-hidden rounded-none border border-[#30291f] bg-[#111111] p-6 shadow-[inset_0_1px_0_rgba(223,255,0,0.06)] transition-all duration-200 hover:-translate-y-1 hover:border-[#dfff00]/50">
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-none border border-[#dfff00]/60 bg-[#dfff00] font-bold text-black shadow-[0_0_16px_rgba(223,255,0,0.2)]">{step}</div>
             <h3 className="mb-2 text-xl font-bold text-white">{title}</h3>
             <p className="text-sm leading-6 text-slate-300">{text}</p>
           </div>

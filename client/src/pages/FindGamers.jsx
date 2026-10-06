@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import SearchFilters from '../components/SearchFilters';
 import GamerCard from '../components/GamerCard';
 import { getNearbyGamers } from '../services/gamerService';
@@ -13,7 +14,11 @@ const defaultFilters = {
 };
 
 const FindGamers = () => {
-  const [filters, setFilters] = useState(defaultFilters);
+  const [searchParams] = useSearchParams();
+  const [filters, setFilters] = useState(() => ({
+    ...defaultFilters,
+    game: searchParams.get('game') || '',
+  }));
   const [gamers, setGamers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [games, setGames] = useState([]);

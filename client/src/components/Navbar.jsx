@@ -19,11 +19,11 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 border-b border-[#221b19] bg-[#050505]/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
         <Link to="/" className="flex items-center gap-3 text-white">
-          <span className="logo-mark inline-flex h-10 w-10 items-center justify-center border border-[#dfff00] bg-[#dfff00] text-lg font-black text-black shadow-[0_0_18px_rgba(223,255,0,0.35)]">
+          <span className="logo-mark inline-flex h-10 w-10 items-center justify-center border border-[#ff1744] bg-[#111111] text-lg font-black text-[#ffd2da] shadow-[0_0_18px_rgba(255,23,68,0.35)]">
             G
           </span>
           <div className="leading-none">
-            <span className="block text-lg font-black tracking-tight">GameMate</span>
+            <span className="radiant-red block text-lg font-black tracking-tight">GameMate</span>
             <span className="mono block text-[10px] uppercase tracking-[0.28em] text-slate-400">Squad network</span>
           </div>
         </Link>

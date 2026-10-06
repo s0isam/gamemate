@@ -32,7 +32,7 @@ const Register = () => {
   };
 
   return (
-    <div className="mx-auto max-w-lg rounded-3xl border border-slate-800 bg-slate-900/70 p-8 shadow-soft">
+    <div className="mx-auto max-w-lg rounded-3xl border border-[#3d2a26] bg-[#111111]/95 p-8 shadow-[0_0_0_1px_rgba(255,23,68,0.08),0_0_22px_rgba(255,23,68,0.08)]">
       <h1 className="text-3xl font-bold text-white">Create your profile</h1>
       <p className="mt-2 text-sm text-slate-400">Join the GameMate community and start matching.</p>
 
@@ -81,7 +81,7 @@ const Register = () => {
 
       <p className="mt-6 text-center text-sm text-slate-400">
         Already a player?{' '}
-        <Link to="/login" className="text-brand-300">
+        <Link to="/login" className="radiant-red font-medium">
           Sign in
         </Link>
       </p>

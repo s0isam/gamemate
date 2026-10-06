@@ -14,7 +14,7 @@
   --bg-soft: #0a0a0a;
   --panel: rgba(17, 17, 17, 0.96);
   --panel-alt: rgba(23, 23, 23, 0.96);
-  --border: rgba(255, 255, 255, 0.08);
+  --border: rgba(223, 255, 0, 0.12);
   --text: #f5f5f5;
   --muted: #a3a3a3;
   --yellow: #dfff00;
@@ -80,6 +80,22 @@ textarea:focus-visible,
 a:focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px rgba(223, 255, 0, 0.7), 0 0 0 6px rgba(223, 255, 0, 0.12);
+}
+
+.radiant-red {
+  background: linear-gradient(135deg, #ffd2da 0%, #ff3f6a 28%, #ff1744 52%, #ff9aad 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 22px rgba(255, 23, 68, 0.35);
+}
+
+.radiant-yellow {
+  background: linear-gradient(135deg, #ffffe0 0%, #dfff00 35%, #f4ff00 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 22px rgba(223, 255, 0, 0.28);
 }
 
 h1,
