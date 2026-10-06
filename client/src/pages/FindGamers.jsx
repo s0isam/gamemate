@@ -113,7 +113,7 @@ const FindGamers = () => {
         {requestFeedback && <p role="status" className="mb-4 border border-[#ff1744]/35 bg-[#ff1744]/10 px-4 py-3 text-sm text-red-200">{requestFeedback}</p>}
         {loadError && <p role="alert" className="mb-4 border border-danger-500/40 bg-danger-500/10 px-4 py-3 text-sm text-red-200">{loadError}</p>}
 
-        <section className="relative mb-8 min-h-64 overflow-hidden border border-[#30291f] bg-[#0b0b0b] p-5 sm:p-7" aria-label="Approximate nearby player activity">
+        <section className="relative mb-8 min-h-64 overflow-hidden border border-[#302a3e] bg-[#0b0d13] p-5 sm:p-7" aria-label="Approximate nearby player activity">
           <div
             className="pointer-events-none absolute inset-0 opacity-60"
             style={{
