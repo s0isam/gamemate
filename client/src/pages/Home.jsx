@@ -16,7 +16,7 @@ const Home = () => {
           <p className="mb-5 inline-flex border border-[#ff1744]/40 bg-[#171717] px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-[#ff9aad]">
             Nearby players. Your next squad.
           </p>
-          <h1 className="text-[3.1rem] font-black leading-[0.94] tracking-[-0.06em] text-white md:text-[5.1rem]">
+          <h1 className="text-[3.1rem] font-black uppercase leading-[0.94] tracking-[-0.06em] text-white md:text-[5.1rem]">
             Find Your Next
             <span className="radiant-red block">Squad.</span>
           </h1>
