@@ -40,7 +40,7 @@ const GameCard = ({ name, description, category }) => {
           <p className="mono text-[10px] uppercase tracking-[0.2em] text-slate-400">{category}</p>
           <h3 className="mt-2 text-xl font-bold text-white">{name}</h3>
         </div>
-        <Link to={`/find-gamers?game=${encodeURIComponent(name)}`} className="border border-brand-400 bg-brand-600 px-3 py-2 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-white transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[0_0_18px_rgba(255,230,0,0.35)]">
+        <Link to={`/find-gamers?game=${encodeURIComponent(name)}`} className="border border-brand-400 bg-brand-600 px-3 py-2 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-black transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[0_0_18px_rgba(255,230,0,0.35)]">
           Explore
         </Link>
       </div>

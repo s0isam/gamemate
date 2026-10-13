@@ -27,7 +27,7 @@ const Home = () => {
 
   return (
     <div className="space-y-16 pb-10">
-      <section className="grid items-center gap-8 rounded-none border border-[#514a23] bg-[#11151C]/95 p-8 shadow-[0_0_0_1px_rgba(255,230,0,0.12),0_0_22px_rgba(255,230,0,0.12)] lg:grid-cols-[1.55fr_1fr] lg:p-10 xl:p-12">
+      <section className="grid items-center gap-8 rounded-none border border-[#30303A] bg-[#11151C]/95 p-8 shadow-[0_0_0_1px_rgba(255,230,0,0.12),0_0_22px_rgba(255,230,0,0.12)] lg:grid-cols-[1.55fr_1fr] lg:p-10 xl:p-12">
         <div className="max-w-[720px]">
           <p className="mb-5 inline-flex border border-[#FFE600]/40 bg-[#171B24] px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-[#FFE600]">
             Nearby players. Your next squad.
@@ -40,7 +40,7 @@ const Home = () => {
             Gamers around you. Games you play. Teams you can join.
           </p>
           <div className="mt-8 flex flex-wrap gap-4">
-            <Link to="/find-gamers" className="inline-flex items-center justify-center rounded-[10px] bg-brand-600 px-7 py-4 text-base font-bold text-white shadow-[0_0_18px_rgba(255,230,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500">
+            <Link to="/find-gamers" className="inline-flex items-center justify-center rounded-[10px] bg-brand-600 px-7 py-4 text-base font-bold text-black shadow-[0_0_18px_rgba(255,230,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500">
               Find Gamers Near Me
             </Link>
             <Link to="/my-teams" className="inline-flex items-center justify-center rounded-[10px] border border-white/40 bg-[#171717] px-7 py-4 text-base font-medium text-white transition-all duration-200 hover:border-brand-400 hover:text-brand-300">
@@ -50,17 +50,17 @@ const Home = () => {
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2">
-          <div className="rounded-none border border-[#514a23] bg-[#171B24] p-5 shadow-[inset_0_0_0_1px_rgba(255,230,0,0.10)]">
+          <div className="rounded-none border border-[#30303A] bg-[#171B24] p-5 shadow-[inset_0_0_0_1px_rgba(255,230,0,0.10)]">
             <p className="mono text-xs uppercase tracking-[0.16em] text-slate-400">01 / Discover</p>
             <p className="mt-4 text-xl font-bold text-white">Players nearby</p>
             <p className="mt-2 text-sm leading-6 text-slate-400">Find teammates by game, distance, skill and availability.</p>
           </div>
-          <div className="rounded-none border border-[#514a23] bg-[#171B24] p-5 shadow-[inset_0_0_0_1px_rgba(255,230,0,0.10)]">
+          <div className="rounded-none border border-[#30303A] bg-[#171B24] p-5 shadow-[inset_0_0_0_1px_rgba(255,230,0,0.10)]">
             <p className="mono text-xs uppercase tracking-[0.16em] text-slate-400">02 / Squad up</p>
             <p className="mt-4 text-xl font-bold text-white">Build your team</p>
             <p className="mt-2 text-sm leading-6 text-slate-400">Invite players, manage your lobby and keep the conversation going.</p>
           </div>
-          <div className="rounded-none border border-[#514a23] bg-[#171B24] p-5 sm:col-span-2">
+          <div className="rounded-none border border-[#30303A] bg-[#171B24] p-5 sm:col-span-2">
             <div className="flex items-center justify-between gap-4">
               <div>
                 <p className="mono text-xs uppercase tracking-[0.16em] text-[#00A8FF]">Privacy first</p>

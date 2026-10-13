@@ -58,7 +58,7 @@ const GamerCard = ({ gamer, onRequest }) => {
         <button
           type="button"
           onClick={() => onRequest?.(gamer)}
-          className="border border-brand-400 bg-brand-600 px-3 py-3 text-[10px] font-black uppercase tracking-[0.14em] text-white hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[0_0_18px_rgba(255,230,0,0.35)]"
+          className="border border-brand-400 bg-brand-600 px-3 py-3 text-[10px] font-black uppercase tracking-[0.14em] text-black hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[0_0_18px_rgba(255,230,0,0.35)]"
         >
           Invite
         </button>
