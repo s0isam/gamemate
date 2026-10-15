@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import NotificationBell from './NotificationBell';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
+  const showNotifications = pathname !== '/find-gamers' && pathname !== '/notifications';
 
   const navItems = [
     { to: '/games', label: 'Discover' },
@@ -74,7 +76,7 @@ const Navbar = () => {
         <div className="ml-auto flex items-center gap-3 lg:ml-0">
           {user && (
             <>
-              <NotificationBell />
+              {showNotifications && <NotificationBell />}
               <Link to={`/gamer/${user._id}`} aria-label="View your profile" className="flex h-10 w-10 items-center justify-center overflow-hidden border border-brand-400/50 bg-[#171B24] font-bold text-brand-200 hover:border-brand-400">
                 {user.profileImage ? (
                   <img src={user.profileImage} alt="" className="h-full w-full object-cover" />
