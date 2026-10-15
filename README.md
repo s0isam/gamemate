@@ -74,7 +74,7 @@ npm run dev --prefix client
 
 The frontend is available at `http://localhost:5173` and the API health endpoint is `http://localhost:5000/api/health`.
 
-To access the app from another device on your private LAN, open the frontend using the host computer's LAN IP address, for example `http://192.168.1.10:5173`. In development, the client resolves a localhost API URL to the browser's host, and the API allows localhost and private-LAN frontend origins on port 5173.
+To access the app from another device on your private LAN, open the frontend using the host computer's LAN IP address, for example `http://192.168.1.10:5173`. If Vite falls back because port 5173 is busy, use the port it prints (for example, 5174). In development, the client resolves a localhost API URL to the browser's host, and the API allows localhost and private-LAN frontend origins on Vite dev ports 5173–5179.
 
 ## Demo data
 

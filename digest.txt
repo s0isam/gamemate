@@ -1,0 +1,5237 @@
+Directory structure:
+└── gamemate/
+    ├── README.md
+    ├── package.json
+    ├── client/
+    │   ├── index.html
+    │   ├── package.json
+    │   ├── postcss.config.js
+    │   ├── tailwind.config.js
+    │   ├── vite.config.js
+    │   ├── .env.example
+    │   └── src/
+    │       ├── App.jsx
+    │       ├── index.css
+    │       ├── main.jsx
+    │       ├── components/
+    │       │   ├── ChatBox.jsx
+    │       │   ├── Footer.jsx
+    │       │   ├── GameCard.jsx
+    │       │   ├── GamerCard.jsx
+    │       │   ├── Navbar.jsx
+    │       │   ├── NotificationBell.jsx
+    │       │   ├── ProtectedRoute.jsx
+    │       │   ├── SearchFilters.jsx
+    │       │   └── TeamRequestCard.jsx
+    │       ├── context/
+    │       │   ├── AuthContext.jsx
+    │       │   └── SocketContext.jsx
+    │       ├── hooks/
+    │       │   └── useSocket.js
+    │       ├── pages/
+    │       │   ├── Chat.jsx
+    │       │   ├── Dashboard.jsx
+    │       │   ├── FindGamers.jsx
+    │       │   ├── GamerProfile.jsx
+    │       │   ├── Games.jsx
+    │       │   ├── Home.jsx
+    │       │   ├── Login.jsx
+    │       │   ├── MyTeams.jsx
+    │       │   ├── Notifications.jsx
+    │       │   ├── Register.jsx
+    │       │   ├── Settings.jsx
+    │       │   └── TeamDetails.jsx
+    │       └── services/
+    │           ├── api.js
+    │           ├── authService.js
+    │           ├── backendUrl.js
+    │           ├── chatService.js
+    │           ├── gamerService.js
+    │           ├── gameService.js
+    │           ├── notificationService.js
+    │           └── teamService.js
+    └── server/
+        ├── package.json
+        ├── server.js
+        ├── .env.example
+        ├── config/
+        │   ├── clientOrigin.js
+        │   └── db.js
+        ├── controllers/
+        │   ├── authController.js
+        │   ├── chatController.js
+        │   ├── gameController.js
+        │   ├── gamerController.js
+        │   ├── notificationController.js
+        │   └── teamController.js
+        ├── middleware/
+        │   ├── authMiddleware.js
+        │   └── errorMiddleware.js
+        ├── models/
+        │   ├── Game.js
+        │   ├── Message.js
+        │   ├── Notification.js
+        │   ├── Team.js
+        │   ├── TeamRequest.js
+        │   └── User.js
+        ├── routes/
+        │   ├── authRoutes.js
+        │   ├── chatRoutes.js
+        │   ├── gameRoutes.js
+        │   ├── gamerRoutes.js
+        │   ├── notificationRoutes.js
+        │   └── teamRoutes.js
+        ├── scripts/
+        │   └── seedDemoData.js
+        ├── socket/
+        │   └── socketHandler.js
+        └── utils/
+            ├── generateToken.js
+            └── seedGames.js
+
+================================================
+FILE: README.md
+================================================
+# GameMate
+
+GameMate is a gaming community web app for discovering games, finding nearby players, creating squads, and coordinating with teammates. It uses a React/Vite frontend, an Express API, MongoDB, and Socket.IO.
+
+## Features
+
+- Register and log in with JWT authentication.
+- Browse and search games loaded from MongoDB.
+- Find gamers by game, skill, availability, and approximate distance.
+- Keep nearby-player locations private; discovery shows approximate distances and illustrative map positions.
+- Create squads, join them with a lobby code, manage membership, and send or respond to invitations.
+- View player profiles, notifications, and squad chat.
+- Use the responsive interface on desktop and mobile.
+
+## Tech stack
+
+- **Frontend:** React, Vite, React Router, Tailwind CSS, Axios
+- **Backend:** Node.js, Express, Mongoose, MongoDB, Socket.IO
+- **Authentication:** JWT and bcrypt
+
+## Requirements
+
+- Node.js and npm
+- MongoDB running locally or a MongoDB Atlas connection string
+
+## Install
+
+From the repository root:
+
+```bash
+npm install
+npm run install:all
+```
+
+`npm run install:all` installs the client and server dependencies. Run it after cloning the repository or when dependencies need to be restored.
+
+## Configure the server
+
+Create `server/.env` by copying `server/.env.example`. On Windows PowerShell:
+
+```powershell
+Copy-Item server/.env.example server/.env
+```
+
+Set the values in `server/.env`:
+
+```env
+MONGO_URI=mongodb://127.0.0.1:27017/gamemate
+JWT_SECRET=replace_with_a_long_random_secret
+PORT=5000
+CLIENT_URL=http://localhost:5173
+SEED_DEMO_DATA=false
+DEMO_SEED_PASSWORD=replace_with_a_private_password_at_least_12_chars
+```
+
+Use your MongoDB Atlas connection string for `MONGO_URI` if the database is hosted. Keep `.env` files and secrets private; do not commit them.
+
+The demo-seed settings are optional. Leave `SEED_DEMO_DATA=false` for normal use. `DEMO_SEED_PASSWORD` is used only when intentionally seeding demo accounts; choose a private password of at least 12 characters.
+
+## Run locally
+
+Start both the API and frontend from the repository root:
+
+```bash
+npm run dev
+```
+
+Or start them in separate terminals:
+
+```bash
+npm run dev --prefix server
+npm run dev --prefix client
+```
+
+The frontend is available at `http://localhost:5173` and the API health endpoint is `http://localhost:5000/api/health`.
+
+To access the app from another device on your private LAN, open the frontend using the host computer's LAN IP address, for example `http://192.168.1.10:5173`. If Vite falls back because port 5173 is busy, use the port it prints (for example, 5174). In development, the client resolves a localhost API URL to the browser's host, and the API allows localhost and private-LAN frontend origins on Vite dev ports 5173â€“5179.
+
+## Demo data
+
+The server creates the starter game catalog automatically when its games collection is empty. Demo accounts and sample squads, notifications, and chat messages are separate and require an explicit seed command.
+
+To seed demo data:
+
+1. Set `SEED_DEMO_DATA=true` in `server/.env`.
+2. Set `DEMO_SEED_PASSWORD` to a private password with at least 12 characters.
+3. From the `server` directory, run:
+
+   ```bash
+   npm run seed:demo
+   ```
+
+The seeder is disabled in production, is safe to run repeatedly, and does not delete or replace non-demo records. Set `SEED_DEMO_DATA=false` when finished.
+
+The demo captain account uses `demo.captain@gamemate.test` and the password configured in `DEMO_SEED_PASSWORD`.
+
+## API overview
+
+All API routes are prefixed with `/api`. Routes other than health, authentication registration/login, and game browsing require authentication.
+
+| Area | Routes |
+| --- | --- |
+| Health | `GET /health` |
+| Authentication | `POST /auth/register`, `POST /auth/login`, `GET /auth/me` |
+| Gamers | `GET /gamers`, `GET /gamers/nearby`, `GET /gamers/me`, `GET /gamers/:id`, `PUT /gamers/profile`, `PUT /gamers/status`, `PUT /gamers/location` |
+| Games | `GET /games`, `GET /games/:id` |
+| Squads | `GET /teams`, `POST /teams`, `GET /teams/:id`, `POST /teams/join`, `POST /teams/:id/leave` |
+| Squad requests | `GET /teams/requests`, `POST /teams/requests`, `PUT /teams/requests/:id/accept`, `PUT /teams/requests/:id/reject` |
+| Notifications | `GET /notifications`, `PUT /notifications/:id/read`, `PUT /notifications/read-all` |
+| Chat | `GET /chat/:teamId/messages`, `POST /chat/:teamId/messages` |
+
+## Project structure
+
+```text
+gamemate/
+â”œâ”€â”€ client/              # React and Vite frontend
+â”‚   â””â”€â”€ src/
+â”‚       â”œâ”€â”€ components/
+â”‚       â”œâ”€â”€ context/
+â”‚       â”œâ”€â”€ pages/
+â”‚       â””â”€â”€ services/
+â”œâ”€â”€ server/              # Express API and Socket.IO server
+â”‚   â”œâ”€â”€ config/
+â”‚   â”œâ”€â”€ controllers/
+â”‚   â”œâ”€â”€ middleware/
+â”‚   â”œâ”€â”€ models/
+â”‚   â”œâ”€â”€ routes/
+â”‚   â”œâ”€â”€ scripts/
+â”‚   â””â”€â”€ socket/
+â”œâ”€â”€ package.json
+â””â”€â”€ README.md
+```
+
+## Production notes
+
+- Configure a strong `JWT_SECRET`, a production MongoDB URI, and the exact frontend origin(s) in `CLIENT_URL`.
+- Set `NODE_ENV=production` in the server environment. Development LAN CORS allowances do not apply in production.
+- Serve the built client with an appropriate static host or web server and run the API with `npm start --prefix server`.
+- Demo-data seeding is intentionally blocked in production.
+
+
+
+================================================
+FILE: package.json
+================================================
+{
+  "name": "gamemate",
+  "private": true,
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "concurrently \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "server": "npm run dev --prefix server",
+    "client": "npm run dev --prefix client",
+    "install:all": "npm install --prefix server && npm install --prefix client"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.1"
+  },
+  "dependencies": {
+    "mongoose": "^9.10.3"
+  }
+}
+
+
+
+================================================
+FILE: client/index.html
+================================================
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="GameMate - Nearby gamer matchmaking platform" />
+    <title>GameMate</title>
+  </head>
+  <body class="bg-slate-950 text-slate-100">
+    <div id="root"></div>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
+</html>
+
+
+
+================================================
+FILE: client/package.json
+================================================
+{
+  "name": "gamemate-client",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "axios": "^1.7.5",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^6.28.0",
+    "socket.io-client": "^4.7.5"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.3.2",
+    "autoprefixer": "^10.4.20",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.15",
+    "vite": "^5.4.10"
+  }
+}
+
+
+
+================================================
+FILE: client/postcss.config.js
+================================================
+export default {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+};
+
+
+
+================================================
+FILE: client/tailwind.config.js
+================================================
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      fontFamily: {
+        sans: ['"Inter"', 'sans-serif'],
+        display: ['"Space Grotesk"', 'sans-serif'],
+        mono: ['"JetBrains Mono"', 'monospace'],
+      },
+      colors: {
+        white: '#2C84A0',
+        brand: {
+          50: '#FFFDE6',
+          100: '#FFF9A8',
+          200: '#FFF36B',
+          300: '#FFED33',
+          400: '#FFE600',
+          500: '#FFD500',
+          600: '#FFE600',
+          700: '#E6C900',
+          800: '#BFA600',
+          900: '#807000',
+        },
+        neon: {
+          blue: '#00A8FF',
+          yellow: '#FFE600',
+          orange: '#FF6B00',
+          red: '#FF1744',
+          green: '#39FF14',
+        },
+        danger: {
+          400: '#FF5473',
+          500: '#FF1744',
+          600: '#D90D35',
+        },
+        slate: {
+          50: '#F5F7FA',
+          100: '#E3E7EE',
+          200: '#C6CDD8',
+          300: '#A6AFBC',
+          400: '#8A919F',
+          500: '#626A78',
+          600: '#454C59',
+          700: '#2A303A',
+          800: '#1B2029',
+          900: '#11151C',
+          950: '#080A0F',
+        },
+      },
+      boxShadow: {
+        soft: '0 0 0 1px rgba(255,230,0,0.10), 0 0 24px rgba(255,230,0,0.08)',
+      },
+    },
+  },
+  plugins: [],
+};
+
+
+
+================================================
+FILE: client/vite.config.js
+================================================
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+
+export default defineConfig({
+  plugins: [react()],
+  server: {
+    port: 5173,
+    host: '0.0.0.0',
+  },
+});
+
+
+
+================================================
+FILE: client/.env.example
+================================================
+VITE_API_URL=http://localhost:5000/api
+VITE_SOCKET_URL=http://localhost:5000
+
+
+
+================================================
+FILE: client/src/App.jsx
+================================================
+import { Navigate, Route, Routes } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Footer from './components/Footer';
+import ProtectedRoute from './components/ProtectedRoute';
+import Home from './pages/Home';
+import Games from './pages/Games';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
+import FindGamers from './pages/FindGamers';
+import GamerProfile from './pages/GamerProfile';
+import MyTeams from './pages/MyTeams';
+import TeamDetails from './pages/TeamDetails';
+import Notifications from './pages/Notifications';
+import Chat from './pages/Chat';
+import Settings from './pages/Settings';
+import { AuthProvider } from './context/AuthContext';
+import { SocketProvider } from './context/SocketContext';
+
+const App = () => {
+  return (
+    <AuthProvider>
+      <SocketProvider>
+        <div className="min-h-screen bg-[#080A0F] text-slate-100">
+          <div className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,230,0,0.10),_transparent_20%),radial-gradient(circle_at_bottom_left,_rgba(0,168,255,0.045),_transparent_22%),radial-gradient(circle_at_bottom_right,_rgba(255,23,68,0.07),_transparent_24%)]" />
+          <div className="relative z-10">
+            <Navbar />
+            <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/games" element={<Games />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/register" element={<Register />} />
+                <Route
+                  path="/find-gamers"
+                  element={
+                    <ProtectedRoute>
+                      <FindGamers />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/gamer/:id"
+                  element={
+                    <ProtectedRoute>
+                      <GamerProfile />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path="/dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/my-teams"
+                  element={
+                    <ProtectedRoute>
+                      <MyTeams />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/teams/:teamId"
+                  element={
+                    <ProtectedRoute>
+                      <TeamDetails />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/notifications"
+                  element={
+                    <ProtectedRoute>
+                      <Notifications />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chat"
+                  element={
+                    <ProtectedRoute>
+                      <Chat />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/chat/:teamId"
+                  element={
+                    <ProtectedRoute>
+                      <Chat />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute>
+                      <Settings />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </main>
+            <Footer />
+          </div>
+        </div>
+      </SocketProvider>
+    </AuthProvider>
+  );
+};
+
+export default App;
+
+
+
+================================================
+FILE: client/src/index.css
+================================================
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color: #2C8490;
+  background-color: #080A0F;
+  font-family: 'Inter', sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  --bg: #080A0F;
+  --bg-soft: #11151C;
+  --panel: rgba(17, 21, 28, 0.96);
+  --panel-alt: rgba(27, 32, 41, 0.96);
+  --border: rgba(255, 230, 0, 0.18);
+  --text: rgb(44 132 160);
+  --muted: #8A919F;
+  --primary: #FFE600;
+  --primary-soft: rgba(255, 230, 0, 0.14);
+  --blue: #00A8FF;
+  --yellow: #FFE600;
+  --orange: #FF6B00;
+  --red: #FF1744;
+  --red-soft: rgba(255, 23, 68, 0.14);
+  --green: #39FF14;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(255, 230, 0, 0.10), transparent 28%),
+    radial-gradient(circle at 80% 20%, rgba(0, 168, 255, 0.05), transparent 18%),
+    radial-gradient(circle at 75% 70%, rgba(255, 23, 68, 0.06), transparent 20%),
+    linear-gradient(180deg, #080A0F 0%, #0D1017 100%);
+  color: var(--text);
+  position: relative;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 40px 40px;
+  mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
+  pointer-events: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+#root {
+  min-height: 100vh;
+  position: relative;
+  isolation: isolate;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+button,
+input,
+select,
+textarea {
+  @apply transition-all duration-200;
+}
+
+input,
+select,
+textarea {
+  color-scheme: dark;
+}
+
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+a:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 230, 0, 0.75), 0 0 0 6px rgba(255, 230, 0, 0.16);
+}
+
+.radiant-red {
+  background: linear-gradient(135deg, #FF9AAD 0%, #FF5473 28%, #FF1744 52%, #FF9AAD 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 22px rgba(255, 23, 68, 0.35);
+}
+
+.radiant-yellow {
+  background: linear-gradient(135deg, #FFF9A8 0%, #FFE600 45%, #FFB800 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 22px rgba(255, 230, 0, 0.28);
+}
+
+.radiant-primary {
+  background: linear-gradient(135deg, #FFF9A8 0%, #FFE600 50%, #FFB800 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 22px rgba(255, 230, 0, 0.32);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.logo-mark {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  letter-spacing: -0.05em;
+}
+
+.mono,
+.status-pill,
+.game-tag,
+.stat-label,
+.kicker,
+.code-text {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.card {
+  @apply rounded-none border border-[#30303A] bg-[#11151C] shadow-soft;
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0 auto auto 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255, 230, 0, 0.65), rgba(0, 168, 255, 0.3), transparent 75%);
+  opacity: 0.45;
+}
+
+.rounded-3xl,
+.rounded-2xl,
+.rounded-xl {
+  border-radius: 0.25rem !important;
+}
+
+.panel-surface {
+  background: linear-gradient(180deg, rgba(17, 17, 17, 0.96), rgba(10, 10, 10, 0.96));
+}
+
+.neon-border {
+  box-shadow: 0 0 0 1px rgba(255, 230, 0, 0.3), 0 0 24px rgba(255, 230, 0, 0.1);
+}
+
+.red-border {
+  box-shadow: 0 0 0 1px rgba(255, 23, 68, 0.35), 0 0 18px rgba(255, 23, 68, 0.08);
+}
+
+.gradient-line {
+  background: linear-gradient(90deg, rgba(255, 230, 0, 0.85), rgba(0, 168, 255, 0.6), rgba(255, 230, 0, 0.45), transparent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+
+
+================================================
+FILE: client/src/main.jsx
+================================================
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')).render(
+  <React.StrictMode>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
+  </React.StrictMode>
+);
+
+
+
+================================================
+FILE: client/src/components/ChatBox.jsx
+================================================
+import { useEffect, useRef, useState } from 'react';
+import { useAuth } from '../context/AuthContext';
+import { useSocket } from '../context/SocketContext';
+import { getTeamMessages, sendTeamMessage } from '../services/chatService';
+
+const ChatBox = ({ teamId }) => {
+  const { user } = useAuth();
+  const { socket } = useSocket();
+  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState('');
+  const [loading, setLoading] = useState(true);
+  const endRef = useRef(null);
+
+  useEffect(() => {
+    if (!teamId) {
+      setMessages([]);
+      return undefined;
+    }
+
+    const fetchMessages = async () => {
+      setLoading(true);
+
+      try {
+        const response = await getTeamMessages(teamId);
+        setMessages(response.data || []);
+      } catch (error) {
+        console.error('Unable to load team messages', error);
+        setMessages([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMessages();
+  }, [teamId]);
+
+  useEffect(() => {
+    if (!teamId || !socket) {
+      return undefined;
+    }
+
+    socket.emit('join-team', String(teamId));
+
+    const handleTeamMessage = (message) => {
+      if (message.team === teamId || message.team?._id === teamId) {
+        setMessages((prev) => {
+          const exists = prev.some((item) => item._id === message._id);
+          return exists ? prev : [...prev, message];
+        });
+      }
+    };
+
+    socket.on('team-message', handleTeamMessage);
+
+    return () => {
+      socket.off('team-message', handleTeamMessage);
+    };
+  }, [teamId, socket]);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSend = async () => {
+    if (!input.trim() || !teamId) {
+      return;
+    }
+
+    try {
+      const response = await sendTeamMessage(teamId, input.trim());
+      setMessages((prev) => [...prev, response.data]);
+      setInput('');
+    } catch (error) {
+      console.error('Unable to send message', error);
+    }
+  };
+
+  return (
+    <div className="card h-[420px] p-4">
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-white">Team Chat</h3>
+        <span className="rounded-full border border-brand-400/40 bg-brand-400/10 px-2 py-1 text-xs text-brand-300">Online</span>
+      </div>
+
+      <div className="flex h-[280px] flex-col gap-3 overflow-y-auto rounded-xl border border-slate-700 bg-slate-950/60 p-3 text-sm text-slate-200">
+        {loading ? (
+          <p className="text-slate-400">Loading messages...</p>
+        ) : messages.length === 0 ? (
+          <p className="text-slate-400">No messages yet. Start the conversation.</p>
+        ) : (
+          messages.map((message) => {
+            const isMine = message.sender?._id === user?._id || message.sender?.username === user?.username;
+            return (
+              <div key={message._id} className={isMine ? 'self-end' : 'self-start'}>
+                <div className={`max-w-xs rounded-2xl px-3 py-2 ${isMine ? 'bg-brand-600 font-medium text-black' : 'bg-slate-800 text-slate-200'}`}>
+                  {message.text}
+                </div>
+              </div>
+            );
+          })
+        )}
+        <div ref={endRef} />
+      </div>
+
+      <div className="mt-4 flex gap-3">
+        <input
+          value={input}
+          onChange={(event) => setInput(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              handleSend();
+            }
+          }}
+          placeholder="Type a message..."
+          className="flex-1 rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white focus:border-brand-500"
+        />
+        <button onClick={handleSend} className="rounded-xl bg-brand-600 px-4 py-2 font-bold text-black hover:bg-brand-500">
+          Send
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ChatBox;
+
+
+
+================================================
+FILE: client/src/components/Footer.jsx
+================================================
+const Footer = () => {
+  return (
+    <footer className="border-t border-[#30303A] bg-[#080A0F] py-10">
+      <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 text-sm text-slate-400 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+        <p className="font-medium text-slate-300">Â© 2026 GameMate. Built for gamers who want to play together.</p>
+        <div className="mono flex gap-4 text-[10px] uppercase tracking-[0.24em] text-slate-500">
+          <span className="transition-colors hover:text-brand-300">Privacy</span>
+          <span className="transition-colors hover:text-brand-300">Safety</span>
+          <span className="transition-colors hover:text-brand-300">Support</span>
+        </div>
+      </div>
+    </footer>
+  );
+};
+
+export default Footer;
+
+
+
+================================================
+FILE: client/src/components/GameCard.jsx
+================================================
+import { Link } from 'react-router-dom';
+
+const gameMarks = {
+  'Among Us': { mark: 'AU', accent: '#FF1744' },
+  'Apex Legends': { mark: 'APEX', accent: '#FF6B00' },
+  BGMI: { mark: 'BGMI', accent: '#FFE600' },
+  'Call of Duty': { mark: 'COD', accent: '#FF1744' },
+  Fortnite: { mark: 'FN', accent: '#00A8FF' },
+  'Free Fire': { mark: 'FF', accent: '#FF6B00' },
+  'GTA V': { mark: 'V', accent: '#39FF14' },
+  Minecraft: { mark: 'M', accent: '#39FF14' },
+  PUBG: { mark: 'PUBG', accent: '#FFE600' },
+  Valorant: { mark: 'V', accent: '#FF1744' },
+};
+
+const GameCard = ({ name, description, category }) => {
+  const mark = gameMarks[name] || {
+    mark: name.split(/\s+/).map((word) => word[0]).join('').slice(0, 4).toUpperCase(),
+    accent: '#FFE600',
+  };
+
+  return (
+    <article className="relative flex h-full flex-col overflow-hidden border border-[#30303A] bg-[#11151C] p-4 transition-all duration-200 hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-[0_0_20px_rgba(255,230,0,0.16)]">
+      <div
+        role="img"
+        aria-label={`${name} logo`}
+        className="mb-4 flex h-32 flex-col items-center justify-center gap-1 border bg-[linear-gradient(145deg,#1B2029,#080A0F)]"
+        style={{
+          borderColor: `${mark.accent}66`,
+          backgroundImage: `radial-gradient(circle at 50% 0, ${mark.accent}24, transparent 72%), linear-gradient(145deg, #1B2029, #080A0F)`,
+        }}
+      >
+        <span className="font-display text-4xl font-black leading-none tracking-[-0.08em]" style={{ color: mark.accent, textShadow: `0 0 24px ${mark.accent}55` }}>
+          {mark.mark}
+        </span>
+        <span className="mono mt-1 text-[10px] font-bold uppercase tracking-[0.2em] text-slate-200">{name}</span>
+      </div>
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="mono text-[10px] uppercase tracking-[0.2em] text-slate-400">{category}</p>
+          <h3 className="mt-2 text-xl font-bold text-white">{name}</h3>
+        </div>
+        <Link to={`/find-gamers?game=${encodeURIComponent(name)}`} className="border border-brand-400 bg-brand-600 px-3 py-2 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-black transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[0_0_18px_rgba(255,230,0,0.35)]">
+          Explore
+        </Link>
+      </div>
+      <p className="mt-4 text-sm text-slate-300">{description}</p>
+    </article>
+  );
+};
+
+export default GameCard;
+
+
+
+================================================
+FILE: client/src/components/GamerCard.jsx
+================================================
+import { Link } from 'react-router-dom';
+
+const GamerCard = ({ gamer, onRequest }) => {
+  const { username, games = [], preferredLanguages = [], gamingStatus = 'Looking for Team', distance = 'Nearby', microphoneAvailable } = gamer || {};
+
+  const normalizedStatus = gamingStatus?.toLowerCase() || '';
+  const statusClass = normalizedStatus.includes('offline')
+    ? 'text-slate-300 border-slate-600 bg-slate-800/80'
+    : normalizedStatus.includes('in game')
+      ? 'text-red-200 border-danger-500/50 bg-danger-500/10'
+      : 'text-neon-green border-neon-green/50 bg-neon-green/10';
+
+  return (
+    <article className="card p-5 transition-transform duration-200 hover:-translate-y-1 hover:border-brand-400/70 hover:shadow-[0_0_18px_rgba(255,230,0,0.10)]">
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center border border-brand-400/60 bg-[#11151C] text-lg font-black text-brand-200 shadow-[0_0_18px_rgba(255,230,0,0.18)]">
+            {username?.slice(0, 1).toUpperCase() || 'G'}
+          </div>
+          <div>
+            <h3 className="text-xl font-bold text-white">
+              <Link to={`/gamer/${gamer._id}`} className="hover:text-brand-300">{username}</Link>
+            </h3>
+            <p className="mono mt-1 text-[10px] uppercase tracking-[0.18em] text-slate-400">{games[0] || 'No games listed'}</p>
+          </div>
+        </div>
+        <span className={`status-pill border px-2 py-1 text-[10px] uppercase tracking-[0.18em] ${statusClass}`}>
+          {gamingStatus}
+        </span>
+      </div>
+
+      <div className="mt-5 grid gap-2 text-sm text-slate-300">
+        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span className="text-slate-400">Status</span>
+          <span className="font-medium text-white">{distance} away</span>
+        </div>
+        <div className="flex items-center justify-between border-b border-slate-800 pb-2">
+          <span className="text-slate-400">Languages</span>
+          <span className="font-medium text-white">{preferredLanguages.length ? preferredLanguages.join(', ') : 'Not listed'}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-slate-400">Mic</span>
+          <span className="font-medium text-white">{microphoneAvailable ? 'Available' : 'Not listed'}</span>
+        </div>
+        <div className="flex items-center justify-between">
+          <span className="text-slate-400">Rank / skill</span>
+          <span className="font-medium text-white">{gamer.skillLevel || 'Not listed'}</span>
+        </div>
+      </div>
+
+      <div className="mt-5 grid grid-cols-2 gap-2">
+        <Link
+          to={`/gamer/${gamer._id}`}
+          className="flex items-center justify-center border border-slate-600 bg-slate-900 px-3 py-3 text-center text-[10px] font-black uppercase tracking-[0.14em] text-white transition-colors hover:border-brand-400 hover:text-brand-300"
+        >
+          View Profile
+        </Link>
+        <button
+          type="button"
+          onClick={() => onRequest?.(gamer)}
+          className="border border-brand-400 bg-brand-600 px-3 py-3 text-[10px] font-black uppercase tracking-[0.14em] text-black hover:-translate-y-0.5 hover:bg-brand-500 hover:shadow-[0_0_18px_rgba(255,230,0,0.35)]"
+        >
+          Invite
+        </button>
+      </div>
+    </article>
+  );
+};
+
+export default GamerCard;
+
+
+
+================================================
+FILE: client/src/components/Navbar.jsx
+================================================
+import { useState } from 'react';
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import NotificationBell from './NotificationBell';
+
+const Navbar = () => {
+  const { user, logout } = useAuth();
+  const navigate = useNavigate();
+  const [search, setSearch] = useState('');
+
+  const navItems = [
+    { to: '/games', label: 'Discover' },
+    { to: '/find-gamers', label: 'Nearby' },
+    ...(user ? [
+      { to: '/dashboard', label: 'Dashboard' },
+      { to: '/my-teams', label: 'Squads' },
+      { to: '/chat', label: 'Messages' },
+    ] : []),
+  ];
+
+  const handleSearch = (event) => {
+    event.preventDefault();
+    const query = search.trim();
+    navigate(query ? `/games?search=${encodeURIComponent(query)}` : '/games');
+    setSearch('');
+  };
+
+  return (
+    <header className="sticky top-0 z-50 border-b border-[#30303A] bg-[#080A0F]/90 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:flex-nowrap lg:px-8">
+        <Link to="/" className="flex items-center gap-3 text-white">
+          <span className="logo-mark inline-flex h-10 w-10 items-center justify-center border border-brand-400 bg-[#11151C] text-lg font-black text-brand-200 shadow-[0_0_18px_rgba(255,230,0,0.35)]">
+            G
+          </span>
+          <div className="leading-none">
+            <span className="radiant-primary block text-lg font-black tracking-tight">GameMate</span>
+            <span className="mono block text-[10px] uppercase tracking-[0.28em] text-slate-400">Squad network</span>
+          </div>
+        </Link>
+
+        <form onSubmit={handleSearch} role="search" className="order-3 flex w-full lg:order-none lg:w-auto lg:flex-1 lg:max-w-xs">
+          <label className="sr-only" htmlFor="global-search">Search games</label>
+          <input
+            id="global-search"
+            type="search"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            placeholder="Search games..."
+            className="min-w-0 w-full border border-[#2d2d2d] bg-[#111111] px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-brand-400"
+          />
+          <button type="submit" className="border border-l-0 border-[#2d2d2d] bg-[#171717] px-3 text-xs font-bold uppercase tracking-wider text-brand-300 hover:border-brand-400 hover:text-brand-200">
+            Search
+          </button>
+        </form>
+
+        <nav className="hidden items-center gap-1 border border-[#2b2b2b] bg-[#111111]/80 p-1 lg:flex">
+          {navItems.map(({ to, label }) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) =>
+                `px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] transition-all ${
+                  isActive
+                    ? 'bg-brand-600 text-black shadow-[0_0_18px_rgba(255,230,0,0.35)]'
+                    : 'text-slate-300 hover:text-brand-300'
+                }`
+              }
+            >
+              {label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <div className="ml-auto flex items-center gap-3 lg:ml-0">
+          {user && (
+            <>
+              <NotificationBell />
+              <Link to={`/gamer/${user._id}`} aria-label="View your profile" className="flex h-10 w-10 items-center justify-center overflow-hidden border border-brand-400/50 bg-[#171B24] font-bold text-brand-200 hover:border-brand-400">
+                {user.profileImage ? (
+                  <img src={user.profileImage} alt="" className="h-full w-full object-cover" />
+                ) : user.username?.charAt(0)?.toUpperCase() || 'G'}
+              </Link>
+            </>
+          )}
+          {user ? (
+            <button
+              type="button"
+              onClick={logout}
+              className="rounded-[8px] border border-[#343946] bg-[#121720] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300"
+            >
+              Sign out
+            </button>
+          ) : (
+            <Link
+              to="/login"
+              className="rounded-[8px] border border-brand-400 bg-brand-600 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-black shadow-[0_0_18px_rgba(255,230,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500"
+            >
+              Login
+            </Link>
+          )}
+        </div>
+      </div>
+      <nav aria-label="Mobile navigation" className="flex items-center gap-1 overflow-x-auto border-t border-[#1c1c1c] px-3 py-2 lg:hidden">
+        <NavLink to="/" className={({ isActive }) => `shrink-0 px-3 py-2 text-xs font-semibold uppercase tracking-wider ${isActive ? 'text-brand-300' : 'text-slate-400'}`}>Home</NavLink>
+        {navItems.map(({ to, label }) => (
+          <NavLink key={to} to={to} className={({ isActive }) => `shrink-0 px-3 py-2 text-xs font-semibold uppercase tracking-wider ${isActive ? 'text-brand-300' : 'text-slate-400'}`}>
+            {label}
+          </NavLink>
+        ))}
+      </nav>
+    </header>
+  );
+};
+
+export default Navbar;
+
+
+
+================================================
+FILE: client/src/components/NotificationBell.jsx
+================================================
+import { useCallback, useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useSocket } from '../context/SocketContext';
+import { getNotifications } from '../services/notificationService';
+
+const NotificationBell = () => {
+  const { socket } = useSocket();
+  const [count, setCount] = useState(0);
+
+  const fetchCount = useCallback(async () => {
+    try {
+      const response = await getNotifications();
+      const unread = (response.data || []).filter((item) => !item.read).length;
+      setCount(unread);
+    } catch (error) {
+      console.error('Unable to fetch notifications', error);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchCount();
+  }, [fetchCount]);
+
+  useEffect(() => {
+    if (!socket) {
+      return undefined;
+    }
+
+    const handleNewNotification = () => fetchCount();
+    socket.on('new-notification', handleNewNotification);
+
+    return () => {
+      socket.off('new-notification', handleNewNotification);
+    };
+  }, [socket, fetchCount]);
+
+  return (
+    <Link
+      to="/notifications"
+      aria-label="Notifications"
+      className="relative flex h-10 w-10 items-center justify-center border border-slate-700 bg-slate-900 text-base text-slate-100 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300"
+    >
+      <span className="text-lg">ðŸ””</span>
+      {count > 0 && (
+        <span className="absolute -right-1 -top-1 flex h-5 min-w-5 items-center justify-center border border-black bg-danger-500 px-1 text-[10px] font-bold text-white shadow-[0_0_10px_rgba(255,23,68,0.35)]">
+          {count}
+        </span>
+      )}
+    </Link>
+  );
+};
+
+export default NotificationBell;
+
+
+
+================================================
+FILE: client/src/components/ProtectedRoute.jsx
+================================================
+import { Navigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+
+const ProtectedRoute = ({ children }) => {
+  const { user, token, loading } = useAuth();
+
+  if (loading) {
+    return <div className="flex min-h-[40vh] items-center justify-center text-slate-300">Loading session...</div>;
+  }
+
+  if (!user && !token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return children;
+};
+
+export default ProtectedRoute;
+
+
+
+================================================
+FILE: client/src/components/SearchFilters.jsx
+================================================
+const SearchFilters = ({ filters, setFilters, onSubmit, games = [] }) => {
+  const handleChange = (key, value) => {
+    setFilters((prev) => ({ ...prev, [key]: value }));
+  };
+
+  return (
+    <div className="card p-5">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-6">
+        <label className="space-y-2 text-sm text-slate-300">
+          <span>Game</span>
+          <select
+            value={filters.game}
+            onChange={(event) => handleChange('game', event.target.value)}
+            className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white focus:border-brand-500"
+          >
+            <option value="">Any Game</option>
+            {games.map((game) => (
+              <option key={game.name} value={game.name}>
+                {game.name}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label className="space-y-2 text-sm text-slate-300">
+          <span>Radius</span>
+          <input
+            type="number"
+            min="1"
+            max="50"
+            value={filters.radius}
+            onChange={(event) => handleChange('radius', event.target.value)}
+            className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white focus:border-brand-500"
+          />
+        </label>
+
+        <label className="space-y-2 text-sm text-slate-300">
+          <span>Language</span>
+          <select
+            value={filters.language}
+            onChange={(event) => handleChange('language', event.target.value)}
+            className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white focus:border-brand-500"
+          >
+            <option value="">Any</option>
+            <option value="English">English</option>
+            <option value="Telugu">Telugu</option>
+            <option value="Hindi">Hindi</option>
+          </select>
+        </label>
+
+        <label className="space-y-2 text-sm text-slate-300">
+          <span>Microphone</span>
+          <select
+            value={filters.microphone}
+            onChange={(event) => handleChange('microphone', event.target.value)}
+            className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white focus:border-brand-500"
+          >
+            <option value="">Any</option>
+            <option value="true">Required</option>
+            <option value="false">Not Required</option>
+          </select>
+        </label>
+
+        <label className="space-y-2 text-sm text-slate-300">
+          <span>Skill</span>
+          <select
+            value={filters.skillLevel}
+            onChange={(event) => handleChange('skillLevel', event.target.value)}
+            className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white focus:border-brand-500"
+          >
+            <option value="">Any</option>
+            <option value="Beginner">Beginner</option>
+            <option value="Intermediate">Intermediate</option>
+            <option value="Advanced">Advanced</option>
+            <option value="Pro">Pro</option>
+          </select>
+        </label>
+
+        <div className="flex items-end">
+          <button
+            type="button"
+            onClick={onSubmit}
+            className="w-full rounded-xl bg-brand-600 px-4 py-2.5 font-bold text-black transition-all hover:-translate-y-0.5 hover:bg-brand-500"
+          >
+            Find Gamers
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SearchFilters;
+
+
+
+================================================
+FILE: client/src/components/TeamRequestCard.jsx
+================================================
+const TeamRequestCard = ({ request, onAccept, onReject, direction = 'incoming', showActions = true }) => {
+  const playerName = direction === 'incoming'
+    ? request?.sender?.username || request?.sender || 'Player'
+    : request?.receiver?.username || request?.receiver || 'Player';
+  const gameName = request?.game || 'a game';
+
+  return (
+    <article className="card p-4">
+      <p className="text-sm text-slate-300">
+        {direction === 'incoming'
+          ? `${playerName} wants to team up with you for ${gameName}.`
+          : `You invited ${playerName} to team up for ${gameName}.`}
+      </p>
+      {request?.message && <p className="mt-2 text-sm text-slate-400">“{request.message}”</p>}
+      {showActions ? <div className="mt-4 flex gap-3">
+        <button
+          type="button"
+          onClick={() => onAccept?.(request)}
+          className="rounded-xl border border-brand-400 bg-brand-400 px-3 py-2 text-sm font-bold text-black hover:bg-brand-300"
+        >
+          Accept
+        </button>
+        <button
+          type="button"
+          onClick={() => onReject?.(request)}
+          className="rounded-xl border border-danger-500/50 bg-danger-500/10 px-3 py-2 text-sm font-medium text-red-200 transition-colors hover:bg-danger-500/20"
+        >
+          Reject
+        </button>
+      </div> : <p className="mt-3 text-xs font-medium capitalize text-slate-500">Status: {request.status}</p>}
+    </article>
+  );
+};
+
+export default TeamRequestCard;
+
+
+
+================================================
+FILE: client/src/context/AuthContext.jsx
+================================================
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { getCurrentUser } from '../services/authService';
+
+const AuthContext = createContext();
+
+const normalizeUser = (userData) => {
+  if (!userData) {
+    return userData;
+  }
+
+  const id = userData._id || userData.id;
+  return id ? { ...userData, _id: id } : userData;
+};
+
+export const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('gamemate_token') || '');
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const restoreSession = async () => {
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const response = await getCurrentUser();
+        setUser(normalizeUser(response.data.user));
+      } catch (error) {
+        localStorage.removeItem('gamemate_token');
+        setToken('');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    restoreSession();
+  }, [token]);
+
+  const login = (userData, authToken) => {
+    setUser(normalizeUser(userData));
+    setToken(authToken);
+    localStorage.setItem('gamemate_token', authToken);
+  };
+
+  const logout = () => {
+    setUser(null);
+    setToken('');
+    localStorage.removeItem('gamemate_token');
+  };
+
+  const value = useMemo(
+    () => ({ user, token, loading, login, logout, setUser }),
+    [user, token, loading]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+export const useAuth = () => useContext(AuthContext);
+
+
+
+================================================
+FILE: client/src/context/SocketContext.jsx
+================================================
+import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { io } from 'socket.io-client';
+import { useAuth } from './AuthContext';
+import { resolveBackendUrl } from '../services/backendUrl';
+
+export const SocketContext = createContext(null);
+
+const socketUrl = resolveBackendUrl(import.meta.env.VITE_SOCKET_URL, 5000);
+
+export const SocketProvider = ({ children }) => {
+  const [socket] = useState(() => io(socketUrl));
+  const { user } = useAuth();
+
+  useEffect(() => {
+    const onConnect = () => {
+      console.log('Socket connected');
+      if (user?._id) {
+        socket.emit('join-user', String(user._id));
+      }
+    };
+
+    const onDisconnect = () => {
+      console.log('Socket disconnected');
+    };
+
+    socket.on('connect', onConnect);
+    socket.on('disconnect', onDisconnect);
+
+    if (socket.connected && user?._id) {
+      socket.emit('join-user', String(user._id));
+    }
+
+    return () => {
+      socket.off('connect', onConnect);
+      socket.off('disconnect', onDisconnect);
+    };
+  }, [socket, user?._id]);
+
+  const value = useMemo(() => ({ socket }), [socket]);
+
+  return <SocketContext.Provider value={value}>{children}</SocketContext.Provider>;
+};
+
+export const useSocket = () => useContext(SocketContext);
+
+
+
+================================================
+FILE: client/src/hooks/useSocket.js
+================================================
+import { useContext } from 'react';
+import { SocketContext } from '../context/SocketContext';
+
+const useSocket = () => useContext(SocketContext);
+
+export default useSocket;
+
+
+
+================================================
+FILE: client/src/pages/Chat.jsx
+================================================
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import ChatBox from '../components/ChatBox';
+import { getMyTeams } from '../services/teamService';
+
+const Chat = () => {
+  const { teamId: routeTeamId } = useParams();
+  const [teamId, setTeamId] = useState(routeTeamId || '');
+
+  useEffect(() => {
+    const fetchDefaultTeam = async () => {
+      if (routeTeamId) {
+        setTeamId(routeTeamId);
+        return;
+      }
+
+      try {
+        const response = await getMyTeams();
+        const firstTeam = response.data?.[0];
+        if (firstTeam) {
+          setTeamId(firstTeam._id);
+        }
+      } catch (error) {
+        console.error('Unable to load team list for chat', error);
+      }
+    };
+
+    fetchDefaultTeam();
+  }, [routeTeamId]);
+
+  return (
+    <div className="space-y-6">
+      <h1 className="text-3xl font-bold text-white">Team Chat</h1>
+      <ChatBox teamId={teamId} />
+    </div>
+  );
+};
+
+export default Chat;
+
+
+
+================================================
+FILE: client/src/pages/Dashboard.jsx
+================================================
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { getMyTeams, getTeamRequests } from '../services/teamService';
+
+const getTeamSize = (team) => new Set([
+  team.leader?._id || team.leader,
+  ...(team.members || []).map((member) => member._id || member),
+].filter(Boolean)).size;
+
+const Dashboard = () => {
+  const { user } = useAuth();
+  const [teams, setTeams] = useState([]);
+  const [incomingRequests, setIncomingRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+
+    const loadDashboard = async () => {
+      if (!user) {
+        setLoading(false);
+        return;
+      }
+
+      setLoading(true);
+      setError('');
+      try {
+        const [teamResponse, requestResponse] = await Promise.all([
+          getMyTeams(),
+          getTeamRequests(),
+        ]);
+        if (!active) return;
+
+        setTeams(teamResponse.data || []);
+        setIncomingRequests(
+          (requestResponse.data || []).filter(
+            (request) => request.status === 'pending' && request.receiver?._id === user._id
+          )
+        );
+      } catch (loadError) {
+        if (active) setError(loadError.response?.data?.message || 'Could not load your dashboard. Please try again.');
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    loadDashboard();
+    return () => { active = false; };
+  }, [user?._id]);
+
+  const profileItems = [
+    Boolean(user?.bio),
+    Boolean(user?.games?.length),
+    Boolean(user?.preferredLanguages?.length),
+    Boolean(user?.skillLevel),
+  ];
+  const profileProgress = Math.round((profileItems.filter(Boolean).length / profileItems.length) * 100);
+
+  return (
+    <div className="space-y-8">
+      <section className="relative overflow-hidden rounded-3xl border border-slate-800 bg-slate-900 p-6 sm:p-8">
+        <div className="pointer-events-none absolute -right-16 -top-24 h-64 w-64 rounded-full bg-brand-600/20 blur-3xl" />
+        <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-wider text-brand-300">Player hub</p>
+            <h1 className="mt-2 text-3xl font-bold text-white">Welcome back, <span className="radiant-red">{user?.username || 'Gamer'}</span></h1>
+            <p className="mt-2 max-w-xl text-slate-400">Your squads, invitations, and profile are all in one place.</p>
+            <div className="mt-5 flex flex-wrap gap-3">
+              <Link to="/find-gamers" className="rounded-xl bg-brand-600 px-4 py-2.5 text-sm font-bold text-black hover:bg-brand-500">
+                Find teammates
+              </Link>
+              <Link to="/my-teams" className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-100 hover:border-slate-500">
+                Open my teams
+              </Link>
+            </div>
+          </div>
+          <Link to={`/gamer/${user?._id}`} className="flex items-center gap-3 rounded-2xl border border-slate-700 bg-slate-950/70 p-3 hover:border-brand-500">
+            {user?.profileImage ? (
+              <img src={user.profileImage} alt="" className="h-12 w-12 rounded-xl object-cover" />
+            ) : (
+              <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-brand-600 text-xl font-bold text-black">
+                {user?.username?.charAt(0)?.toUpperCase() || 'G'}
+              </span>
+            )}
+            <span className="text-left">
+              <span className="block text-sm font-semibold text-white">View your profile</span>
+              <span className="block text-xs text-slate-400">Profile {profileProgress}% complete</span>
+            </span>
+          </Link>
+        </div>
+      </section>
+
+      {error && <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{error}</p>}
+
+      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+        <article className="card p-5">
+          <p className="text-sm text-slate-400">Favorite game</p>
+          <h2 className="mt-2 text-xl font-bold text-white">{user?.games?.[0] || 'Add a game'}</h2>
+          <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-white">Update profile</Link>
+        </article>
+        <article className="card p-5">
+          <p className="text-sm text-slate-400">Availability</p>
+          <h2 className="mt-2 text-xl font-bold text-brand-300">{user?.gamingStatus || 'Online'}</h2>
+          <Link to="/settings" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-white">Change status</Link>
+        </article>
+        <article className="card p-5">
+          <p className="text-sm text-slate-400">Your squads</p>
+          <h2 className="mt-2 text-xl font-bold text-white">{loading ? '...' : teams.length}</h2>
+          <Link to="/my-teams" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-white">Manage teams</Link>
+        </article>
+        <article className="card p-5">
+          <p className="text-sm text-slate-400">Team invitations</p>
+          <h2 className="mt-2 text-xl font-bold text-white">{loading ? '...' : incomingRequests.length}</h2>
+          <Link to="/notifications" className="mt-4 inline-flex text-sm font-medium text-brand-300 hover:text-white">Review invitations</Link>
+        </article>
+      </section>
+
+      <div className="grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+        <section className="card p-6">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-white">Your teams</h2>
+              <p className="mt-1 text-sm text-slate-400">Jump back into a squad lobby or its chat.</p>
+            </div>
+            <Link to="/my-teams" className="text-sm font-semibold text-brand-300 hover:text-brand-200">View all</Link>
+          </div>
+          {loading ? (
+            <p className="mt-5 text-sm text-slate-400">Loading your teams...</p>
+          ) : teams.length === 0 ? (
+            <div className="mt-5 rounded-xl border border-dashed border-slate-700 p-5">
+              <p className="font-medium text-slate-200">No squads yet</p>
+              <p className="mt-1 text-sm text-slate-400">Find players or join a lobby with its code.</p>
+              <Link to="/find-gamers" className="mt-4 inline-flex text-sm font-semibold text-brand-300">Find gamers â†’</Link>
+            </div>
+          ) : (
+            <div className="mt-5 space-y-3">
+              {teams.slice(0, 3).map((team) => (
+                <article key={team._id} className="flex flex-col gap-3 rounded-xl border border-slate-800 bg-slate-950/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+                  <div>
+                    <h3 className="font-semibold text-white">{team.game} squad</h3>
+                    <p className="mt-1 text-sm text-slate-400">{getTeamSize(team)} / {team.maxPlayers || 4} players</p>
+                  </div>
+                  <Link to={`/chat/${team._id}`} className="rounded-lg border border-slate-700 px-3 py-2 text-center text-sm font-medium text-slate-200 hover:border-brand-500">
+                    Open team chat
+                  </Link>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+
+        <section className="card p-6">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <h2 className="text-xl font-bold text-white">Incoming requests</h2>
+              <p className="mt-1 text-sm text-slate-400">Players looking to team up with you.</p>
+            </div>
+            <Link to="/notifications" className="text-sm font-semibold text-brand-300 hover:text-brand-200">Open</Link>
+          </div>
+          {loading ? (
+            <p className="mt-5 text-sm text-slate-400">Loading requests...</p>
+          ) : incomingRequests.length === 0 ? (
+            <p className="mt-5 rounded-xl border border-dashed border-slate-700 p-5 text-sm text-slate-400">Youâ€™re all caught up. New team requests will appear here.</p>
+          ) : (
+            <ul className="mt-5 space-y-3">
+              {incomingRequests.slice(0, 4).map((request) => (
+                <li key={request._id} className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
+                  <p className="font-medium text-white">{request.sender?.username || 'A gamer'} invited you</p>
+                  <p className="mt-1 text-sm text-slate-400">For {request.game}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      </div>
+    </div>
+  );
+};
+
+export default Dashboard;
+
+
+
+================================================
+FILE: client/src/pages/FindGamers.jsx
+================================================
+import { useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
+import SearchFilters from '../components/SearchFilters';
+import GamerCard from '../components/GamerCard';
+import { getNearbyGamers } from '../services/gamerService';
+import { sendTeamRequest } from '../services/teamService';
+import { getGames } from '../services/gameService';
+
+const getActivityPosition = (index) => {
+  const angle = index * 2.399;
+  const radius = 12 + (index % 6) * 5;
+  return {
+    left: `${50 + Math.cos(angle) * radius}%`,
+    top: `${50 + Math.sin(angle) * radius}%`,
+  };
+};
+
+const defaultFilters = {
+  game: '',
+  radius: '10',
+  language: '',
+  microphone: '',
+  skillLevel: '',
+};
+
+const FindGamers = () => {
+  const [searchParams] = useSearchParams();
+  const [filters, setFilters] = useState(() => ({
+    ...defaultFilters,
+    game: searchParams.get('game') || '',
+  }));
+  const [gamers, setGamers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [games, setGames] = useState([]);
+  const [gamesError, setGamesError] = useState('');
+  const [loadError, setLoadError] = useState('');
+  const [requestFeedback, setRequestFeedback] = useState('');
+
+  const handleRequest = async (gamer) => {
+    setRequestFeedback('');
+    try {
+      const game = filters.game || gamer.games?.[0] || 'Among Us';
+      const payload = {
+        receiverId: gamer._id,
+        game,
+        message: `Hi ${gamer.username}, I want to squad up for ${game}.`,
+      };
+
+      await sendTeamRequest(payload);
+      setRequestFeedback(`Invite sent to ${gamer.username}.`);
+    } catch (error) {
+      console.error('Failed to send request', error);
+      setRequestFeedback(error.response?.data?.message || 'Unable to send the team request right now.');
+    }
+  };
+
+  const loadGamers = async (nextFilters = filters) => {
+    setLoading(true);
+    setLoadError('');
+
+    try {
+      const response = await getNearbyGamers({
+        ...nextFilters,
+        radius: nextFilters.radius || 10,
+      });
+      setGamers(response.data || []);
+    } catch (error) {
+      console.error('Unable to load nearby gamers', error);
+      setGamers([]);
+      setLoadError(error.response?.data?.message || 'Unable to load nearby gamers. Try again in a moment.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadGamers();
+  }, []);
+
+  useEffect(() => {
+    let active = true;
+    getGames()
+      .then((response) => {
+        if (active) setGames(response.data || []);
+      })
+      .catch((error) => {
+        if (active) setGamesError(error.response?.data?.message || 'Unable to load game filters.');
+      });
+
+    return () => { active = false; };
+  }, []);
+
+  return (
+    <div className="space-y-8">
+      <section className="text-center">
+        <p className="mono text-xs uppercase tracking-[0.24em] text-brand-300">Live player discovery</p>
+        <h1 className="text-4xl font-black text-white">Find Your Gaming Squad</h1>
+        <p className="mx-auto mt-3 max-w-2xl text-slate-400">Filter real nearby player profiles, check their game and availability, then invite them to team up.</p>
+      </section>
+
+      <SearchFilters filters={filters} setFilters={setFilters} onSubmit={() => loadGamers(filters)} games={games} />
+      {gamesError && <p role="alert" className="border border-danger-500/40 bg-danger-500/10 px-4 py-3 text-sm text-red-200">{gamesError}</p>}
+
+      <div className="mt-8">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="mono text-[10px] uppercase tracking-[0.2em] text-slate-500">Area activity</p>
+            <h2 className="mt-1 text-2xl font-bold text-white">Nearby Gamers</h2>
+          </div>
+          {!loading && <p className="text-sm text-slate-400">{gamers.length} player{gamers.length === 1 ? '' : 's'} found</p>}
+        </div>
+
+        {requestFeedback && <p role="status" className="mb-4 border border-[#ff1744]/35 bg-[#ff1744]/10 px-4 py-3 text-sm text-red-200">{requestFeedback}</p>}
+        {loadError && <p role="alert" className="mb-4 border border-danger-500/40 bg-danger-500/10 px-4 py-3 text-sm text-red-200">{loadError}</p>}
+
+        <section className="relative mb-8 min-h-64 overflow-hidden border border-[#30303A] bg-[#0b0d13] p-5 sm:p-7" aria-label="Approximate nearby player activity">
+          <div
+            className="pointer-events-none absolute inset-0 opacity-60"
+            style={{
+              backgroundImage: 'linear-gradient(rgba(255,230,0,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,230,0,0.07) 1px, transparent 1px)',
+              backgroundSize: '32px 32px',
+            }}
+          />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(0,168,255,0.08),transparent_55%)]" />
+          <div className="relative flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="mono text-xs uppercase tracking-[0.18em] text-brand-300">Squad signal grid</p>
+              <p className="mt-1 text-sm text-slate-300">Approximate player activity Â· exact locations are never shown</p>
+            </div>
+            <div className="flex gap-4 text-xs text-slate-400">
+              <span className="inline-flex items-center gap-2"><i className="h-2 w-2 bg-neon-green shadow-[0_0_8px_rgba(57,255,20,0.5)]" />Available</span>
+              <span className="inline-flex items-center gap-2"><i className="h-2 w-2 bg-danger-500 shadow-[0_0_8px_rgba(255,23,68,0.5)]" />In game</span>
+            </div>
+          </div>
+          <div className="relative mt-5 h-48 border-y border-[#28231c]/80 sm:h-56">
+            <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 border border-brand-400/20" />
+            <div className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 border border-[#ff1744]/25" />
+            {gamers.map((gamer, index) => {
+              const point = getActivityPosition(index);
+              const inGame = gamer.gamingStatus?.toLowerCase().includes('in game');
+              return (
+                <Link
+                  key={gamer._id || gamer.username}
+                  to={`/gamer/${gamer._id}`}
+                  title={`${gamer.username || 'Player'} Â· ${gamer.distanceLabel || 'Nearby'}`}
+                  aria-label={`Open ${gamer.username || 'player'} profile, ${gamer.distanceLabel || 'nearby'}`}
+                  className={`absolute flex h-8 w-8 -translate-x-1/2 -translate-y-1/2 items-center justify-center border text-[10px] font-bold text-black transition-transform hover:z-10 hover:scale-125 ${inGame ? 'border-danger-500 bg-danger-500' : 'border-neon-green bg-neon-green'}`}
+                  style={{ left: point.left, top: point.top }}
+                >
+                  {gamer.username?.slice(0, 1).toUpperCase() || 'G'}
+                </Link>
+              );
+            })}
+            {!loading && gamers.length === 0 && (
+              <p className="absolute inset-0 flex items-center justify-center px-4 text-center text-sm text-slate-500">
+                No player signals in this search area. Adjust filters or update your location in Settings.
+              </p>
+            )}
+          </div>
+          <p className="relative mt-3 text-[11px] text-slate-500">Grid positions are illustrative, not geographic. Distances are approximate.</p>
+        </section>
+
+        {loading ? (
+          <div className="text-slate-300">Loading nearby players...</div>
+        ) : gamers.length === 0 ? (
+          <div className="card p-6 text-slate-300">No nearby gamers matched your filters yet. Try a wider radius or a different game.</div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+            {gamers.map((gamer) => (
+              <GamerCard
+                key={gamer._id || gamer.username}
+                gamer={{ ...gamer, distance: gamer.distanceLabel || 'Nearby' }}
+                onRequest={handleRequest}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default FindGamers;
+
+
+
+================================================
+FILE: client/src/pages/GamerProfile.jsx
+================================================
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import { getGamerById } from '../services/gamerService';
+import { sendTeamRequest } from '../services/teamService';
+
+const GamerProfile = () => {
+  const { id } = useParams();
+  const { user } = useAuth();
+  const [gamer, setGamer] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [requesting, setRequesting] = useState(false);
+  const [feedback, setFeedback] = useState('');
+
+  useEffect(() => {
+    let active = true;
+
+    const loadProfile = async () => {
+      setLoading(true);
+      setFeedback('');
+      try {
+        const response = await getGamerById(id);
+        if (active) setGamer(response.data);
+      } catch (error) {
+        if (active) {
+          setGamer(null);
+          setFeedback(error.response?.data?.message || 'Unable to load this gamer profile.');
+        }
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+
+    loadProfile();
+    return () => { active = false; };
+  }, [id]);
+
+  const handleRequest = async () => {
+    const game = gamer?.games?.[0];
+    if (!game) {
+      setFeedback('This gamer has not added a game yet.');
+      return;
+    }
+
+    setRequesting(true);
+    setFeedback('');
+    try {
+      await sendTeamRequest({
+        receiverId: gamer._id,
+        game,
+        message: `Hi ${gamer.username}, I would like to team up for ${game}.`,
+      });
+      setFeedback(`Team request sent for ${game}.`);
+    } catch (error) {
+      setFeedback(error.response?.data?.message || 'Unable to send a team request right now.');
+    } finally {
+      setRequesting(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="card mx-auto max-w-3xl p-8 text-slate-300">Loading gamer profile...</div>;
+  }
+
+  if (!gamer) {
+    return (
+      <section className="card mx-auto max-w-3xl p-8">
+        <h1 className="text-2xl font-bold text-white">Profile unavailable</h1>
+        <p role="status" className="mt-3 text-slate-300">{feedback}</p>
+        <Link to="/find-gamers" className="mt-6 inline-flex rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-black">
+          Back to gamers
+        </Link>
+      </section>
+    );
+  }
+
+  const isOwnProfile = user?._id === gamer._id;
+  const games = gamer.games || [];
+  const languages = gamer.preferredLanguages || [];
+  const status = gamer.gamingStatus || 'Online';
+  const normalizedStatus = status.toLowerCase();
+  const statusClass = normalizedStatus === 'offline'
+    ? 'border-slate-700 bg-slate-800 text-slate-300'
+    : normalizedStatus === 'in game'
+      ? 'border-danger-500/40 bg-danger-500/10 text-red-200'
+      : 'border-neon-green/40 bg-neon-green/10 text-neon-green';
+
+  return (
+    <div className="mx-auto max-w-4xl space-y-6">
+      <section className="overflow-hidden rounded-none border border-[#30303A] bg-[#11151C]">
+        <div className="relative h-28 bg-[linear-gradient(110deg,rgba(255,23,68,0.38),rgba(17,21,28,0.95)_55%,rgba(255,230,0,0.20))]">
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-danger-500/70 via-brand-400/50 to-transparent" />
+        </div>
+        <div className="px-6 pb-7 sm:px-8">
+          <div className="-mt-12 flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div className="flex items-end gap-4">
+              {gamer.profileImage ? (
+                <img src={gamer.profileImage} alt="" className="h-24 w-24 rounded-none border-4 border-[#111111] object-cover" />
+              ) : (
+                <div className="flex h-24 w-24 items-center justify-center rounded-none border-4 border-[#111111] bg-brand-400 text-3xl font-bold text-black">
+                  {gamer.username?.charAt(0)?.toUpperCase() || '?'}
+                </div>
+              )}
+              <div className="pb-1">
+                <h1 className="text-3xl font-bold text-white">{gamer.username}</h1>
+                <p className="mt-1 text-sm text-slate-400">{gamer.skillLevel || 'Gamer'}</p>
+              </div>
+            </div>
+            {isOwnProfile ? (
+              <Link to="/settings" className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-center text-sm font-semibold text-white hover:border-brand-500">
+                Edit profile
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={handleRequest}
+                disabled={requesting || games.length === 0}
+                className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-black hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {requesting ? 'Sending request...' : 'Request to team up'}
+              </button>
+            )}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-2">
+            <span className={`rounded-full border px-3 py-1 text-sm ${statusClass}`}>{status}</span>
+            <span className="rounded-full border border-slate-700 bg-slate-800 px-3 py-1 text-sm text-slate-300">
+              {gamer.microphoneAvailable ? 'Microphone available' : 'No microphone listed'}
+            </span>
+            <span className="rounded-full border border-danger-500/30 bg-danger-500/10 px-3 py-1 text-sm text-red-200">Location protected</span>
+          </div>
+          {gamer.bio ? (
+            <p className="mt-6 whitespace-pre-wrap leading-relaxed text-slate-300">{gamer.bio}</p>
+          ) : (
+            <p className="mt-6 text-slate-500">No bio added yet.</p>
+          )}
+          {feedback && <p role="status" className="mt-4 rounded-xl border border-slate-700 bg-slate-950/70 px-4 py-3 text-sm text-slate-200">{feedback}</p>}
+        </div>
+      </section>
+
+      <div className="grid gap-6 md:grid-cols-2">
+        <section className="card p-6">
+          <h2 className="text-lg font-semibold text-white">Favorite games</h2>
+          {games.length ? (
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {games.map((game) => <li key={game} className="rounded-xl border border-brand-500/20 bg-brand-500/10 px-3 py-2 text-sm text-brand-100">{game}</li>)}
+            </ul>
+          ) : <p className="mt-3 text-sm text-slate-400">No games listed yet.</p>}
+        </section>
+        <section className="card p-6">
+          <h2 className="text-lg font-semibold text-white">Languages</h2>
+          {languages.length ? (
+            <ul className="mt-4 flex flex-wrap gap-2">
+              {languages.map((language) => <li key={language} className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-slate-200">{language}</li>)}
+            </ul>
+          ) : <p className="mt-3 text-sm text-slate-400">No preferred languages listed.</p>}
+        </section>
+      </div>
+    </div>
+  );
+};
+
+export default GamerProfile;
+
+
+
+================================================
+FILE: client/src/pages/Games.jsx
+================================================
+Error reading file with 'cp1252': 'charmap' codec can't decode byte 0x9d in position 1739: character maps to <undefined>
+
+
+================================================
+FILE: client/src/pages/Home.jsx
+================================================
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import GameCard from '../components/GameCard';
+import { getGames } from '../services/gameService';
+
+const Home = () => {
+  const [games, setGames] = useState([]);
+  const [gamesLoading, setGamesLoading] = useState(true);
+  const [gamesError, setGamesError] = useState('');
+
+  useEffect(() => {
+    let active = true;
+
+    getGames()
+      .then((response) => {
+        if (active) setGames(response.data || []);
+      })
+      .catch((error) => {
+        if (active) setGamesError(error.response?.data?.message || 'Unable to load games from the server.');
+      })
+      .finally(() => {
+        if (active) setGamesLoading(false);
+      });
+
+    return () => { active = false; };
+  }, []);
+
+  return (
+    <div className="space-y-16 pb-10">
+      <section className="grid items-center gap-8 rounded-none border border-[#30303A] bg-[#11151C]/95 p-8 shadow-[0_0_0_1px_rgba(255,230,0,0.12),0_0_22px_rgba(255,230,0,0.12)] lg:grid-cols-[1.55fr_1fr] lg:p-10 xl:p-12">
+        <div className="max-w-[720px]">
+          <p className="mb-5 inline-flex border border-[#FFE600]/40 bg-[#171B24] px-3 py-1 text-xs font-medium uppercase tracking-[0.14em] text-[#FFE600]">
+            Nearby players. Your next squad.
+          </p>
+          <h1 className="text-[3.1rem] font-black uppercase leading-[0.94] tracking-[-0.06em] text-white md:text-[5.1rem]">
+            Find Your Next
+            <span className="radiant-red block">Squad.</span>
+          </h1>
+          <p className="mt-6 max-w-[620px] text-xl leading-8 text-slate-300">
+            Gamers around you. Games you play. Teams you can join.
+          </p>
+          <div className="mt-8 flex flex-wrap gap-4">
+            <Link to="/find-gamers" className="inline-flex items-center justify-center rounded-[10px] bg-brand-600 px-7 py-4 text-base font-bold text-black shadow-[0_0_18px_rgba(255,230,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500">
+              Find Gamers Near Me
+            </Link>
+            <Link to="/my-teams" className="inline-flex items-center justify-center rounded-[10px] border border-white/40 bg-[#171717] px-7 py-4 text-base font-medium text-white transition-all duration-200 hover:border-brand-400 hover:text-brand-300">
+              Create a Squad
+            </Link>
+          </div>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
+          <div className="rounded-none border border-[#30303A] bg-[#171B24] p-5 shadow-[inset_0_0_0_1px_rgba(255,230,0,0.10)]">
+            <p className="mono text-xs uppercase tracking-[0.16em] text-slate-400">01 / Discover</p>
+            <p className="mt-4 text-xl font-bold text-white">Players nearby</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Find teammates by game, distance, skill and availability.</p>
+          </div>
+          <div className="rounded-none border border-[#30303A] bg-[#171B24] p-5 shadow-[inset_0_0_0_1px_rgba(255,230,0,0.10)]">
+            <p className="mono text-xs uppercase tracking-[0.16em] text-slate-400">02 / Squad up</p>
+            <p className="mt-4 text-xl font-bold text-white">Build your team</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">Invite players, manage your lobby and keep the conversation going.</p>
+          </div>
+          <div className="rounded-none border border-[#30303A] bg-[#171B24] p-5 sm:col-span-2">
+            <div className="flex items-center justify-between gap-4">
+              <div>
+                <p className="mono text-xs uppercase tracking-[0.16em] text-[#00A8FF]">Privacy first</p>
+                <p className="mt-2 text-sm text-slate-300">Nearby discovery uses approximate distance. Exact locations stay private.</p>
+              </div>
+              <span aria-hidden="true" className="hidden h-10 w-10 shrink-0 items-center justify-center border border-[#00A8FF]/50 text-[#00A8FF] sm:flex">â—Ž</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="popular-games" className="scroll-mt-24">
+        <div className="mb-8 flex items-center justify-between">
+          <h2 className="text-4xl font-black tracking-[-0.05em] text-white">Popular games</h2>
+          <Link className="radiant-red text-sm font-semibold transition-opacity hover:opacity-80" to="/games">Browse all</Link>
+        </div>
+        <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
+          {gamesLoading ? (
+            <p className="text-sm text-slate-400">Loading games...</p>
+          ) : gamesError ? (
+            <p role="alert" className="border border-danger-500/40 bg-danger-500/10 px-4 py-3 text-sm text-red-200">{gamesError}</p>
+          ) : games.length ? (
+            games.map((game) => <GameCard key={game._id || game.name} {...game} />)
+          ) : (
+            <p className="text-sm text-slate-400">No games are available yet.</p>
+          )}
+        </div>
+      </section>
+
+      <section className="grid gap-6 lg:grid-cols-3">
+        {[
+          ['1', 'Set your game and filters', 'Choose your favorite title, language, microphone preference, and skill level.'],
+          ['2', 'Find nearby gamers', 'Match with players close to your current location and check their online status.'],
+          ['3', 'Send requests & play', 'Invite the right teammate and build a team quickly before your next match starts.'],
+        ].map(([step, title, text]) => (
+          <div key={step} className="relative overflow-hidden rounded-none border border-[#30303A] bg-[#11151C] p-6 shadow-[inset_0_1px_0_rgba(255,230,0,0.08)] transition-all duration-200 hover:-translate-y-1 hover:border-[#FFE600]/50">
+            <div className="mb-4 flex h-10 w-10 items-center justify-center rounded-none border border-[#FFE600]/60 bg-[#FFE600] font-bold text-[#080A0F] shadow-[0_0_16px_rgba(255,230,0,0.18)]">{step}</div>
+            <h3 className="mb-2 text-xl font-bold text-white">{title}</h3>
+            <p className="text-sm leading-6 text-slate-300">{text}</p>
+          </div>
+        ))}
+      </section>
+    </div>
+  );
+};
+
+export default Home;
+
+
+
+================================================
+FILE: client/src/pages/Login.jsx
+================================================
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginUser } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
+
+const Login = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({ email: '', password: '' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await loginUser(formData);
+      login(response.data.user, response.data.token);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.message || (
+        err.code === 'ERR_NETWORK'
+          ? 'Cannot reach the GameMate server. Check the server is running and reload this page.'
+          : 'Unable to login. Please try again.'
+      ));
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="mx-auto max-w-md rounded-3xl border border-[#30303A] bg-[#11151C]/95 p-8 shadow-[0_0_0_1px_rgba(255,230,0,0.10),0_0_22px_rgba(255,230,0,0.10)]">
+      <h1 className="text-3xl font-bold text-white">Welcome back</h1>
+      <p className="mt-2 text-sm text-slate-400">Log in with the email and password you used to create your account.</p>
+
+      <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+        <label className="block text-sm text-slate-300">
+          <span className="mb-2 block">Email</span>
+          <input
+            type="email"
+            autoComplete="email"
+            required
+            value={formData.email}
+            onChange={(event) => setFormData({ ...formData, email: event.target.value })}
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+          />
+        </label>
+        <label className="block text-sm text-slate-300">
+          <span className="mb-2 block">Password</span>
+          <input
+            type="password"
+            autoComplete="current-password"
+            required
+            value={formData.password}
+            onChange={(event) => setFormData({ ...formData, password: event.target.value })}
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+          />
+        </label>
+
+        {error && <p role="alert" className="border border-danger-500/40 bg-danger-500/10 px-3 py-2 text-sm text-red-200">{error}</p>}
+
+        <button type="submit" disabled={loading} className="w-full rounded-xl bg-brand-600 px-4 py-3 font-bold text-black hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-70">
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-slate-400">
+        Donâ€™t have an account?{' '}
+        <Link to="/register" className="radiant-red font-medium">
+          Create one
+        </Link>
+      </p>
+    </div>
+  );
+};
+
+export default Login;
+
+
+
+================================================
+FILE: client/src/pages/MyTeams.jsx
+================================================
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
+import {
+  createTeam,
+  getMyTeams,
+  joinTeamByLobbyCode,
+  leaveTeam,
+  transferTeamLeadership,
+} from '../services/teamService';
+
+const MyTeams = () => {
+  const { user } = useAuth();
+  const [teams, setTeams] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [copiedCode, setCopiedCode] = useState('');
+  const [lobbyCode, setLobbyCode] = useState('');
+  const [newTeamGame, setNewTeamGame] = useState('');
+  const [newTeamSize, setNewTeamSize] = useState('4');
+  const [creatingTeam, setCreatingTeam] = useState(false);
+  const [selectedLeaders, setSelectedLeaders] = useState({});
+  const [busyTeamId, setBusyTeamId] = useState('');
+  const [feedback, setFeedback] = useState('');
+
+  const loadTeams = async () => {
+    setLoading(true);
+
+    try {
+      const response = await getMyTeams();
+      setTeams(response.data || []);
+    } catch (error) {
+      console.error('Unable to load teams', error);
+      setTeams([]);
+      setFeedback(error.response?.data?.message || 'Unable to load your teams right now.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadTeams();
+  }, []);
+
+  const handleLeave = async (teamId) => {
+    if (!window.confirm('Leave this team?')) {
+      return;
+    }
+
+    setFeedback('');
+    try {
+      await leaveTeam(teamId);
+      await loadTeams();
+    } catch (error) {
+      setFeedback(error.response?.data?.message || 'Unable to leave this team right now.');
+    }
+  };
+
+  const handleShareLobbyCode = async (team) => {
+    try {
+      await navigator.clipboard.writeText(team.lobbyCode);
+      setCopiedCode(team._id);
+      setTimeout(() => setCopiedCode(''), 1600);
+    } catch (error) {
+      setFeedback('Could not access the clipboard. Copy the lobby code directly.');
+    }
+  };
+
+  const handleJoinTeam = async (event) => {
+    event.preventDefault();
+    setFeedback('');
+
+    try {
+      await joinTeamByLobbyCode(lobbyCode);
+      setLobbyCode('');
+      setFeedback('You joined the team lobby.');
+      await loadTeams();
+    } catch (error) {
+      setFeedback(error.response?.data?.message || 'Unable to join this lobby right now.');
+    }
+  };
+
+  const handleCreateTeam = async (event) => {
+    event.preventDefault();
+    setFeedback('');
+    setCreatingTeam(true);
+
+    try {
+      const response = await createTeam({
+        game: newTeamGame.trim(),
+        maxPlayers: Number(newTeamSize),
+      });
+      setNewTeamGame('');
+      setNewTeamSize('4');
+      setFeedback(`Your ${response.data.game} squad is ready. Share its lobby code to invite players.`);
+      await loadTeams();
+    } catch (error) {
+      setFeedback(error.response?.data?.message || 'Unable to create your squad right now.');
+    } finally {
+      setCreatingTeam(false);
+    }
+  };
+
+  const handleTransferLeadership = async (teamId) => {
+    const memberId = selectedLeaders[teamId];
+    if (!memberId) {
+      setFeedback('Choose a team member before transferring leadership.');
+      return;
+    }
+
+    setBusyTeamId(teamId);
+    setFeedback('');
+    try {
+      await transferTeamLeadership(teamId, memberId);
+      setFeedback('Team leadership transferred.');
+      await loadTeams();
+    } catch (error) {
+      setFeedback(error.response?.data?.message || 'Unable to transfer team leadership.');
+    } finally {
+      setBusyTeamId('');
+    }
+  };
+
+  return (
+    <div className="space-y-6">
+      <section className="flex flex-col gap-5 rounded-3xl border border-slate-800 bg-slate-900 p-6 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-sm font-semibold uppercase tracking-wider text-brand-300">Your squads</p>
+          <h1 className="mt-2 text-3xl font-bold text-white">My Teams</h1>
+          <p className="mt-2 text-slate-400">Share a lobby code to bring your squad together, or join a teammate's lobby.</p>
+        </div>
+        <form onSubmit={handleJoinTeam} className="flex w-full gap-2 sm:max-w-md">
+          <label className="sr-only" htmlFor="lobby-code">Lobby code</label>
+          <input
+            id="lobby-code"
+            value={lobbyCode}
+            onChange={(event) => setLobbyCode(event.target.value.toUpperCase())}
+            placeholder="Enter 10-character code"
+            maxLength={10}
+            autoComplete="off"
+            className="min-w-0 flex-1 rounded-xl border border-slate-700 bg-slate-950 px-3 py-2 text-sm uppercase tracking-widest text-white placeholder:normal-case placeholder:tracking-normal"
+          />
+          <button type="submit" disabled={lobbyCode.trim().length !== 10} className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-black hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-50">
+            Join lobby
+          </button>
+        </form>
+      </section>
+
+      <section className="border border-[#30303A] bg-[#11151C] p-5">
+        <div className="mb-4">
+          <p className="mono text-[10px] uppercase tracking-[0.2em] text-brand-300">New lobby</p>
+          <h2 className="mt-1 text-xl font-bold text-white">Create a squad</h2>
+          <p className="mt-1 text-sm text-slate-400">Choose a game and squad size, then share the generated lobby code.</p>
+        </div>
+        <form onSubmit={handleCreateTeam} className="grid gap-3 sm:grid-cols-[1fr_10rem_auto]">
+          <label className="sr-only" htmlFor="new-team-game">Game</label>
+          <input
+            id="new-team-game"
+            value={newTeamGame}
+            onChange={(event) => setNewTeamGame(event.target.value)}
+            placeholder="Game title"
+            required
+            maxLength={80}
+            className="min-w-0 border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white placeholder:text-slate-500"
+          />
+          <label className="sr-only" htmlFor="new-team-size">Maximum squad size</label>
+          <select
+            id="new-team-size"
+            value={newTeamSize}
+            onChange={(event) => setNewTeamSize(event.target.value)}
+            className="border border-slate-700 bg-slate-950 px-3 py-2 text-sm text-white"
+          >
+            {[2, 3, 4, 5, 6, 7, 8, 9, 10].map((size) => <option key={size} value={size}>{size} players</option>)}
+          </select>
+          <button type="submit" disabled={!newTeamGame.trim() || creatingTeam} className="border border-brand-400 bg-brand-400 px-5 py-2 text-sm font-bold text-black transition-all hover:bg-brand-300 disabled:cursor-not-allowed disabled:opacity-50">
+            {creatingTeam ? 'Creating...' : 'Create squad'}
+          </button>
+        </form>
+      </section>
+
+      {feedback && <p role="status" className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-sm text-slate-200">{feedback}</p>}
+
+      {loading ? (
+        <div className="text-slate-300">Loading teams...</div>
+      ) : teams.length === 0 ? (
+        <div className="card p-6 text-slate-300">You are not in any active teams yet.</div>
+      ) : (
+        teams.map((team) => {
+          const leaderId = team.leader?._id || team.leader;
+          const memberList = [...new Map(
+            [team.leader, ...(team.members || [])]
+              .filter(Boolean)
+              .map((member) => [member._id || member, member])
+          ).values()];
+          const teamSize = memberList.length;
+          const isLeader = leaderId === user?._id;
+          const transferableMembers = memberList.filter((member) => (member._id || member) !== leaderId);
+
+          return (
+            <div key={team._id} className="card p-6">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <h2 className="text-2xl font-bold text-white">
+                    <Link to={`/teams/${team._id}`} className="hover:text-brand-300">{team.game} Squad</Link>
+                  </h2>
+                  <p className="mt-2 text-slate-400">
+                    {teamSize} / {team.maxPlayers || 4} players Â· Led by {team.leader?.username || 'your team'}
+                  </p>
+                </div>
+                <div className="rounded-xl border border-brand-500/30 bg-brand-500/10 px-3 py-2 text-sm text-brand-200">
+                  Lobby: <span className="font-mono font-bold tracking-widest">{team.lobbyCode}</span>
+                </div>
+              </div>
+
+              <div className="mt-4 flex flex-wrap gap-2">
+                {memberList.map((member) => (
+                  <span key={member._id || member} className="rounded-full border border-slate-600 bg-slate-800 px-2.5 py-1 text-xs text-slate-200">
+                    {member.username || 'Player'}{(member._id || member) === leaderId ? ' Â· Leader' : ''}
+                  </span>
+                ))}
+              </div>
+
+              <div className="mt-5 flex flex-wrap gap-3">
+                <Link to={`/teams/${team._id}`} className="rounded-xl border border-slate-700 bg-slate-900 px-4 py-2 text-sm font-medium text-white hover:border-brand-400 hover:text-brand-300">
+                  Squad details
+                </Link>
+                <Link to={`/chat/${team._id}`} className="rounded-xl bg-brand-600 px-4 py-2 text-sm font-bold text-black">
+                  Chat
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => handleShareLobbyCode(team)}
+                  className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-sm text-white"
+                >
+                  {copiedCode === team._id ? 'Copied!' : 'Share Lobby Code'}
+                </button>
+                {isLeader && transferableMembers.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    <label className="sr-only" htmlFor={`leader-${team._id}`}>New team leader</label>
+                    <select
+                      id={`leader-${team._id}`}
+                      value={selectedLeaders[team._id] || ''}
+                      onChange={(event) => setSelectedLeaders({ ...selectedLeaders, [team._id]: event.target.value })}
+                      className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-sm text-white"
+                    >
+                      <option value="">Transfer leadership...</option>
+                      {transferableMembers.map((member) => (
+                        <option key={member._id || member} value={member._id || member}>{member.username || 'Player'}</option>
+                      ))}
+                    </select>
+                    <button
+                      type="button"
+                      disabled={!selectedLeaders[team._id] || busyTeamId === team._id}
+                      onClick={() => handleTransferLeadership(team._id)}
+                      className="rounded-xl border border-brand-400/40 bg-brand-400/10 px-4 py-2 text-sm text-brand-200 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      {busyTeamId === team._id ? 'Transferring...' : 'Transfer leader'}
+                    </button>
+                  </div>
+                )}
+                <button
+                  type="button"
+                  onClick={() => handleLeave(team._id)}
+                  className="rounded-xl border border-red-500/40 bg-red-500/10 px-4 py-2 text-sm text-red-300"
+                >
+                  Leave Team
+                </button>
+              </div>
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+};
+
+export default MyTeams;
+
+
+
+================================================
+FILE: client/src/pages/Notifications.jsx
+================================================
+import { useEffect, useState } from 'react';
+import TeamRequestCard from '../components/TeamRequestCard';
+import { getTeamRequests, acceptTeamRequest, rejectTeamRequest } from '../services/teamService';
+import { useAuth } from '../context/AuthContext';
+
+const Notifications = () => {
+  const { user } = useAuth();
+  const [requests, setRequests] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [feedback, setFeedback] = useState('');
+
+  const loadRequests = async () => {
+    setLoading(true);
+
+    try {
+      const response = await getTeamRequests();
+      setRequests(response.data || []);
+    } catch (error) {
+      console.error('Unable to load requests', error);
+      setRequests([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadRequests();
+  }, []);
+
+  const handleAccept = async (request) => {
+    setFeedback('');
+    try {
+      await acceptTeamRequest(request._id);
+      await loadRequests();
+    } catch (error) {
+      setFeedback(error.response?.data?.message || 'Unable to accept this request.');
+    }
+  };
+
+  const handleReject = async (request) => {
+    setFeedback('');
+    try {
+      await rejectTeamRequest(request._id);
+      await loadRequests();
+    } catch (error) {
+      setFeedback(error.response?.data?.message || 'Unable to reject this request.');
+    }
+  };
+
+  const incomingRequests = requests.filter(
+    (request) => request.status === 'pending' && request.receiver?._id === user?._id
+  );
+  const sentRequests = requests.filter((request) => request.sender?._id === user?._id);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold text-white">Team requests</h1>
+        <p className="mt-2 text-slate-400">Review invitations youâ€™ve received and track the ones youâ€™ve sent.</p>
+      </div>
+      {feedback && <p role="alert" className="rounded-xl border border-red-500/30 bg-red-500/10 px-4 py-3 text-sm text-red-200">{feedback}</p>}
+      {loading ? (
+        <div className="text-slate-300">Loading requests...</div>
+      ) : (
+        <div className="grid gap-8 lg:grid-cols-2">
+          <section className="space-y-4">
+            <div>
+              <h2 className="text-xl font-bold text-white">Received</h2>
+              <p className="mt-1 text-sm text-slate-400">Accept or decline incoming team invitations.</p>
+            </div>
+            {incomingRequests.length === 0 ? (
+              <div className="card p-5 text-slate-300">No pending invitations right now.</div>
+            ) : incomingRequests.map((request) => (
+              <TeamRequestCard key={request._id} request={request} onAccept={handleAccept} onReject={handleReject} />
+            ))}
+          </section>
+
+          <section className="space-y-4">
+            <div>
+              <h2 className="text-xl font-bold text-white">Sent</h2>
+              <p className="mt-1 text-sm text-slate-400">Keep track of your outgoing requests.</p>
+            </div>
+            {sentRequests.length === 0 ? (
+              <div className="card p-5 text-slate-300">You havenâ€™t sent any requests yet.</div>
+            ) : sentRequests.map((request) => (
+              <TeamRequestCard key={request._id} request={request} direction="outgoing" showActions={false} />
+            ))}
+          </section>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Notifications;
+
+
+
+================================================
+FILE: client/src/pages/Register.jsx
+================================================
+import { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { registerUser } from '../services/authService';
+import { useAuth } from '../context/AuthContext';
+
+const Register = () => {
+  const navigate = useNavigate();
+  const { login } = useAuth();
+  const [formData, setFormData] = useState({
+    username: '',
+    email: '',
+    password: '',
+    bio: '',
+  });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await registerUser(formData);
+      login(response.data.user, response.data.token);
+      navigate('/dashboard');
+    } catch (err) {
+      setError(err.response?.data?.message || 'Unable to create your account.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="mx-auto max-w-lg rounded-3xl border border-[#30303A] bg-[#11151C]/95 p-8 shadow-[0_0_0_1px_rgba(255,230,0,0.10),0_0_22px_rgba(255,230,0,0.10)]">
+      <h1 className="text-3xl font-bold text-white">Create your profile</h1>
+      <p className="mt-2 text-sm text-slate-400">Join the GameMate community and start matching.</p>
+
+      <form className="mt-8 grid gap-5 md:grid-cols-2" onSubmit={handleSubmit}>
+        <label className="block text-sm text-slate-300 md:col-span-1">
+          <span className="mb-2 block">Username</span>
+          <input
+            type="text"
+            autoComplete="username"
+            required
+            minLength={2}
+            value={formData.username}
+            onChange={(event) => setFormData({ ...formData, username: event.target.value })}
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+          />
+        </label>
+        <label className="block text-sm text-slate-300 md:col-span-1">
+          <span className="mb-2 block">Email</span>
+          <input
+            type="email"
+            autoComplete="email"
+            required
+            value={formData.email}
+            onChange={(event) => setFormData({ ...formData, email: event.target.value })}
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+          />
+        </label>
+        <label className="block text-sm text-slate-300 md:col-span-2">
+          <span className="mb-2 block">Password</span>
+          <input
+            type="password"
+            autoComplete="new-password"
+            required
+            minLength={6}
+            value={formData.password}
+            onChange={(event) => setFormData({ ...formData, password: event.target.value })}
+            className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+          />
+        </label>
+        <label className="block text-sm text-slate-300 md:col-span-2">
+          <span className="mb-2 block">Bio</span>
+          <textarea
+            value={formData.bio}
+            onChange={(event) => setFormData({ ...formData, bio: event.target.value })}
+            className="h-24 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+          />
+        </label>
+
+        {error && <p role="alert" className="md:col-span-2 border border-danger-500/40 bg-danger-500/10 px-3 py-2 text-sm text-red-200">{error}</p>}
+
+        <button type="submit" disabled={loading} className="md:col-span-2 w-full rounded-xl bg-brand-600 px-4 py-3 font-bold text-black hover:bg-brand-500 disabled:cursor-not-allowed disabled:opacity-70">
+          {loading ? 'Creating account...' : 'Register'}
+        </button>
+      </form>
+
+      <p className="mt-6 text-center text-sm text-slate-400">
+        Already a player?{' '}
+        <Link to="/login" className="radiant-red font-medium">
+          Sign in
+        </Link>
+      </p>
+    </div>
+  );
+};
+
+export default Register;
+
+
+
+================================================
+FILE: client/src/pages/Settings.jsx
+================================================
+import { useEffect, useState } from 'react';
+import { getProfile, updateLocation, updateProfile, updateStatus } from '../services/gamerService';
+import { useAuth } from '../context/AuthContext';
+
+const Settings = () => {
+  const { user, setUser } = useAuth();
+  const [formData, setFormData] = useState({
+    username: '',
+    bio: '',
+    games: '',
+    preferredLanguages: '',
+    microphoneAvailable: false,
+    gamingStatus: 'Looking for Team',
+    skillLevel: 'Intermediate',
+  });
+  const [locationData, setLocationData] = useState({ latitude: '', longitude: '' });
+  const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState('');
+
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await getProfile();
+        const profile = response.data;
+        setFormData({
+          username: profile.username || '',
+          bio: profile.bio || '',
+          games: Array.isArray(profile.games) ? profile.games.join(', ') : '',
+          preferredLanguages: Array.isArray(profile.preferredLanguages) ? profile.preferredLanguages.join(', ') : '',
+          microphoneAvailable: Boolean(profile.microphoneAvailable),
+          gamingStatus: profile.gamingStatus || 'Looking for Team',
+          skillLevel: profile.skillLevel || 'Intermediate',
+        });
+      } catch (error) {
+        console.error('Unable to load profile', error);
+      }
+    };
+
+    if (user) {
+      fetchProfile();
+    }
+  }, [user]);
+
+  const handleUseCurrentLocation = () => {
+    if (!navigator.geolocation) {
+      setFeedback('Location access is not supported by this browser.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        setFeedback('Location captured. Save your profile to update nearby discovery.');
+        setLocationData({
+          latitude: position.coords.latitude.toString(),
+          longitude: position.coords.longitude.toString(),
+        });
+      },
+      (error) => {
+        setFeedback(error.message || 'Location permission was denied.');
+      }
+    );
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setSaving(true);
+    setFeedback('');
+
+    try {
+      const payload = {
+        username: formData.username,
+        bio: formData.bio,
+        games: formData.games.split(',').map((item) => item.trim()).filter(Boolean),
+        preferredLanguages: formData.preferredLanguages.split(',').map((item) => item.trim()).filter(Boolean),
+        microphoneAvailable: formData.microphoneAvailable,
+        skillLevel: formData.skillLevel,
+      };
+
+      const profileResponse = await updateProfile(payload);
+      const statusResponse = await updateStatus(formData.gamingStatus);
+
+      if (locationData.latitude && locationData.longitude) {
+        await updateLocation(Number(locationData.latitude), Number(locationData.longitude));
+      }
+
+      setUser({ ...profileResponse.data, gamingStatus: statusResponse.data.gamingStatus });
+      setFeedback('Profile saved.');
+    } catch (error) {
+      console.error('Profile update failed', error);
+      setFeedback(error.response?.data?.message || 'Profile update failed. Please try again.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div className="mx-auto max-w-3xl rounded-none border border-[#30303A] bg-[#11151C] p-8">
+      <h1 className="text-3xl font-bold text-white">Settings</h1>
+      <p className="mt-2 text-sm text-slate-400">Manage your player identity, games, availability and discovery location.</p>
+      <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
+        <div className="grid gap-5 md:grid-cols-2">
+          <label className="block text-sm text-slate-300 md:col-span-1">
+            <span className="mb-2 block">Username</span>
+            <input
+              value={formData.username}
+              onChange={(event) => setFormData({ ...formData, username: event.target.value })}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            />
+          </label>
+          <label className="block text-sm text-slate-300 md:col-span-1">
+            <span className="mb-2 block">Skill Level</span>
+            <select
+              value={formData.skillLevel}
+              onChange={(event) => setFormData({ ...formData, skillLevel: event.target.value })}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            >
+              <option>Beginner</option>
+              <option>Intermediate</option>
+              <option>Advanced</option>
+              <option>Pro</option>
+            </select>
+          </label>
+          <label className="block text-sm text-slate-300 md:col-span-2">
+            <span className="mb-2 block">Bio</span>
+            <textarea
+              value={formData.bio}
+              onChange={(event) => setFormData({ ...formData, bio: event.target.value })}
+              className="h-28 w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            />
+          </label>
+          <label className="block text-sm text-slate-300 md:col-span-1">
+            <span className="mb-2 block">Games</span>
+            <input
+              value={formData.games}
+              onChange={(event) => setFormData({ ...formData, games: event.target.value })}
+              placeholder="Among Us, Valorant"
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            />
+          </label>
+          <label className="block text-sm text-slate-300 md:col-span-1">
+            <span className="mb-2 block">Preferred Languages</span>
+            <input
+              value={formData.preferredLanguages}
+              onChange={(event) => setFormData({ ...formData, preferredLanguages: event.target.value })}
+              placeholder="English, Telugu"
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            />
+          </label>
+          <label className="block text-sm text-slate-300 md:col-span-1">
+            <span className="mb-2 block">Gaming Status</span>
+            <select
+              value={formData.gamingStatus}
+              onChange={(event) => setFormData({ ...formData, gamingStatus: event.target.value })}
+              className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"
+            >
+              <option>Online</option>
+              <option>Looking for Team</option>
+              <option>In Game</option>
+              <option>Offline</option>
+            </select>
+          </label>
+          <label className="flex items-center gap-3 rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-sm text-slate-300 md:col-span-1">
+            <input
+              type="checkbox"
+              checked={formData.microphoneAvailable}
+              onChange={(event) => setFormData({ ...formData, microphoneAvailable: event.target.checked })}
+              className="h-4 w-4 accent-brand-600"
+            />
+            Microphone available
+          </label>
+        </div>
+
+        <div className="rounded-2xl border border-slate-700 bg-slate-950 p-4">
+          <div className="mb-3 flex items-center justify-between gap-3">
+            <h2 className="text-lg font-semibold text-white">Location</h2>
+            <button
+              type="button"
+              onClick={handleUseCurrentLocation}
+              className="rounded-xl border border-slate-600 bg-slate-800 px-3 py-2 text-sm text-slate-100 hover:border-brand-500"
+            >
+              Use My Location
+            </button>
+          </div>
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="block text-sm text-slate-300">
+              <span className="mb-2 block">Latitude</span>
+              <input
+                value={locationData.latitude}
+                onChange={(event) => setLocationData({ ...locationData, latitude: event.target.value })}
+                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-3 text-white"
+              />
+            </label>
+            <label className="block text-sm text-slate-300">
+              <span className="mb-2 block">Longitude</span>
+              <input
+                value={locationData.longitude}
+                onChange={(event) => setLocationData({ ...locationData, longitude: event.target.value })}
+                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-3 py-3 text-white"
+              />
+            </label>
+          </div>
+        </div>
+
+        {feedback && <p role="status" className="border border-[#ff1744]/35 bg-[#ff1744]/10 px-4 py-3 text-sm text-red-200">{feedback}</p>}
+        <button type="submit" disabled={saving} className="rounded-xl bg-brand-600 px-5 py-3 font-bold text-black hover:bg-brand-500 disabled:opacity-70">
+          {saving ? 'Saving...' : 'Save Profile'}
+        </button>
+      </form>
+    </div>
+  );
+};
+
+export default Settings;
+
+
+
+================================================
+FILE: client/src/pages/TeamDetails.jsx
+================================================
+Error reading file with 'cp1252': 'charmap' codec can't decode byte 0x90 in position 4766: character maps to <undefined>
+
+
+================================================
+FILE: client/src/services/api.js
+================================================
+import axios from 'axios';
+import { resolveBackendUrl } from './backendUrl';
+
+const apiBaseUrl = resolveBackendUrl(import.meta.env.VITE_API_URL, 5000, '/api');
+
+const api = axios.create({
+  baseURL: apiBaseUrl,
+  timeout: 10000,
+});
+
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('gamemate_token');
+
+  if (token) {
+    config.headers = {
+      ...config.headers,
+      Authorization: `Bearer ${token}`,
+    };
+  }
+
+  return config;
+});
+
+export default api;
+
+
+
+================================================
+FILE: client/src/services/authService.js
+================================================
+import api from './api';
+
+export const registerUser = async (payload) => {
+  const { data } = await api.post('/auth/register', payload);
+  return data;
+};
+
+export const loginUser = async (payload) => {
+  const { data } = await api.post('/auth/login', payload);
+  return data;
+};
+
+export const getCurrentUser = async () => {
+  const { data } = await api.get('/auth/me');
+  return data;
+};
+
+
+
+================================================
+FILE: client/src/services/backendUrl.js
+================================================
+const isLoopback = (hostname) => (
+  hostname === 'localhost'
+  || hostname === '127.0.0.1'
+  || hostname === '[::1]'
+);
+
+export const resolveBackendUrl = (configuredUrl, fallbackPort, fallbackPath = '') => {
+  const browserHostname = window.location.hostname;
+
+  if (!configuredUrl) {
+    return `${window.location.protocol}//${browserHostname}:${fallbackPort}${fallbackPath}`;
+  }
+
+  try {
+    const backendUrl = new URL(configuredUrl);
+    if (!isLoopback(browserHostname) && isLoopback(backendUrl.hostname)) {
+      backendUrl.hostname = browserHostname;
+    }
+    return backendUrl.toString().replace(/\/$/, '');
+  } catch {
+    return configuredUrl;
+  }
+};
+
+
+
+================================================
+FILE: client/src/services/chatService.js
+================================================
+import api from './api';
+
+export const getTeamMessages = async (teamId) => {
+  const { data } = await api.get(`/chat/${teamId}/messages`);
+  return data;
+};
+
+export const sendTeamMessage = async (teamId, text) => {
+  const { data } = await api.post(`/chat/${teamId}/messages`, { text });
+  return data;
+};
+
+
+
+================================================
+FILE: client/src/services/gamerService.js
+================================================
+import api from './api';
+
+export const getProfile = async () => {
+  const { data } = await api.get('/gamers/me');
+  return data;
+};
+
+export const getNearbyGamers = async (params) => {
+  const { data } = await api.get('/gamers/nearby', { params });
+  return data;
+};
+
+export const getGamers = async () => {
+  const { data } = await api.get('/gamers');
+  return data;
+};
+
+export const getGamerById = async (gamerId) => {
+  const { data } = await api.get(`/gamers/${gamerId}`);
+  return data;
+};
+
+export const updateProfile = async (payload) => {
+  const { data } = await api.put('/gamers/profile', payload);
+  return data;
+};
+
+export const updateStatus = async (gamingStatus) => {
+  const { data } = await api.put('/gamers/status', { gamingStatus });
+  return data;
+};
+
+export const updateLocation = async (latitude, longitude) => {
+  const { data } = await api.put('/gamers/location', { latitude, longitude });
+  return data;
+};
+
+
+
+================================================
+FILE: client/src/services/gameService.js
+================================================
+import api from './api';
+
+export const getGames = async () => {
+  const { data } = await api.get('/games');
+  return data;
+};
+
+
+
+================================================
+FILE: client/src/services/notificationService.js
+================================================
+import api from './api';
+
+export const getNotifications = async () => {
+  const { data } = await api.get('/notifications');
+  return data;
+};
+
+export const markNotificationsRead = async () => {
+  const { data } = await api.put('/notifications/read-all');
+  return data;
+};
+
+
+
+================================================
+FILE: client/src/services/teamService.js
+================================================
+import api from './api';
+
+export const getMyTeams = async () => {
+  const { data } = await api.get('/teams');
+  return data;
+};
+
+export const getTeamById = async (teamId) => {
+  const { data } = await api.get(`/teams/${teamId}`);
+  return data;
+};
+
+export const createTeam = async (payload) => {
+  const { data } = await api.post('/teams', payload);
+  return data;
+};
+
+export const getTeamRequests = async () => {
+  const { data } = await api.get('/teams/requests');
+  return data;
+};
+
+export const sendTeamRequest = async (payload) => {
+  const { data } = await api.post('/teams/requests', payload);
+  return data;
+};
+
+export const acceptTeamRequest = async (id) => {
+  const { data } = await api.put(`/teams/requests/${id}/accept`);
+  return data;
+};
+
+export const rejectTeamRequest = async (id) => {
+  const { data } = await api.put(`/teams/requests/${id}/reject`);
+  return data;
+};
+
+export const leaveTeam = async (teamId) => {
+  const { data } = await api.post(`/teams/${teamId}/leave`);
+  return data;
+};
+
+export const transferTeamLeadership = async (teamId, memberId) => {
+  const { data } = await api.put(`/teams/${teamId}/leadership`, { memberId });
+  return data;
+};
+
+export const joinTeamByLobbyCode = async (lobbyCode) => {
+  const { data } = await api.post('/teams/join', { lobbyCode });
+  return data;
+};
+
+
+
+================================================
+FILE: server/package.json
+================================================
+{
+  "name": "gamemate-server",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "seed:demo": "node scripts/seedDemoData.js"
+  },
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.5.1",
+    "socket.io": "^4.7.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
+
+
+
+================================================
+FILE: server/server.js
+================================================
+const express = require('express');
+const http = require('http');
+const cors = require('cors');
+const dotenv = require('dotenv');
+const connectDB = require('./config/db');
+const isAllowedClientOrigin = require('./config/clientOrigin');
+const authRoutes = require('./routes/authRoutes');
+const gamerRoutes = require('./routes/gamerRoutes');
+const gameRoutes = require('./routes/gameRoutes');
+const teamRoutes = require('./routes/teamRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+const { errorHandler } = require('./middleware/errorMiddleware');
+const socketHandler = require('./socket/socketHandler');
+const seedGames = require('./utils/seedGames');
+
+dotenv.config({ path: './.env' });
+
+const app = express();
+const server = http.createServer(app);
+const port = process.env.PORT || 5000;
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (isAllowedClientOrigin(origin)) {
+        return callback(null, true);
+      }
+
+      return callback(new Error('Client origin is not allowed by CORS'));
+    },
+    credentials: true,
+  })
+);
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
+app.get('/api/health', (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: 'GameMate server is running',
+    data: { status: 'healthy' },
+  });
+});
+
+app.use('/api/auth', authRoutes);
+app.use('/api/gamers', gamerRoutes);
+app.use('/api/games', gameRoutes);
+app.use('/api/teams', teamRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/chat', chatRoutes);
+
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: 'Route not found',
+  });
+});
+
+app.use(errorHandler);
+
+connectDB().then((connection) => {
+  if (connection) {
+    seedGames();
+  }
+});
+socketHandler(server);
+
+server.listen(port, () => {
+  console.log(`GameMate server running on port ${port}`);
+});
+
+
+
+================================================
+FILE: server/.env.example
+================================================
+MONGO_URI=mongodb://127.0.0.1:27017/gamemate
+JWT_SECRET=your_jwt_secret_here
+PORT=5000
+CLIENT_URL=http://localhost:5173
+# Leave false for normal use; set true only when intentionally running `npm run seed:demo`.
+SEED_DEMO_DATA=false
+# A private password of at least 12 characters for the seeded demo account.
+DEMO_SEED_PASSWORD=replace_with_a_local_demo_password_at_least_12_chars
+
+
+
+================================================
+FILE: server/config/clientOrigin.js
+================================================
+const isPrivateIpv4 = (hostname) => {
+  const octets = hostname.split('.').map(Number);
+  if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet) || octet < 0 || octet > 255)) {
+    return false;
+  }
+
+  return octets[0] === 10
+    || (octets[0] === 172 && octets[1] >= 16 && octets[1] <= 31)
+    || (octets[0] === 192 && octets[1] === 168);
+};
+
+const isViteDevPort = (port) => {
+  const portNumber = Number(port);
+  return Number.isInteger(portNumber) && portNumber >= 5173 && portNumber <= 5179;
+};
+
+const isAllowedClientOrigin = (origin) => {
+  if (!origin) {
+    return true;
+  }
+
+  const configuredOrigins = (process.env.CLIENT_URL || 'http://localhost:5173')
+    .split(',')
+    .map((configuredOrigin) => configuredOrigin.trim())
+    .filter(Boolean);
+
+  if (configuredOrigins.includes(origin)) {
+    return true;
+  }
+
+  if (process.env.NODE_ENV === 'production') {
+    return false;
+  }
+
+  try {
+    const parsedOrigin = new URL(origin);
+    if (parsedOrigin.protocol !== 'http:' || !isViteDevPort(parsedOrigin.port)) {
+      return false;
+    }
+
+    const hostname = parsedOrigin.hostname.toLowerCase();
+    return hostname === 'localhost'
+      || hostname === '127.0.0.1'
+      || hostname === '[::1]'
+      || isPrivateIpv4(hostname);
+  } catch {
+    return false;
+  }
+};
+
+module.exports = isAllowedClientOrigin;
+
+
+
+================================================
+FILE: server/config/db.js
+================================================
+const mongoose = require('mongoose');
+
+const connectDB = async () => {
+  const mongoURI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/gamemate';
+
+  try {
+    const connection = await mongoose.connect(mongoURI);
+    console.log(`MongoDB connected: ${connection.connection.host}`);
+    return connection;
+  } catch (error) {
+    console.error('MongoDB connection error:', error.message);
+    console.warn('The server will continue in local development mode without a database connection.');
+    return null;
+  }
+};
+
+module.exports = connectDB;
+
+
+
+================================================
+FILE: server/controllers/authController.js
+================================================
+const bcrypt = require('bcrypt');
+const User = require('../models/User');
+const generateToken = require('../utils/generateToken');
+
+const registerUser = async (req, res, next) => {
+  try {
+    const { username, email, password, profileImage, age, games, preferredLanguages, microphoneAvailable, bio } = req.body;
+
+    if (!username || !email || !password) {
+      return res.status(400).json({ success: false, message: 'Username, email, and password are required' });
+    }
+
+    const existingUser = await User.findOne({ email: email.toLowerCase() });
+
+    if (existingUser) {
+      return res.status(409).json({ success: false, message: 'User with that email already exists' });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const user = await User.create({
+      username,
+      email: email.toLowerCase(),
+      password: hashedPassword,
+      profileImage,
+      age,
+      games: games || [],
+      preferredLanguages: preferredLanguages || [],
+      microphoneAvailable: microphoneAvailable || false,
+      bio,
+      gamingStatus: 'Looking for Team',
+    });
+
+    const token = generateToken(user._id);
+
+    return res.status(201).json({
+      success: true,
+      data: {
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          profileImage: user.profileImage,
+          games: user.games,
+          preferredLanguages: user.preferredLanguages,
+          microphoneAvailable: user.microphoneAvailable,
+          bio: user.bio,
+        },
+        token,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const loginUser = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({ success: false, message: 'Email and password are required' });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    }
+
+    const token = generateToken(user._id);
+
+    return res.status(200).json({
+      success: true,
+      data: {
+        user: {
+          id: user._id,
+          username: user.username,
+          email: user.email,
+          profileImage: user.profileImage,
+          games: user.games,
+          preferredLanguages: user.preferredLanguages,
+          microphoneAvailable: user.microphoneAvailable,
+          bio: user.bio,
+          gamingStatus: user.gamingStatus,
+        },
+        token,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+const getCurrentUser = async (req, res) => {
+  return res.status(200).json({
+    success: true,
+    data: {
+      user: {
+        id: req.user._id,
+        username: req.user.username,
+        email: req.user.email,
+        profileImage: req.user.profileImage,
+        games: req.user.games,
+        preferredLanguages: req.user.preferredLanguages,
+        microphoneAvailable: req.user.microphoneAvailable,
+        bio: req.user.bio,
+        gamingStatus: req.user.gamingStatus,
+      },
+    },
+  });
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  getCurrentUser,
+};
+
+
+
+================================================
+FILE: server/controllers/chatController.js
+================================================
+const Team = require('../models/Team');
+const Message = require('../models/Message');
+const socketHandler = require('../socket/socketHandler');
+
+const getMessages = async (req, res) => {
+  const { teamId } = req.params;
+
+  const team = await Team.findById(teamId);
+
+  if (!team) {
+    return res.status(404).json({ success: false, message: 'Team not found' });
+  }
+
+  const isMember = team.leader.toString() === req.user._id.toString() || team.members.some((member) => member.toString() === req.user._id.toString());
+
+  if (!isMember) {
+    return res.status(403).json({ success: false, message: 'You are not allowed to view this team chat' });
+  }
+
+  const messages = await Message.find({ team: teamId })
+    .populate('sender', 'username profileImage')
+    .sort({ createdAt: 1 });
+
+  return res.status(200).json({
+    success: true,
+    data: messages,
+  });
+};
+
+const addMessage = async (req, res) => {
+  const { teamId } = req.params;
+  const { text } = req.body;
+
+  if (!text || !text.trim()) {
+    return res.status(400).json({ success: false, message: 'Message text is required' });
+  }
+
+  const team = await Team.findById(teamId);
+
+  if (!team) {
+    return res.status(404).json({ success: false, message: 'Team not found' });
+  }
+
+  const isMember = team.leader.toString() === req.user._id.toString() || team.members.some((member) => member.toString() === req.user._id.toString());
+
+  if (!isMember) {
+    return res.status(403).json({ success: false, message: 'You are not allowed to send in this team chat' });
+  }
+
+  const message = await Message.create({
+    sender: req.user._id,
+    team: teamId,
+    text: text.trim(),
+  });
+
+  const populatedMessage = await message.populate('sender', 'username profileImage');
+
+  if (socketHandler && typeof socketHandler.emitTeamMessage === 'function') {
+    socketHandler.emitTeamMessage(teamId, populatedMessage);
+  }
+
+  return res.status(201).json({
+    success: true,
+    data: populatedMessage,
+  });
+};
+
+module.exports = {
+  getMessages,
+  addMessage,
+};
+
+
+
+================================================
+FILE: server/controllers/gameController.js
+================================================
+const Game = require('../models/Game');
+
+const getGames = async (req, res) => {
+  const games = await Game.find().sort({ name: 1 });
+
+  return res.status(200).json({
+    success: true,
+    data: games,
+  });
+};
+
+const getGameById = async (req, res) => {
+  const game = await Game.findById(req.params.id);
+
+  if (!game) {
+    return res.status(404).json({ success: false, message: 'Game not found' });
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: game,
+  });
+};
+
+module.exports = {
+  getGames,
+  getGameById,
+};
+
+
+
+================================================
+FILE: server/controllers/gamerController.js
+================================================
+const User = require('../models/User');
+
+const calculateDistanceKm = (fromCoordinates, toCoordinates) => {
+  if (!fromCoordinates || !toCoordinates || fromCoordinates.length < 2 || toCoordinates.length < 2) {
+    return null;
+  }
+
+  const [fromLon, fromLat] = fromCoordinates;
+  const [toLon, toLat] = toCoordinates;
+
+  const toRadians = (value) => (value * Math.PI) / 180;
+  const earthRadiusKm = 6371;
+
+  const dLat = toRadians(toLat - fromLat);
+  const dLon = toRadians(toLon - fromLon);
+
+  const lat1 = toRadians(fromLat);
+  const lat2 = toRadians(toLat);
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return earthRadiusKm * c;
+};
+
+const formatDistanceLabel = (distanceKm) => {
+  if (distanceKm === null || Number.isNaN(distanceKm)) {
+    return 'Nearby';
+  }
+
+  if (distanceKm < 1) {
+    return 'Nearby';
+  }
+
+  if (distanceKm < 10) {
+    return `Within ${distanceKm.toFixed(1)} km`;
+  }
+
+  return `Within ${Math.round(distanceKm)} km`;
+};
+
+const getProfile = async (req, res) => {
+  const user = await User.findById(req.user._id).select('-password');
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'User profile not found' });
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: user,
+  });
+};
+
+const getAllGamers = async (req, res) => {
+  const users = await User.find({ _id: { $ne: req.user._id } }).select('-password -location').sort({ createdAt: -1 });
+
+  return res.status(200).json({
+    success: true,
+    data: users,
+  });
+};
+
+const getGamerById = async (req, res) => {
+  const user = await User.findById(req.params.id).select('-password -location');
+
+  if (!user) {
+    return res.status(404).json({ success: false, message: 'Gamer not found' });
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: user,
+  });
+};
+
+const updateProfile = async (req, res) => {
+  const allowedFields = {
+    username: req.body.username,
+    profileImage: req.body.profileImage,
+    age: req.body.age,
+    games: req.body.games,
+    preferredLanguages: req.body.preferredLanguages,
+    microphoneAvailable: req.body.microphoneAvailable,
+    bio: req.body.bio,
+    skillLevel: req.body.skillLevel,
+  };
+
+  Object.keys(allowedFields).forEach((key) => {
+    if (allowedFields[key] === undefined) {
+      delete allowedFields[key];
+    }
+  });
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: allowedFields },
+    { new: true, runValidators: true }
+  ).select('-password');
+
+  return res.status(200).json({
+    success: true,
+    data: user,
+  });
+};
+
+const updateStatus = async (req, res) => {
+  const { gamingStatus } = req.body;
+
+  if (!gamingStatus) {
+    return res.status(400).json({ success: false, message: 'Gaming status is required' });
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { gamingStatus } },
+    { new: true, runValidators: true }
+  ).select('-password');
+
+  return res.status(200).json({
+    success: true,
+    data: user,
+  });
+};
+
+const updateLocation = async (req, res) => {
+  const { latitude, longitude } = req.body;
+
+  if (latitude === undefined || longitude === undefined) {
+    return res.status(400).json({ success: false, message: 'Latitude and longitude are required' });
+  }
+
+  const user = await User.findByIdAndUpdate(
+    req.user._id,
+    { $set: { location: { type: 'Point', coordinates: [longitude, latitude] } } },
+    { new: true, runValidators: true }
+  ).select('-password');
+
+  return res.status(200).json({
+    success: true,
+    data: user,
+  });
+};
+
+const getNearbyGamers = async (req, res) => {
+  const { game, radius = 10, language, microphone, skillLevel } = req.query;
+
+  if (!req.user.location || !Array.isArray(req.user.location.coordinates) || req.user.location.coordinates.length !== 2) {
+    return res.status(200).json({ success: true, data: [] });
+  }
+
+  const query = {
+    _id: { $ne: req.user._id },
+    location: {
+      $near: {
+        $geometry: {
+          type: 'Point',
+          coordinates: req.user.location.coordinates,
+        },
+        $maxDistance: Number(radius) * 1000,
+      },
+    },
+  };
+
+  if (game) query.games = game;
+  if (language) query.preferredLanguages = language;
+  if (microphone !== undefined) query.microphoneAvailable = microphone === 'true';
+  if (skillLevel) query.skillLevel = skillLevel;
+
+  const users = await User.find(query).select('-password');
+
+  const payload = users.map((user) => {
+    const safeUser = user.toObject();
+    const distanceKm = calculateDistanceKm(req.user.location.coordinates, safeUser.location?.coordinates || req.user.location.coordinates);
+    const distanceLabel = formatDistanceLabel(distanceKm);
+
+    delete safeUser.location;
+
+    return {
+      ...safeUser,
+      distanceKm: distanceKm === null ? 0 : Number(distanceKm.toFixed(1)),
+      distanceLabel,
+      matchScore: Math.max(70, 100 - Math.round((distanceKm || 0) * 2)),
+    };
+  });
+
+  return res.status(200).json({
+    success: true,
+    data: payload,
+  });
+};
+
+module.exports = {
+  getProfile,
+  getAllGamers,
+  getGamerById,
+  updateProfile,
+  updateStatus,
+  updateLocation,
+  getNearbyGamers,
+};
+
+
+
+================================================
+FILE: server/controllers/notificationController.js
+================================================
+const Notification = require('../models/Notification');
+
+const getNotifications = async (req, res) => {
+  const notifications = await Notification.find({ user: req.user._id })
+    .sort({ createdAt: -1 })
+    .lean();
+
+  return res.status(200).json({
+    success: true,
+    data: notifications,
+  });
+};
+
+const markNotificationRead = async (req, res) => {
+  const notification = await Notification.findOneAndUpdate(
+    { _id: req.params.id, user: req.user._id },
+    { read: true },
+    { new: true }
+  );
+
+  if (!notification) {
+    return res.status(404).json({ success: false, message: 'Notification not found' });
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: notification,
+  });
+};
+
+const markAllNotificationsRead = async (req, res) => {
+  const result = await Notification.updateMany({ user: req.user._id, read: false }, { read: true });
+
+  return res.status(200).json({
+    success: true,
+    data: {
+      updatedCount: result.modifiedCount,
+    },
+  });
+};
+
+module.exports = {
+  getNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+};
+
+
+
+================================================
+FILE: server/controllers/teamController.js
+================================================
+const Team = require('../models/Team');
+const TeamRequest = require('../models/TeamRequest');
+const User = require('../models/User');
+const Notification = require('../models/Notification');
+const socketHandler = require('../socket/socketHandler');
+const crypto = require('crypto');
+
+const generateLobbyCode = () => crypto.randomBytes(5).toString('hex').toUpperCase();
+
+const createNotificationForUser = async (userId, message, type = 'teamRequest') => {
+  const notification = await Notification.create({ user: userId, message, type });
+
+  if (socketHandler && typeof socketHandler.emitNotification === 'function') {
+    socketHandler.emitNotification(userId, notification);
+  }
+
+  return notification;
+};
+
+const getMyTeams = async (req, res) => {
+  const teams = await Team.find({
+    $or: [{ leader: req.user._id }, { members: req.user._id }],
+  })
+    .populate('leader', 'username profileImage gamingStatus')
+    .populate('members', 'username profileImage gamingStatus')
+    .sort({ updatedAt: -1 });
+
+  for (const team of teams) {
+    if (!team.lobbyCode) {
+      team.lobbyCode = generateLobbyCode();
+      await team.save();
+    }
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: teams,
+  });
+};
+
+const createTeam = async (req, res) => {
+  const game = String(req.body?.game || '').trim();
+  const maxPlayers = Number(req.body?.maxPlayers || 4);
+
+  if (!game) {
+    return res.status(400).json({ success: false, message: 'Game is required' });
+  }
+
+  if (!Number.isInteger(maxPlayers) || maxPlayers < 2 || maxPlayers > 10) {
+    return res.status(400).json({ success: false, message: 'Squad size must be between 2 and 10 players' });
+  }
+
+  const team = await Team.create({
+    game,
+    leader: req.user._id,
+    members: [req.user._id],
+    maxPlayers,
+    status: 'active',
+  });
+
+  const createdTeam = await Team.findById(team._id)
+    .populate('leader', 'username profileImage gamingStatus')
+    .populate('members', 'username profileImage gamingStatus');
+
+  return res.status(201).json({ success: true, data: createdTeam });
+};
+
+const getTeamById = async (req, res) => {
+  const team = await Team.findById(req.params.id)
+    .populate('leader', 'username profileImage gamingStatus')
+    .populate('members', 'username profileImage gamingStatus');
+
+  if (!team) {
+    return res.status(404).json({ success: false, message: 'Team not found' });
+  }
+
+  const isMember = team.leader._id.toString() === req.user._id.toString() || team.members.some((member) => member._id.toString() === req.user._id.toString());
+
+  if (!isMember) {
+    return res.status(403).json({ success: false, message: 'You are not a member of this team' });
+  }
+
+  return res.status(200).json({
+    success: true,
+    data: team,
+  });
+};
+
+const leaveTeam = async (req, res) => {
+  const team = await Team.findById(req.params.id);
+
+  if (!team) {
+    return res.status(404).json({ success: false, message: 'Team not found' });
+  }
+
+  if (team.leader.toString() === req.user._id.toString()) {
+    return res.status(400).json({ success: false, message: 'Team leader must transfer leadership before leaving' });
+  }
+
+  const isMember = team.members.some((member) => member.toString() === req.user._id.toString());
+  if (!isMember) {
+    return res.status(403).json({ success: false, message: 'You are not a member of this team' });
+  }
+
+  team.members = team.members.filter((member) => member.toString() !== req.user._id.toString());
+
+  const memberIds = new Set([team.leader.toString(), ...team.members.map((member) => member.toString())]);
+  if (memberIds.size >= team.maxPlayers) {
+    team.status = 'full';
+  } else if (team.status === 'full') {
+    team.status = 'active';
+  }
+
+  await team.save();
+
+  return res.status(200).json({
+    success: true,
+    data: team,
+  });
+};
+
+const transferTeamLeadership = async (req, res) => {
+  const memberId = req.body?.memberId;
+  const team = await Team.findById(req.params.id);
+
+  if (!team) {
+    return res.status(404).json({ success: false, message: 'Team not found' });
+  }
+
+  if (team.leader.toString() !== req.user._id.toString()) {
+    return res.status(403).json({ success: false, message: 'Only the team leader can transfer leadership' });
+  }
+
+  if (!memberId || memberId === req.user._id.toString()) {
+    return res.status(400).json({ success: false, message: 'Choose another team member to become leader' });
+  }
+
+  const isMember = team.members.some((member) => member.toString() === memberId);
+  if (!isMember) {
+    return res.status(400).json({ success: false, message: 'The new leader must already be a team member' });
+  }
+
+  const previousLeaderId = team.leader.toString();
+  if (!team.members.some((member) => member.toString() === previousLeaderId)) {
+    team.members.push(team.leader);
+  }
+  team.leader = memberId;
+  await team.save();
+
+  const updatedTeam = await Team.findById(team._id)
+    .populate('leader', 'username profileImage gamingStatus')
+    .populate('members', 'username profileImage gamingStatus');
+
+  return res.status(200).json({ success: true, data: updatedTeam });
+};
+
+const joinTeamByLobbyCode = async (req, res) => {
+  const lobbyCode = String(req.body?.lobbyCode || '').trim().toUpperCase();
+
+  if (!/^[A-F0-9]{10}$/.test(lobbyCode)) {
+    return res.status(400).json({ success: false, message: 'Enter a valid 10-character lobby code' });
+  }
+
+  const team = await Team.findOne({ lobbyCode });
+  if (!team) {
+    return res.status(404).json({ success: false, message: 'No team was found for that lobby code' });
+  }
+
+  if (team.status !== 'active') {
+    return res.status(400).json({ success: false, message: 'This lobby is not accepting new players' });
+  }
+
+  const memberIds = new Set([team.leader.toString(), ...team.members.map((member) => member.toString())]);
+  if (memberIds.has(req.user._id.toString())) {
+    return res.status(409).json({ success: false, message: 'You are already in this team' });
+  }
+
+  if (memberIds.size >= team.maxPlayers) {
+    team.status = 'full';
+    await team.save();
+    return res.status(400).json({ success: false, message: 'This lobby is full' });
+  }
+
+  team.members.push(req.user._id);
+  if (memberIds.size + 1 >= team.maxPlayers) {
+    team.status = 'full';
+  }
+  await team.save();
+
+  const joinedTeam = await Team.findById(team._id)
+    .populate('leader', 'username profileImage gamingStatus')
+    .populate('members', 'username profileImage gamingStatus');
+
+  return res.status(200).json({ success: true, data: joinedTeam });
+};
+
+const getTeamRequests = async (req, res) => {
+  const requests = await TeamRequest.find({
+    $or: [{ sender: req.user._id }, { receiver: req.user._id }],
+  })
+    .populate('sender', 'username profileImage gamingStatus')
+    .populate('receiver', 'username profileImage gamingStatus')
+    .sort({ createdAt: -1 });
+
+  return res.status(200).json({
+    success: true,
+    data: requests,
+  });
+};
+
+const createTeamRequest = async (req, res) => {
+  const { receiverId, game, message } = req.body;
+
+  if (!receiverId || !game) {
+    return res.status(400).json({ success: false, message: 'Receiver and game are required' });
+  }
+
+  if (receiverId.toString() === req.user._id.toString()) {
+    return res.status(400).json({ success: false, message: 'You cannot request to team up with yourself' });
+  }
+
+  const receiver = await User.findById(receiverId);
+
+  if (!receiver) {
+    return res.status(404).json({ success: false, message: 'Receiver not found' });
+  }
+
+  const existingRequest = await TeamRequest.findOne({
+    sender: req.user._id,
+    receiver: receiverId,
+    game,
+    status: 'pending',
+  });
+
+  if (existingRequest) {
+    return res.status(409).json({ success: false, message: 'A pending request already exists for this gamer' });
+  }
+
+  const request = await TeamRequest.create({
+    sender: req.user._id,
+    receiver: receiverId,
+    game,
+    message: message || `I want to team up for ${game}.`,
+  });
+
+  const notification = await createNotificationForUser(
+    receiverId,
+    `${req.user.username} wants to team up for ${game}.`,
+    'teamRequest'
+  );
+
+  return res.status(201).json({
+    success: true,
+    data: { request, notification },
+  });
+};
+
+const acceptTeamRequest = async (req, res) => {
+  const request = await TeamRequest.findById(req.params.id)
+    .populate('sender', 'username')
+    .populate('receiver', 'username');
+
+  if (!request) {
+    return res.status(404).json({ success: false, message: 'Team request not found' });
+  }
+
+  if (request.receiver._id.toString() !== req.user._id.toString()) {
+    return res.status(403).json({ success: false, message: 'You are not allowed to accept this request' });
+  }
+
+  if (request.status !== 'pending') {
+    return res.status(400).json({ success: false, message: 'This request is no longer pending' });
+  }
+
+  let team = await Team.findOne({
+    game: request.game,
+    status: { $ne: 'closed' },
+    members: { $in: [request.sender._id, request.receiver._id] },
+  });
+
+  if (team) {
+    if (team.status !== 'active') {
+      return res.status(400).json({ success: false, message: 'This team is not accepting new players' });
+    }
+
+    const memberIds = new Set([
+      team.leader.toString(),
+      ...team.members.map((member) => member.toString()),
+      request.sender._id.toString(),
+      request.receiver._id.toString(),
+    ]);
+    if (memberIds.size > team.maxPlayers) {
+      return res.status(400).json({ success: false, message: 'There is not enough room in this team' });
+    }
+  }
+
+  request.status = 'accepted';
+  await request.save();
+
+  if (!team) {
+    team = await Team.create({
+      game: request.game,
+      leader: request.receiver._id,
+      members: [request.receiver._id, request.sender._id],
+      maxPlayers: 4,
+      status: 'active',
+    });
+  } else {
+    if (!team.members.some((member) => member.toString() === request.sender._id.toString())) {
+      team.members.push(request.sender._id);
+    }
+    if (!team.members.some((member) => member.toString() === request.receiver._id.toString())) {
+      team.members.push(request.receiver._id);
+    }
+    const memberIds = new Set([team.leader.toString(), ...team.members.map((member) => member.toString())]);
+    if (memberIds.size >= team.maxPlayers) {
+      team.status = 'full';
+    }
+    await team.save();
+  }
+
+  await createNotificationForUser(
+    request.sender._id,
+    `${req.user.username} accepted your request for ${request.game}.`,
+    'teamRequestAccepted'
+  );
+
+  return res.status(200).json({
+    success: true,
+    data: { request, team },
+  });
+};
+
+const rejectTeamRequest = async (req, res) => {
+  const request = await TeamRequest.findById(req.params.id).populate('sender', 'username').populate('receiver', 'username');
+
+  if (!request) {
+    return res.status(404).json({ success: false, message: 'Team request not found' });
+  }
+
+  if (request.receiver._id.toString() !== req.user._id.toString()) {
+    return res.status(403).json({ success: false, message: 'You are not allowed to reject this request' });
+  }
+
+  if (request.status !== 'pending') {
+    return res.status(400).json({ success: false, message: 'This request has already been handled' });
+  }
+
+  request.status = 'rejected';
+  await request.save();
+
+  await createNotificationForUser(
+    request.sender._id,
+    `${req.user.username} rejected your request for ${request.game}.`,
+    'teamRequestRejected'
+  );
+
+  return res.status(200).json({
+    success: true,
+    data: request,
+  });
+};
+
+module.exports = {
+  getMyTeams,
+  createTeam,
+  getTeamById,
+  leaveTeam,
+  transferTeamLeadership,
+  joinTeamByLobbyCode,
+  getTeamRequests,
+  createTeamRequest,
+  acceptTeamRequest,
+  rejectTeamRequest,
+};
+
+
+
+================================================
+FILE: server/middleware/authMiddleware.js
+================================================
+const jwt = require('jsonwebtoken');
+const User = require('../models/User');
+
+const protect = async (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    return res.status(401).json({ success: false, message: 'Not authorized, no token' });
+  }
+
+  try {
+    const token = authHeader.split(' ')[1];
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev_secret_key');
+
+    const user = await User.findById(decoded.id).select('-password');
+
+    if (!user) {
+      return res.status(401).json({ success: false, message: 'User not found' });
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    return res.status(401).json({ success: false, message: 'Invalid or expired token' });
+  }
+};
+
+module.exports = { protect };
+
+
+
+================================================
+FILE: server/middleware/errorMiddleware.js
+================================================
+const errorHandler = (err, req, res, next) => {
+  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+
+  res.status(statusCode).json({
+    success: false,
+    message: err.message || 'Something went wrong',
+    stack: process.env.NODE_ENV === 'production' ? undefined : err.stack,
+  });
+};
+
+module.exports = { errorHandler };
+
+
+
+================================================
+FILE: server/models/Game.js
+================================================
+const mongoose = require('mongoose');
+
+const gameSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    image: String,
+    description: String,
+    category: String,
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model('Game', gameSchema);
+
+
+
+================================================
+FILE: server/models/Message.js
+================================================
+const mongoose = require('mongoose');
+
+const messageSchema = new mongoose.Schema(
+  {
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    team: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Team',
+      required: true,
+    },
+    text: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model('Message', messageSchema);
+
+
+
+================================================
+FILE: server/models/Notification.js
+================================================
+const mongoose = require('mongoose');
+
+const notificationSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    message: {
+      type: String,
+      required: true,
+    },
+    type: {
+      type: String,
+      enum: ['teamRequest', 'teamRequestAccepted', 'teamRequestRejected', 'message'],
+      default: 'teamRequest',
+    },
+    read: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model('Notification', notificationSchema);
+
+
+
+================================================
+FILE: server/models/Team.js
+================================================
+const mongoose = require('mongoose');
+const crypto = require('crypto');
+
+const teamSchema = new mongoose.Schema(
+  {
+    game: {
+      type: String,
+      required: true,
+    },
+    lobbyCode: {
+      type: String,
+      default: () => crypto.randomBytes(5).toString('hex').toUpperCase(),
+      unique: true,
+      sparse: true,
+    },
+    leader: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    members: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+    maxPlayers: {
+      type: Number,
+      default: 4,
+    },
+    status: {
+      type: String,
+      enum: ['active', 'full', 'closed'],
+      default: 'active',
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model('Team', teamSchema);
+
+
+
+================================================
+FILE: server/models/TeamRequest.js
+================================================
+const mongoose = require('mongoose');
+
+const teamRequestSchema = new mongoose.Schema(
+  {
+    sender: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    receiver: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
+    game: {
+      type: String,
+      required: true,
+    },
+    message: String,
+    status: {
+      type: String,
+      enum: ['pending', 'accepted', 'rejected', 'cancelled'],
+      default: 'pending',
+    },
+  },
+  { timestamps: true }
+);
+
+module.exports = mongoose.model('TeamRequest', teamRequestSchema);
+
+
+
+================================================
+FILE: server/models/User.js
+================================================
+const mongoose = require('mongoose');
+
+const userSchema = new mongoose.Schema(
+  {
+    username: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+    password: {
+      type: String,
+      required: true,
+    },
+    profileImage: String,
+    age: Number,
+    games: [String],
+    preferredLanguages: [String],
+    microphoneAvailable: {
+      type: Boolean,
+      default: false,
+    },
+    bio: String,
+    gamingStatus: {
+      type: String,
+      enum: ['Online', 'Looking for Team', 'In Game', 'Offline'],
+      default: 'Online',
+    },
+    skillLevel: {
+      type: String,
+      enum: ['Beginner', 'Intermediate', 'Advanced', 'Pro'],
+      default: 'Intermediate',
+    },
+    location: {
+      type: {
+        type: String,
+        enum: ['Point'],
+        default: 'Point',
+      },
+      coordinates: {
+        type: [Number],
+        default: [0, 0],
+      },
+    },
+  },
+  { timestamps: true }
+);
+
+userSchema.index({ location: '2dsphere' });
+
+module.exports = mongoose.model('User', userSchema);
+
+
+
+================================================
+FILE: server/routes/authRoutes.js
+================================================
+const express = require('express');
+const { registerUser, loginUser, getCurrentUser } = require('../controllers/authController');
+const { protect } = require('../middleware/authMiddleware');
+
+const router = express.Router();
+
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.get('/me', protect, getCurrentUser);
+
+module.exports = router;
+
+
+
+================================================
+FILE: server/routes/chatRoutes.js
+================================================
+const express = require('express');
+const { getMessages, addMessage } = require('../controllers/chatController');
+const { protect } = require('../middleware/authMiddleware');
+
+const router = express.Router();
+
+router.get('/:teamId/messages', protect, getMessages);
+router.post('/:teamId/messages', protect, addMessage);
+
+module.exports = router;
+
+
+
+================================================
+FILE: server/routes/gameRoutes.js
+================================================
+const express = require('express');
+const { getGames, getGameById } = require('../controllers/gameController');
+
+const router = express.Router();
+
+router.get('/', getGames);
+router.get('/:id', getGameById);
+
+module.exports = router;
+
+
+
+================================================
+FILE: server/routes/gamerRoutes.js
+================================================
+const express = require('express');
+const {
+  getProfile,
+  getAllGamers,
+  getGamerById,
+  getNearbyGamers,
+  updateProfile,
+  updateStatus,
+  updateLocation,
+} = require('../controllers/gamerController');
+const { protect } = require('../middleware/authMiddleware');
+
+const router = express.Router();
+
+router.get('/me', protect, getProfile);
+router.get('/', protect, getAllGamers);
+router.get('/nearby', protect, getNearbyGamers);
+router.get('/:id', protect, getGamerById);
+router.put('/profile', protect, updateProfile);
+router.put('/status', protect, updateStatus);
+router.put('/location', protect, updateLocation);
+
+module.exports = router;
+
+
+
+================================================
+FILE: server/routes/notificationRoutes.js
+================================================
+const express = require('express');
+const { getNotifications, markNotificationRead, markAllNotificationsRead } = require('../controllers/notificationController');
+const { protect } = require('../middleware/authMiddleware');
+
+const router = express.Router();
+
+router.get('/', protect, getNotifications);
+router.put('/:id/read', protect, markNotificationRead);
+router.put('/read-all', protect, markAllNotificationsRead);
+
+module.exports = router;
+
+
+
+================================================
+FILE: server/routes/teamRoutes.js
+================================================
+const express = require('express');
+const {
+  getMyTeams,
+  createTeam,
+  getTeamById,
+  leaveTeam,
+  transferTeamLeadership,
+  joinTeamByLobbyCode,
+  getTeamRequests,
+  createTeamRequest,
+  acceptTeamRequest,
+  rejectTeamRequest,
+} = require('../controllers/teamController');
+const { protect } = require('../middleware/authMiddleware');
+
+const router = express.Router();
+
+router.get('/', protect, getMyTeams);
+router.post('/', protect, createTeam);
+router.get('/requests', protect, getTeamRequests);
+router.post('/requests', protect, createTeamRequest);
+router.put('/requests/:id/accept', protect, acceptTeamRequest);
+router.put('/requests/:id/reject', protect, rejectTeamRequest);
+router.post('/join', protect, joinTeamByLobbyCode);
+router.get('/:id', protect, getTeamById);
+router.post('/:id/leave', protect, leaveTeam);
+router.put('/:id/leadership', protect, transferTeamLeadership);
+
+module.exports = router;
+
+
+
+================================================
+FILE: server/scripts/seedDemoData.js
+================================================
+require('dotenv').config({ path: require('path').resolve(__dirname, '../.env') });
+
+const bcrypt = require('bcrypt');
+const crypto = require('crypto');
+const mongoose = require('mongoose');
+const connectDB = require('../config/db');
+const Game = require('../models/Game');
+const Message = require('../models/Message');
+const Notification = require('../models/Notification');
+const Team = require('../models/Team');
+const TeamRequest = require('../models/TeamRequest');
+const User = require('../models/User');
+const seedGames = require('../utils/seedGames');
+
+const games = [
+  {
+    name: 'Among Us',
+    image: 'AM',
+    category: 'Social Strategy',
+    description: 'Quick matches, teamwork, and intense bluffing rounds.',
+  },
+  {
+    name: 'Valorant',
+    image: 'VA',
+    category: 'Tactical Shooter',
+    description: 'Coordinate with your squad and outplay the enemy team.',
+  },
+  {
+    name: 'Fortnite',
+    image: 'FO',
+    category: 'Battle Royale',
+    description: 'Build, loot, and survive with your perfect duo or squad.',
+  },
+  {
+    name: 'BGMI',
+    image: 'BG',
+    category: 'Battle Arena',
+    description: 'Find reliable friends for ranked pushes and scrims.',
+  },
+];
+
+const demoPlayers = [
+  {
+    key: 'captain',
+    username: 'DEMO | CAPTAIN',
+    email: 'demo.captain@gamemate.test',
+    games: ['Valorant', 'BGMI'],
+    gamingStatus: 'Looking for Team',
+    skillLevel: 'Advanced',
+    microphoneAvailable: true,
+    preferredLanguages: ['English'],
+    bio: 'Fictional demo account for testing GameMate. This is not a real player.',
+    offset: [0, 0],
+  },
+  {
+    key: 'raven',
+    username: 'DEMO | RAVEN',
+    email: 'demo.raven@gamemate.test',
+    games: ['Valorant'],
+    gamingStatus: 'Online',
+    skillLevel: 'Pro',
+    microphoneAvailable: true,
+    preferredLanguages: ['English', 'Hindi'],
+    bio: 'Fictional demo player Â· Competitive Valorant Â· Usually on evenings.',
+    offset: [0.012, 0.009],
+  },
+  {
+    key: 'nova',
+    username: 'DEMO | NOVA',
+    email: 'demo.nova@gamemate.test',
+    games: ['Fortnite', 'Among Us'],
+    gamingStatus: 'Online',
+    skillLevel: 'Intermediate',
+    microphoneAvailable: true,
+    preferredLanguages: ['English', 'Telugu'],
+    bio: 'Fictional demo player Â· Casual and creative sessions.',
+    offset: [-0.017, 0.013],
+  },
+  {
+    key: 'echo',
+    username: 'DEMO | ECHO',
+    email: 'demo.echo@gamemate.test',
+    games: ['BGMI', 'PUBG'],
+    gamingStatus: 'In Game',
+    skillLevel: 'Advanced',
+    microphoneAvailable: true,
+    preferredLanguages: ['English', 'Hindi'],
+    bio: 'Fictional demo player Â· Squad-focused battle royale.',
+    offset: [0.021, -0.011],
+  },
+  {
+    key: 'hex',
+    username: 'DEMO | HEX',
+    email: 'demo.hex@gamemate.test',
+    games: ['Valorant', 'Call of Duty'],
+    gamingStatus: 'Online',
+    skillLevel: 'Advanced',
+    microphoneAvailable: false,
+    preferredLanguages: ['English'],
+    bio: 'Fictional demo player Â· Tactical FPS and ranked queues.',
+    offset: [-0.025, -0.009],
+  },
+  {
+    key: 'pulse',
+    username: 'DEMO | PULSE',
+    email: 'demo.pulse@gamemate.test',
+    games: ['Fortnite', 'Apex Legends'],
+    gamingStatus: 'Looking for Team',
+    skillLevel: 'Intermediate',
+    microphoneAvailable: true,
+    preferredLanguages: ['English'],
+    bio: 'Fictional demo player Â· Looking for a relaxed squad.',
+    offset: [0.031, 0.015],
+  },
+  {
+    key: 'frost',
+    username: 'DEMO | FROST',
+    email: 'demo.frost@gamemate.test',
+    games: ['Minecraft', 'Among Us'],
+    gamingStatus: 'Offline',
+    skillLevel: 'Beginner',
+    microphoneAvailable: false,
+    preferredLanguages: ['English', 'Telugu'],
+    bio: 'Fictional demo player Â· Building, survival, and party games.',
+    offset: [-0.034, 0.024],
+  },
+  {
+    key: 'vex',
+    username: 'DEMO | VEX',
+    email: 'demo.vex@gamemate.test',
+    games: ['BGMI', 'Free Fire'],
+    gamingStatus: 'Online',
+    skillLevel: 'Pro',
+    microphoneAvailable: true,
+    preferredLanguages: ['English', 'Hindi'],
+    bio: 'Fictional demo player Â· Competitive battle royale.',
+    offset: [0.039, -0.022],
+  },
+];
+
+const getOrCreatePlayer = async (player, demoPassword) => {
+  const [longitudeOffset, latitudeOffset] = player.offset;
+  const profile = {
+    username: player.username,
+    games: player.games,
+    gamingStatus: player.gamingStatus,
+    skillLevel: player.skillLevel,
+    microphoneAvailable: player.microphoneAvailable,
+    preferredLanguages: player.preferredLanguages,
+    bio: player.bio,
+    location: {
+      type: 'Point',
+      coordinates: [-122.4194 + longitudeOffset, 37.7749 + latitudeOffset],
+    },
+  };
+  const passwordHash = await bcrypt.hash(
+    player.key === 'captain' ? demoPassword : crypto.randomBytes(32).toString('hex'),
+    10
+  );
+  const update = player.key === 'captain'
+    ? {
+      $set: { ...profile, password: passwordHash },
+      $setOnInsert: { email: player.email },
+    }
+    : {
+      $set: profile,
+      $setOnInsert: { email: player.email, password: passwordHash },
+    };
+
+  return User.findOneAndUpdate({ email: player.email }, update, {
+    new: true,
+    upsert: true,
+    runValidators: true,
+    setDefaultsOnInsert: true,
+  });
+};
+
+const upsertTeam = async ({ lobbyCode, game, leader, members }) => Team.findOneAndUpdate(
+  { lobbyCode },
+  {
+    $set: {
+      game,
+      leader: leader._id,
+      members: members.map((member) => member._id),
+      maxPlayers: 4,
+      status: 'active',
+    },
+  },
+  { new: true, upsert: true, runValidators: true }
+);
+
+const upsertRequest = async ({ sender, receiver, game, status, message }) => TeamRequest.findOneAndUpdate(
+  { sender: sender._id, receiver: receiver._id, game },
+  { $set: { status, message } },
+  { new: true, upsert: true, runValidators: true }
+);
+
+const addNotificationIfMissing = async ({ user, message, type }) => {
+  await Notification.updateOne(
+    { user: user._id, message },
+    { $setOnInsert: { user: user._id, message, type, read: false } },
+    { upsert: true }
+  );
+};
+
+const addMessageIfMissing = async ({ team, sender, text }) => {
+  await Message.updateOne(
+    { team: team._id, sender: sender._id, text },
+    { $setOnInsert: { team: team._id, sender: sender._id, text } },
+    { upsert: true }
+  );
+};
+
+const seedDemoData = async () => {
+  if (process.env.NODE_ENV === 'production') {
+    throw new Error('Demo data seeding is disabled in production.');
+  }
+
+  if (process.env.SEED_DEMO_DATA !== 'true') {
+    throw new Error('Set SEED_DEMO_DATA=true to explicitly enable demo data seeding.');
+  }
+
+  const demoPassword = process.env.DEMO_SEED_PASSWORD;
+  if (!demoPassword || demoPassword.length < 12) {
+    throw new Error('Set DEMO_SEED_PASSWORD to a password with at least 12 characters.');
+  }
+
+  const connection = await connectDB();
+  if (!connection) {
+    throw new Error('MongoDB is unavailable; no demo data was seeded.');
+  }
+
+  try {
+    await seedGames();
+    await Game.bulkWrite(games.map((game) => ({
+      updateOne: {
+        filter: { name: game.name },
+        update: { $setOnInsert: game },
+        upsert: true,
+      },
+    })));
+
+    const players = {};
+    for (const player of demoPlayers) {
+      players[player.key] = await getOrCreatePlayer(player, demoPassword);
+    }
+
+    const valorantTeam = await upsertTeam({
+      lobbyCode: 'DEA0000001',
+      game: 'Valorant',
+      leader: players.captain,
+      members: [players.captain, players.raven, players.hex],
+    });
+    const bgmiTeam = await upsertTeam({
+      lobbyCode: 'DEA0000002',
+      game: 'BGMI',
+      leader: players.vex,
+      members: [players.vex, players.captain, players.echo],
+    });
+    const fortniteTeam = await upsertTeam({
+      lobbyCode: 'DEA0000003',
+      game: 'Fortnite',
+      leader: players.nova,
+      members: [players.nova, players.pulse],
+    });
+
+    await Promise.all([
+      upsertRequest({
+        sender: players.raven,
+        receiver: players.captain,
+        game: 'Valorant',
+        status: 'pending',
+        message: 'Fictional demo invitation: ready for a ranked session?',
+      }),
+      upsertRequest({
+        sender: players.captain,
+        receiver: players.pulse,
+        game: 'Fortnite',
+        status: 'pending',
+        message: 'Fictional demo invitation: want to squad up?',
+      }),
+      upsertRequest({
+        sender: players.hex,
+        receiver: players.captain,
+        game: 'Valorant',
+        status: 'accepted',
+        message: 'Fictional demo request accepted for the seeded squad.',
+      }),
+      addNotificationIfMissing({
+        user: players.captain,
+        message: 'DEMO | RAVEN wants to team up for Valorant.',
+        type: 'teamRequest',
+      }),
+      addNotificationIfMissing({
+        user: players.captain,
+        message: 'DEMO | HEX accepted your Valorant team request.',
+        type: 'teamRequestAccepted',
+      }),
+      addMessageIfMissing({
+        team: valorantTeam,
+        sender: players.captain,
+        text: '[DEMO] Welcome to the Valorant squad. Use this chat to coordinate.',
+      }),
+      addMessageIfMissing({
+        team: valorantTeam,
+        sender: players.raven,
+        text: '[DEMO] Mic check done. Ready when everyone is.',
+      }),
+      addMessageIfMissing({
+        team: bgmiTeam,
+        sender: players.vex,
+        text: '[DEMO] Lobby is open. Share the code with your squad.',
+      }),
+      addMessageIfMissing({
+        team: fortniteTeam,
+        sender: players.nova,
+        text: '[DEMO] Let us build a casual squad.',
+      }),
+    ]);
+
+    console.log('Demo data seeded successfully. Existing non-demo records were left untouched.');
+    console.log('Demo login: demo.captain@gamemate.test');
+    console.log('Password: the value supplied in DEMO_SEED_PASSWORD');
+    console.log('All seeded player names and profile bios are marked DEMO.');
+    console.log(`Database: ${connection.connection.name}`);
+  } finally {
+    await mongoose.disconnect();
+  }
+};
+
+seedDemoData().catch((error) => {
+  console.error(`Demo data seed failed: ${error.message}`);
+  process.exitCode = 1;
+});
+
+
+
+================================================
+FILE: server/socket/socketHandler.js
+================================================
+const socketHandler = (server) => {
+  const { Server } = require('socket.io');
+  const isAllowedClientOrigin = require('../config/clientOrigin');
+  const io = new Server(server, {
+    cors: {
+      origin: (origin, callback) => {
+        if (isAllowedClientOrigin(origin)) {
+          return callback(null, true);
+        }
+
+        return callback(new Error('Client origin is not allowed by CORS'));
+      },
+      methods: ['GET', 'POST'],
+      credentials: true,
+    },
+  });
+
+  socketHandler.io = io;
+
+  io.on('connection', (socket) => {
+    console.log('Socket connected:', socket.id);
+
+    socket.on('join-room', (roomId) => {
+      socket.join(roomId);
+    });
+
+    socket.on('join-user', (userId) => {
+      if (userId) {
+        socket.join(String(userId));
+      }
+    });
+
+    socket.on('join-team', (teamId) => {
+      if (teamId) {
+        socket.join(String(teamId));
+      }
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Socket disconnected:', socket.id);
+    });
+  });
+
+  return io;
+};
+
+socketHandler.emitNotification = (userId, notification) => {
+  if (!userId || !socketHandler.io) {
+    return;
+  }
+
+  socketHandler.io.to(String(userId)).emit('new-notification', notification);
+};
+
+socketHandler.emitTeamMessage = (teamId, message) => {
+  if (!teamId || !socketHandler.io) {
+    return;
+  }
+
+  socketHandler.io.to(String(teamId)).emit('team-message', message);
+};
+
+module.exports = socketHandler;
+
+
+
+================================================
+FILE: server/utils/generateToken.js
+================================================
+const jwt = require('jsonwebtoken');
+
+const generateToken = (userId) => {
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET || 'dev_secret_key', {
+    expiresIn: '7d',
+  });
+};
+
+module.exports = generateToken;
+
+
+
+================================================
+FILE: server/utils/seedGames.js
+================================================
+const Game = require('../models/Game');
+
+const initialGames = [
+  {
+    name: 'Among Us',
+    image: 'A',
+    description: 'Cooperative social deduction with fast, chaotic teamwork moments.',
+    category: 'Party',
+  },
+  {
+    name: 'BGMI',
+    image: 'B',
+    description: 'Battle royale gameplay for squad-based tactical survival.',
+    category: 'Battle Royale',
+  },
+  {
+    name: 'Free Fire',
+    image: 'F',
+    description: 'Quick matches and compact battles for energetic team plays.',
+    category: 'Battle Royale',
+  },
+  {
+    name: 'Valorant',
+    image: 'V',
+    description: 'Tactical shooters built around coordination and precision.',
+    category: 'FPS',
+  },
+  {
+    name: 'Fortnite',
+    image: 'F',
+    description: 'Build, loot, and survive with your ideal squad rotation.',
+    category: 'Battle Royale',
+  },
+  {
+    name: 'Minecraft',
+    image: 'M',
+    description: 'Creative building sessions and survival adventures with friends.',
+    category: 'Sandbox',
+  },
+  {
+    name: 'GTA V',
+    image: 'G',
+    description: 'Free-roam missions and open-world shenanigans with friends.',
+    category: 'Open World',
+  },
+  {
+    name: 'Call of Duty',
+    image: 'C',
+    description: 'Fast-paced competitive matches and objective-focused play.',
+    category: 'FPS',
+  },
+  {
+    name: 'Apex Legends',
+    image: 'A',
+    description: 'Hero-based tactical battle royale for coordinated squads.',
+    category: 'Battle Royale',
+  },
+  {
+    name: 'PUBG',
+    image: 'P',
+    description: 'High-tension survival matches for strategic squad play.',
+    category: 'Battle Royale',
+  },
+];
+
+const seedGames = async () => {
+  try {
+    const count = await Game.countDocuments();
+
+    if (count === 0) {
+      await Game.insertMany(initialGames);
+      console.log('Initial games seeded successfully');
+    }
+  } catch (error) {
+    console.error('Game seeding failed:', error.message);
+  }
+};
+
+module.exports = seedGames;
+
+

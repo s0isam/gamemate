@@ -9,6 +9,11 @@ const isPrivateIpv4 = (hostname) => {
     || (octets[0] === 192 && octets[1] === 168);
 };
 
+const isViteDevPort = (port) => {
+  const portNumber = Number(port);
+  return Number.isInteger(portNumber) && portNumber >= 5173 && portNumber <= 5179;
+};
+
 const isAllowedClientOrigin = (origin) => {
   if (!origin) {
     return true;
@@ -29,7 +34,7 @@ const isAllowedClientOrigin = (origin) => {
 
   try {
     const parsedOrigin = new URL(origin);
-    if (parsedOrigin.protocol !== 'http:' || parsedOrigin.port !== '5173') {
+    if (parsedOrigin.protocol !== 'http:' || !isViteDevPort(parsedOrigin.port)) {
       return false;
     }
 
