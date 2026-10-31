@@ -10,7 +10,7 @@ GameMate is a gaming community web app for discovering games, finding nearby pla
 - Keep nearby-player locations private; discovery shows approximate distances and illustrative map positions.
 - Create squads, join them with a lobby code, manage membership, and send or respond to invitations.
 - View player profiles, notifications, and squad chat.
-- Use the responsive interface on desktop and mobile.
+- Switch between persistent light and dark themes in the responsive interface.
 
 ## Tech stack
 

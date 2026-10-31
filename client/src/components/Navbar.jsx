@@ -1,10 +1,12 @@
 import { useState } from 'react';
 import { Link, NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import NotificationBell from './NotificationBell';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
@@ -74,6 +76,15 @@ const Navbar = () => {
         </nav>
 
         <div className="ml-auto flex items-center gap-3 lg:ml-0">
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            aria-pressed={theme === 'light'}
+            className="border border-[#343946] bg-[#121720] px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-100 hover:border-brand-400 hover:text-brand-300"
+          >
+            {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+          </button>
           {user && (
             <>
               {showNotifications && <NotificationBell />}
