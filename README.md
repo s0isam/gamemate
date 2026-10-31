@@ -5,7 +5,7 @@ GameMate is a gaming community web app for discovering games, finding nearby pla
 ## Features
 
 - Register and log in with JWT authentication.
-- Browse and search games loaded from MongoDB.
+- Browse and search games by title, genre, or description, with shareable filters.
 - Find gamers by game, skill, availability, and approximate distance.
 - Keep nearby-player locations private; discovery shows approximate distances and illustrative map positions.
 - Create squads, join them with a lobby code, manage membership, and send or respond to invitations.

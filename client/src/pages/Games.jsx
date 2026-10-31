@@ -4,11 +4,13 @@ import GameCard from '../components/GameCard';
 import { getGames } from '../services/gameService';
 
 const Games = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [games, setGames] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const search = (searchParams.get('search') || '').trim().toLowerCase();
+  const search = searchParams.get('search') || '';
+  const category = searchParams.get('category') || '';
+  const normalizedSearch = search.trim().toLowerCase();
 
   useEffect(() => {
     let active = true;
@@ -28,10 +30,26 @@ const Games = () => {
     return () => { active = false; };
   }, []);
 
-  const filteredGames = useMemo(
-    () => games.filter((game) => game.name.toLowerCase().includes(search)),
-    [games, search]
+  const categories = useMemo(
+    () => [...new Set(games.map((game) => game.category).filter(Boolean))]
+      .sort((first, second) => first.localeCompare(second)),
+    [games]
   );
+  const filteredGames = useMemo(() => games.filter((game) => {
+    const matchesSearch = !normalizedSearch || [
+      game.name,
+      game.category,
+      game.description,
+    ].some((value) => value?.toLowerCase().includes(normalizedSearch));
+    return matchesSearch && (!category || game.category === category);
+  }), [games, normalizedSearch, category]);
+
+  const updateFilter = (key, value) => {
+    const nextParams = new URLSearchParams(searchParams);
+    if (value) nextParams.set(key, value);
+    else nextParams.delete(key);
+    setSearchParams(nextParams, { replace: true });
+  };
 
   return (
     <div className="space-y-8">
@@ -41,13 +59,46 @@ const Games = () => {
         <p className="mt-3 max-w-2xl text-slate-400">Choose a title to find nearby players who are ready to team up.</p>
       </header>
 
-      {search && (
-        <p className="text-sm text-slate-400">
-          Results for <span className="font-semibold text-white">“{searchParams.get('search')}”</span>
-          {' · '}
-          <Link to="/games" className="text-brand-300 hover:text-white">Clear search</Link>
-        </p>
-      )}
+      <section className="card p-5">
+        <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_minmax(12rem,0.45fr)_auto] sm:items-end">
+          <label className="space-y-2 text-sm text-slate-300">
+            <span>Search games</span>
+            <input
+              type="search"
+              value={search}
+              onChange={(event) => updateFilter('search', event.target.value)}
+              placeholder="Title, genre, or description"
+              className="w-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white placeholder:text-slate-500"
+            />
+          </label>
+          <label className="space-y-2 text-sm text-slate-300">
+            <span>Genre</span>
+            <select
+              value={category}
+              onChange={(event) => updateFilter('category', event.target.value)}
+              className="w-full border border-slate-700 bg-slate-900 px-3 py-2 text-sm text-white"
+            >
+              <option value="">All genres</option>
+              {categories.map((gameCategory) => (
+                <option key={gameCategory} value={gameCategory}>{gameCategory}</option>
+              ))}
+            </select>
+          </label>
+          {(search || category) && (
+            <Link
+              to="/games"
+              className="inline-flex min-h-10 items-center justify-center border border-slate-700 px-4 py-2 text-sm font-semibold text-slate-200 hover:border-brand-400 hover:text-brand-300"
+            >
+              Clear filters
+            </Link>
+          )}
+        </div>
+        {!loading && (
+          <p className="mt-4 text-sm text-slate-400" aria-live="polite">
+            {filteredGames.length} game{filteredGames.length === 1 ? '' : 's'} found
+          </p>
+        )}
+      </section>
 
       {error && <p role="alert" className="border border-danger-500/40 bg-danger-500/10 p-4 text-sm text-red-200">{error}</p>}
       {loading ? (
