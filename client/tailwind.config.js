@@ -22,10 +22,7 @@ export default {
           900: '#195A14',
         },
         neon: {
-          blue: '#39FF14',
-          yellow: '#39FF14',
-          orange: '#39FF14',
-          red: '#39FF14',
+          red: '#FF1744',
           green: '#39FF14',
         },
         danger: {

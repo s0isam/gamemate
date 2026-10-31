@@ -31,7 +31,7 @@ const Login = () => {
   };
 
   return (
-    <div className="mx-auto max-w-md rounded-3xl border border-[#30303A] bg-[#11151C]/95 p-8 shadow-[0_0_0_1px_rgba(255,230,0,0.10),0_0_22px_rgba(255,230,0,0.10)]">
+    <div className="mx-auto max-w-md rounded-3xl border border-[#30303A] bg-[#11151C]/95 p-8 shadow-[0_0_0_1px_rgba(255,23,68,0.14),0_0_22px_rgba(255,23,68,0.14)]">
       <h1 className="text-3xl font-bold text-white">Welcome back</h1>
       <p className="mt-2 text-sm text-slate-400">Log in with the email and password you used to create your account.</p>
 

@@ -33,7 +33,7 @@ const Navbar = () => {
     <header className="sticky top-0 z-50 border-b border-[#30303A] bg-[#080A0F]/90 backdrop-blur-xl">
       <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:flex-nowrap lg:px-8">
         <Link to="/" className="flex items-center gap-3 text-white">
-          <span className="logo-mark inline-flex h-10 w-10 items-center justify-center border border-brand-400 bg-[#11151C] text-lg font-black text-brand-200 shadow-[0_0_18px_rgba(255,230,0,0.35)]">
+          <span className="logo-mark inline-flex h-10 w-10 items-center justify-center border border-brand-400 bg-[#11151C] text-lg font-black text-brand-200 shadow-[0_0_18px_rgba(57,255,20,0.35)]">
             G
           </span>
           <div className="leading-none">
@@ -65,7 +65,7 @@ const Navbar = () => {
               className={({ isActive }) =>
                 `px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] transition-all ${
                   isActive
-                    ? 'bg-brand-600 text-black shadow-[0_0_18px_rgba(255,230,0,0.35)]'
+                    ? 'bg-brand-600 text-black shadow-[0_0_18px_rgba(255,23,68,0.4)]'
                     : 'text-slate-300 hover:text-brand-300'
                 }`
               }
@@ -106,7 +106,7 @@ const Navbar = () => {
           ) : (
             <Link
               to="/login"
-              className="rounded-[8px] border border-brand-400 bg-brand-600 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-black shadow-[0_0_18px_rgba(255,230,0,0.35)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500"
+              className="rounded-[8px] border border-brand-400 bg-brand-600 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-black shadow-[0_0_18px_rgba(255,23,68,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500"
             >
               Login
             </Link>

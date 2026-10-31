@@ -19,9 +19,7 @@
   --muted: #8A919F;
   --primary: #39FF14;
   --primary-soft: rgba(57, 255, 20, 0.14);
-  --blue: #39FF14;
-  --yellow: #39FF14;
-  --orange: #39FF14;
+  --blue: #FF1744;
   --red: #FF1744;
   --red-soft: rgba(255, 23, 68, 0.14);
   --green: #39FF14;
@@ -49,8 +47,8 @@ body::before {
   position: fixed;
   inset: 0;
   background-image:
-    linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
   background-size: 40px 40px;
   mask-image: radial-gradient(circle at center, black 50%, transparent 100%);
   pointer-events: none;
@@ -90,23 +88,15 @@ select:focus-visible,
 textarea:focus-visible,
 a:focus-visible {
   outline: none;
-  box-shadow: 0 0 0 2px rgba(57, 255, 20, 0.75), 0 0 0 6px rgba(57, 255, 20, 0.16);
+  box-shadow: 0 0 0 2px rgba(57, 255, 20, 0.75), 0 0 0 6px rgba(255, 23, 68, 0.18);
 }
 
 .radiant-red {
-  background: linear-gradient(135deg, #208F12 0%, #27B514 48%, #195A14 100%);
+  background: linear-gradient(135deg, #FF9AAD 0%, #FF5473 42%, #FF1744 100%);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  text-shadow: 0 0 22px rgba(57, 255, 20, 0.35);
-}
-
-.radiant-yellow {
-  background: linear-gradient(135deg, #208F12 0%, #27B514 55%, #195A14 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  text-shadow: 0 0 22px rgba(57, 255, 20, 0.28);
+  text-shadow: 0 0 22px rgba(255, 23, 68, 0.55);
 }
 
 .radiant-primary {
@@ -149,8 +139,8 @@ h6,
   inset: 0 auto auto 0;
   width: 100%;
   height: 1px;
-  background: linear-gradient(90deg, rgba(255, 230, 0, 0.65), rgba(0, 168, 255, 0.3), transparent 75%);
-  opacity: 0.45;
+  background: linear-gradient(90deg, rgba(57, 255, 20, 0.72), rgba(255, 23, 68, 0.65), transparent 75%);
+  opacity: 0.7;
 }
 
 .rounded-3xl,
@@ -164,7 +154,7 @@ h6,
 }
 
 .neon-border {
-  box-shadow: 0 0 0 1px rgba(255, 230, 0, 0.3), 0 0 24px rgba(255, 230, 0, 0.1);
+  box-shadow: 0 0 0 1px rgba(255, 23, 68, 0.45), 0 0 24px rgba(255, 23, 68, 0.18);
 }
 
 .red-border {

@@ -77,7 +77,7 @@ const TeamDetails = () => {
             return (
               <li key={memberId} className="flex items-center justify-between gap-3 border border-slate-800 bg-slate-950/70 p-4">
                 <div className="flex min-w-0 items-center gap-3">
-                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-[#FFE600]/40 bg-[#171B24] font-bold text-[#FFE600]">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center border border-danger-500/40 bg-[#171B24] font-bold text-red-300">
                     {username.charAt(0).toUpperCase()}
                   </span>
                   <div className="min-w-0">

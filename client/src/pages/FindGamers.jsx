@@ -117,7 +117,7 @@ const FindGamers = () => {
           <div
             className="pointer-events-none absolute inset-0 opacity-60"
             style={{
-              backgroundImage: 'linear-gradient(rgba(255,230,0,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,230,0,0.07) 1px, transparent 1px)',
+              backgroundImage: 'linear-gradient(rgba(255,23,68,0.08) 1px, transparent 1px), linear-gradient(90deg, rgba(57,255,20,0.08) 1px, transparent 1px)',
               backgroundSize: '32px 32px',
             }}
           />
