@@ -29,20 +29,28 @@ const Navbar = () => {
     setSearch('');
   };
 
+  const navLinkClass = ({ isActive }) => (
+    `shrink-0 rounded-lg px-3 py-2 text-xs font-semibold tracking-wide transition-colors ${
+      isActive
+        ? 'bg-brand-500/15 text-brand-300'
+        : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
+    }`
+  );
+
   return (
-    <header className="sticky top-0 z-50 border-b border-[#30303A] bg-[#080A0F]/90 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:flex-nowrap lg:px-8">
-        <Link to="/" className="flex items-center gap-3 text-white">
-          <span className="logo-mark inline-flex h-10 w-10 items-center justify-center border border-brand-400 bg-[#11151C] text-lg font-black text-brand-200 shadow-[0_0_18px_rgba(57,255,20,0.35)]">
+    <header className="sticky top-0 z-50 border-b border-slate-700/70 bg-[#0B0E13]/95 backdrop-blur-xl">
+      <div className="mx-auto flex max-w-7xl flex-wrap items-center gap-x-3 gap-y-3 px-4 py-3 sm:gap-x-6 sm:px-6 lg:px-8">
+        <Link to="/" className="flex shrink-0 items-center gap-2 sm:gap-3 text-white">
+          <span className="logo-mark inline-flex h-9 w-9 items-center justify-center rounded-lg border border-brand-400/50 bg-slate-900 text-xs font-black text-brand-200 sm:h-10 sm:w-10 sm:text-sm">
             G
           </span>
-          <div className="leading-none">
-            <span className="radiant-primary block text-lg font-black tracking-tight">GameMate</span>
-            <span className="mono block text-[10px] uppercase tracking-[0.28em] text-slate-400">Squad network</span>
+          <div className="leading-tight">
+            <span className="radiant-primary block text-base font-extrabold tracking-tight">GameMate</span>
+            <span className="block text-[10px] font-medium uppercase tracking-[0.16em] text-slate-400">Squad network</span>
           </div>
         </Link>
 
-        <form onSubmit={handleSearch} role="search" className="order-3 flex w-full lg:order-none lg:w-auto lg:flex-1 lg:max-w-xs">
+        <form onSubmit={handleSearch} role="search" className="order-3 flex w-full min-w-0 xl:order-none xl:w-auto xl:max-w-xs xl:flex-1">
           <label className="sr-only" htmlFor="global-search">Search games</label>
           <input
             id="global-search"
@@ -50,45 +58,36 @@ const Navbar = () => {
             value={search}
             onChange={(event) => setSearch(event.target.value)}
             placeholder="Search games..."
-            className="min-w-0 w-full border border-[#2d2d2d] bg-[#111111] px-3 py-2 text-sm text-white placeholder:text-slate-500 focus:border-brand-400"
+            className="min-w-0 w-full rounded-l-lg border border-r-0 border-slate-700 bg-slate-900 px-3 py-2.5 text-sm text-white placeholder:text-slate-500 focus:border-brand-400"
           />
-          <button type="submit" className="border border-l-0 border-[#2d2d2d] bg-[#171717] px-3 text-xs font-bold uppercase tracking-wider text-brand-300 hover:border-brand-400 hover:text-brand-200">
+          <button type="submit" className="rounded-r-lg border border-slate-700 bg-slate-800 px-4 text-xs font-bold text-slate-200 hover:border-brand-400 hover:text-brand-200">
             Search
           </button>
         </form>
 
-        <nav className="hidden items-center gap-1 border border-[#2b2b2b] bg-[#111111]/80 p-1 lg:flex">
+        <nav aria-label="Main navigation" className="hidden items-center gap-1 xl:flex">
           {navItems.map(({ to, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={({ isActive }) =>
-                `px-3 py-2 text-xs font-medium uppercase tracking-[0.14em] transition-all ${
-                  isActive
-                    ? 'bg-brand-600 text-black shadow-[0_0_18px_rgba(255,23,68,0.4)]'
-                    : 'text-slate-300 hover:text-brand-300'
-                }`
-              }
-            >
+            <NavLink key={to} to={to} className={navLinkClass}>
               {label}
             </NavLink>
           ))}
         </nav>
 
-        <div className="ml-auto flex items-center gap-3 lg:ml-0">
+        <div className="ml-auto flex shrink-0 items-center gap-1 sm:gap-3">
           <button
             type="button"
             onClick={toggleTheme}
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             aria-pressed={theme === 'light'}
-            className="border border-[#343946] bg-[#121720] px-3 py-2 text-xs font-semibold uppercase tracking-wider text-slate-100 hover:border-brand-400 hover:text-brand-300"
+            className="rounded-lg border border-slate-700 bg-slate-900 px-3 py-2.5 text-xs font-semibold text-slate-200 hover:border-brand-400 hover:text-brand-300"
           >
-            {theme === 'dark' ? 'Light mode' : 'Dark mode'}
+            <span className="sm:hidden" aria-hidden="true">{theme === 'dark' ? '☼' : '☾'}</span>
+            <span className="hidden sm:inline">{theme === 'dark' ? 'Light' : 'Dark'}</span>
           </button>
           {user && (
             <>
-              {showNotifications && <NotificationBell />}
-              <Link to={`/gamer/${user._id}`} aria-label="View your profile" className="flex h-10 w-10 items-center justify-center overflow-hidden border border-brand-400/50 bg-[#171B24] font-bold text-brand-200 hover:border-brand-400">
+              {showNotifications && <span className="hidden sm:block"><NotificationBell /></span>}
+              <Link to={`/gamer/${user._id}`} aria-label="View your profile" className="flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-slate-600 bg-slate-800 font-bold text-brand-200 hover:border-brand-400 sm:h-10 sm:w-10">
                 {user.profileImage ? (
                   <img src={user.profileImage} alt="" className="h-full w-full object-cover" />
                 ) : user.username?.charAt(0)?.toUpperCase() || 'G'}
@@ -99,27 +98,30 @@ const Navbar = () => {
             <button
               type="button"
               onClick={logout}
-              className="rounded-[8px] border border-[#343946] bg-[#121720] px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-100 transition-all duration-200 hover:-translate-y-0.5 hover:border-brand-400 hover:text-brand-300"
+              aria-label="Sign out"
+              className="rounded-lg border border-slate-700 bg-slate-900 px-2 py-2.5 text-xs font-semibold text-slate-200 transition-colors hover:border-brand-400 hover:text-brand-300 sm:px-4"
             >
-              Sign out
+              <span className="sm:hidden">Out</span>
+              <span className="hidden sm:inline">Sign out</span>
             </button>
           ) : (
             <Link
               to="/login"
-              className="rounded-[8px] border border-brand-400 bg-brand-600 px-4 py-2 text-xs font-bold uppercase tracking-[0.18em] text-black shadow-[0_0_18px_rgba(255,23,68,0.4)] transition-all duration-200 hover:-translate-y-0.5 hover:bg-brand-500"
+              className="rounded-lg bg-brand-500 px-4 py-2.5 text-xs font-bold text-slate-950 transition-colors hover:bg-brand-400"
             >
               Login
             </Link>
           )}
         </div>
       </div>
-      <nav aria-label="Mobile navigation" className="flex items-center gap-1 overflow-x-auto border-t border-[#1c1c1c] px-3 py-2 lg:hidden">
-        <NavLink to="/" className={({ isActive }) => `shrink-0 px-3 py-2 text-xs font-semibold uppercase tracking-wider ${isActive ? 'text-brand-300' : 'text-slate-400'}`}>Home</NavLink>
+      <nav aria-label="Mobile navigation" className="flex items-center gap-1 overflow-x-auto border-t border-slate-800 px-3 py-2 xl:hidden">
+        <NavLink to="/" className={navLinkClass}>Home</NavLink>
         {navItems.map(({ to, label }) => (
-          <NavLink key={to} to={to} className={({ isActive }) => `shrink-0 px-3 py-2 text-xs font-semibold uppercase tracking-wider ${isActive ? 'text-brand-300' : 'text-slate-400'}`}>
+          <NavLink key={to} to={to} className={navLinkClass}>
             {label}
           </NavLink>
         ))}
+        {user && <NavLink to="/notifications" className={navLinkClass}>Alerts</NavLink>}
       </nav>
     </header>
   );

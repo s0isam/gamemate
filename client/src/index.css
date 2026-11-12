@@ -8,7 +8,7 @@
   color: #F5F7FA;
   background-color: #0B0E13;
   font-family: 'Montserrat', sans-serif;
-  line-height: 1.5;
+  line-height: 1.55;
   font-weight: 400;
   --bg: #0B0E13;
   --bg-soft: #121720;
@@ -38,6 +38,7 @@ body {
   color: var(--text);
   position: relative;
   overflow-x: hidden;
+  font-size: 0.9375rem;
 }
 
 body::before {
@@ -102,6 +103,45 @@ h6,
 .logo-mark {
   font-family: 'Press Start 2P', monospace;
   letter-spacing: 0;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+h1 {
+  font-size: clamp(0.8rem, 1.7vw, 1rem);
+}
+
+h2 {
+  font-size: clamp(0.72rem, 1.4vw, 0.875rem);
+}
+
+h3 {
+  font-size: clamp(0.66rem, 1.2vw, 0.75rem);
+}
+
+h4,
+h5,
+h6 {
+  font-size: 0.6875rem;
+}
+
+p,
+li {
+  line-height: 1.65;
+}
+
+@media (max-width: 640px) {
+  body {
+    font-size: 0.875rem;
+  }
+
+  h1 {
+    font-size: 0.75rem;
+  }
+
+  h2 {
+    font-size: 0.6875rem;
+  }
 }
 
 .mono,
