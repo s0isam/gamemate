@@ -5,6 +5,9 @@ const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
 const dotenv = require('dotenv');
 const path = require('path');
+
+dotenv.config({ path: path.resolve(__dirname, '.env') });
+
 const connectDB = require('./config/db');
 const isAllowedClientOrigin = require('./config/clientOrigin');
 const authRoutes = require('./routes/authRoutes');
@@ -17,7 +20,6 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 const socketHandler = require('./socket/socketHandler');
 const seedGames = require('./utils/seedGames');
 
-dotenv.config({ path: path.resolve(__dirname, '.env') });
 require('./config/env');
 
 const app = express();
