@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@500;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Press+Start+2P&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -7,7 +7,7 @@
 :root {
   color: #F5F7FA;
   background-color: #0B0E13;
-  font-family: 'Inter', sans-serif;
+  font-family: 'Montserrat', sans-serif;
   line-height: 1.5;
   font-weight: 400;
   --bg: #0B0E13;
@@ -100,8 +100,8 @@ h4,
 h5,
 h6,
 .logo-mark {
-  font-family: 'Space Grotesk', 'Inter', sans-serif;
-  letter-spacing: -0.05em;
+  font-family: 'Press Start 2P', monospace;
+  letter-spacing: 0;
 }
 
 .mono,

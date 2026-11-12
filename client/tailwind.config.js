@@ -4,8 +4,8 @@ export default {
   theme: {
     extend: {
       fontFamily: {
-        sans: ['"Inter"', 'sans-serif'],
-        display: ['"Space Grotesk"', 'sans-serif'],
+        sans: ['"Montserrat"', 'sans-serif'],
+        display: ['"Press Start 2P"', 'monospace'],
         mono: ['"JetBrains Mono"', 'monospace'],
       },
       colors: {
