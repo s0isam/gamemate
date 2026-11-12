@@ -64,15 +64,11 @@ const initialGames = [
 ];
 
 const seedGames = async () => {
-  try {
-    const count = await Game.countDocuments();
+  const count = await Game.countDocuments();
 
-    if (count === 0) {
-      await Game.insertMany(initialGames);
-      console.log('Initial games seeded successfully');
-    }
-  } catch (error) {
-    console.error('Game seeding failed:', error.message);
+  if (count === 0) {
+    await Game.insertMany(initialGames);
+    console.log('Initial games seeded successfully');
   }
 };
 

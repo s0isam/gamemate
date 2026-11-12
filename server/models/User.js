@@ -1,5 +1,32 @@
 const mongoose = require('mongoose');
 
+const locationSchema = new mongoose.Schema(
+  {
+    type: {
+      type: String,
+      enum: ['Point'],
+      required: true,
+    },
+    coordinates: {
+      type: [Number],
+      required: true,
+      default: undefined,
+      validate: {
+        validator: (coordinates) => (
+          Array.isArray(coordinates)
+          && coordinates.length === 2
+          && coordinates[0] >= -180
+          && coordinates[0] <= 180
+          && coordinates[1] >= -90
+          && coordinates[1] <= 90
+        ),
+        message: 'Location must contain valid longitude and latitude coordinates',
+      },
+    },
+  },
+  { _id: false }
+);
+
 const userSchema = new mongoose.Schema(
   {
     username: {
@@ -36,17 +63,7 @@ const userSchema = new mongoose.Schema(
       enum: ['Beginner', 'Intermediate', 'Advanced', 'Pro'],
       default: 'Intermediate',
     },
-    location: {
-      type: {
-        type: String,
-        enum: ['Point'],
-        default: 'Point',
-      },
-      coordinates: {
-        type: [Number],
-        default: [0, 0],
-      },
-    },
+    location: { type: locationSchema, default: undefined },
   },
   { timestamps: true }
 );

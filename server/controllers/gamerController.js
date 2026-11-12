@@ -145,7 +145,7 @@ const updateLocation = async (req, res) => {
 };
 
 const getNearbyGamers = async (req, res) => {
-  const { game, radius = 10, language, microphone, skillLevel } = req.query;
+  const { game, radius = 10, language, microphone, skillLevel } = req.validated?.query || req.query;
 
   if (!req.user.location || !Array.isArray(req.user.location.coordinates) || req.user.location.coordinates.length !== 2) {
     return res.status(200).json({ success: true, data: [] });

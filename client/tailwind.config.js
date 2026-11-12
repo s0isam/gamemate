@@ -22,13 +22,16 @@ export default {
           900: '#195A14',
         },
         neon: {
-          red: '#FF1744',
-          green: '#39FF14',
+          red: '#F05252',
+          green: '#39D923',
+        },
+        accent: {
+          blue: '#6EA8FE',
         },
         danger: {
-          400: '#FF5473',
-          500: '#FF1744',
-          600: '#D90D35',
+          400: '#F87171',
+          500: '#F05252',
+          600: '#DC2626',
         },
         slate: {
           50: '#F5F7FA',
@@ -45,7 +48,7 @@ export default {
         },
       },
       boxShadow: {
-        soft: '0 0 0 1px rgba(57,255,20,0.10), 0 0 24px rgba(57,255,20,0.08)',
+        soft: '0 8px 28px rgba(0,0,0,0.18)',
       },
     },
   },

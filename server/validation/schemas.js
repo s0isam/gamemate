@@ -92,7 +92,10 @@ module.exports = {
   },
   chatQuery: {
     params: chatParams,
-    query: z.object({ limit: z.coerce.number().int().min(1).max(100).default(100) }),
+    query: z.object({
+      page: z.coerce.number().int().min(1).max(10000).default(1),
+      limit: z.coerce.number().int().min(1).max(100).default(100),
+    }),
   },
   notificationId: { params: z.object({ id: objectId }) },
   gameId: { params: z.object({ id: objectId }) },

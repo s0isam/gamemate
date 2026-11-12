@@ -26,4 +26,8 @@ const teamRequestSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+teamRequestSchema.index({ sender: 1, createdAt: -1 });
+teamRequestSchema.index({ receiver: 1, createdAt: -1 });
+teamRequestSchema.index({ sender: 1, receiver: 1, game: 1, status: 1 });
+
 module.exports = mongoose.model('TeamRequest', teamRequestSchema);

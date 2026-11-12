@@ -23,8 +23,8 @@ const App = () => {
     <ThemeProvider>
       <AuthProvider>
         <SocketProvider>
-          <div className="app-shell min-h-screen bg-[#080A0F] text-slate-100">
-            <div className="app-backdrop pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top,_rgba(57,255,20,0.10),_transparent_20%),radial-gradient(circle_at_bottom_left,_rgba(57,255,20,0.045),_transparent_22%),radial-gradient(circle_at_bottom_right,_rgba(57,255,20,0.035),_transparent_24%)]" />
+          <div className="app-shell min-h-screen bg-[#0B0E13] text-slate-100">
+            <div className="app-backdrop pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_top,_rgba(110,168,254,0.08),_transparent_24%),radial-gradient(circle_at_bottom_left,_rgba(57,217,35,0.025),_transparent_25%)]" />
             <div className="relative z-10">
               <Navbar />
               <main className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">

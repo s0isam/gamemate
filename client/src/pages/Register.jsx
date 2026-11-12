@@ -66,7 +66,7 @@ const Register = () => {
             type="password"
             autoComplete="new-password"
             required
-            minLength={6}
+            minLength={8}
             value={formData.password}
             onChange={(event) => setFormData({ ...formData, password: event.target.value })}
             className="w-full rounded-xl border border-slate-700 bg-slate-950 px-3 py-3 text-white"

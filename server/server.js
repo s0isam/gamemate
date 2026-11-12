@@ -75,19 +75,19 @@ app.use((req, res) => {
 
 app.use(errorHandler);
 
-connectDB()
-  .then((connection) => {
-    if (connection) {
-      seedGames();
-    }
-  })
-  .catch((error) => {
+const startServer = async () => {
+  try {
+    await connectDB();
+    await seedGames();
+
+    server.listen(port, () => {
+      console.log(`GameMate server running on port ${port}`);
+    });
+  } catch (error) {
     console.error('Failed to start server:', error.message);
     process.exit(1);
-  });
+  }
+};
 
 socketHandler(server);
-
-server.listen(port, () => {
-  console.log(`GameMate server running on port ${port}`);
-});
+startServer();

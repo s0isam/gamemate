@@ -9,21 +9,31 @@ const protect = async (req, res, next) => {
     return res.status(401).json({ success: false, message: 'Not authorized, no token' });
   }
 
+  let decoded;
   try {
     const token = authHeader.split(' ')[1];
-    const decoded = jwt.verify(token, jwtSecret);
-
-    const user = await User.findById(decoded.id).select('-password');
-
-    if (!user) {
-      return res.status(401).json({ success: false, message: 'User not found' });
-    }
-
-    req.user = user;
-    next();
+    decoded = jwt.verify(token, jwtSecret, { algorithms: ['HS256'] });
   } catch (error) {
     return res.status(401).json({ success: false, message: 'Invalid or expired token' });
   }
+
+  if (!decoded || typeof decoded.id !== 'string' || !/^[a-f\d]{24}$/i.test(decoded.id)) {
+    return res.status(401).json({ success: false, message: 'Invalid or expired token' });
+  }
+
+  let user;
+  try {
+    user = await User.findById(decoded.id).select('-password');
+  } catch (error) {
+    return next(error);
+  }
+
+  if (!user) {
+    return res.status(401).json({ success: false, message: 'User not found' });
+  }
+
+  req.user = user;
+  next();
 };
 
 module.exports = { protect };

@@ -8,33 +8,20 @@ export const SocketContext = createContext(null);
 const socketUrl = resolveBackendUrl(import.meta.env.VITE_SOCKET_URL, 5000);
 
 export const SocketProvider = ({ children }) => {
-  const [socket] = useState(() => io(socketUrl));
-  const { user } = useAuth();
+  const [socket] = useState(() => io(socketUrl, { autoConnect: false }));
+  const { token } = useAuth();
 
   useEffect(() => {
-    const onConnect = () => {
-      console.log('Socket connected');
-      if (user?._id) {
-        socket.emit('join-user', String(user._id));
-      }
-    };
-
-    const onDisconnect = () => {
-      console.log('Socket disconnected');
-    };
-
-    socket.on('connect', onConnect);
-    socket.on('disconnect', onDisconnect);
-
-    if (socket.connected && user?._id) {
-      socket.emit('join-user', String(user._id));
+    if (!token) {
+      socket.disconnect();
+      return undefined;
     }
 
-    return () => {
-      socket.off('connect', onConnect);
-      socket.off('disconnect', onDisconnect);
-    };
-  }, [socket, user?._id]);
+    socket.auth = { token };
+    socket.connect();
+
+    return () => socket.disconnect();
+  }, [socket, token]);
 
   const value = useMemo(() => ({ socket }), [socket]);
 

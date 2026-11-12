@@ -32,4 +32,7 @@ const teamSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+teamSchema.index({ leader: 1 });
+teamSchema.index({ members: 1 });
+
 module.exports = mongoose.model('Team', teamSchema);

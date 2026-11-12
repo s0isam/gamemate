@@ -4,6 +4,7 @@ const socketHandler = require('../socket/socketHandler');
 
 const getMessages = async (req, res) => {
   const { teamId } = req.params;
+  const { page = 1, limit = 100 } = req.validated?.query || {};
 
   const team = await Team.findById(teamId);
 
@@ -19,21 +20,19 @@ const getMessages = async (req, res) => {
 
   const messages = await Message.find({ team: teamId })
     .populate('sender', 'username profileImage')
-    .sort({ createdAt: 1 });
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * limit)
+    .limit(limit);
 
   return res.status(200).json({
     success: true,
-    data: messages,
+    data: messages.reverse(),
   });
 };
 
 const addMessage = async (req, res) => {
   const { teamId } = req.params;
   const { text } = req.body;
-
-  if (!text || !text.trim()) {
-    return res.status(400).json({ success: false, message: 'Message text is required' });
-  }
 
   const team = await Team.findById(teamId);
 
@@ -50,7 +49,7 @@ const addMessage = async (req, res) => {
   const message = await Message.create({
     sender: req.user._id,
     team: teamId,
-    text: text.trim(),
+    text,
   });
 
   const populatedMessage = await message.populate('sender', 'username profileImage');

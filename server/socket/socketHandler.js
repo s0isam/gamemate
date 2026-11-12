@@ -1,10 +1,13 @@
 const socketHandler = (server) => {
   const { Server } = require('socket.io');
   const jwt = require('jsonwebtoken');
+  const mongoose = require('mongoose');
   const Team = require('../models/Team');
   const User = require('../models/User');
   const { jwtSecret } = require('../config/env');
   const isAllowedClientOrigin = require('../config/clientOrigin');
+  const userRoom = (userId) => `user:${userId}`;
+  const teamRoom = (teamId) => `team:${teamId}`;
 
   const io = new Server(server, {
     cors: {
@@ -21,6 +24,7 @@ const socketHandler = (server) => {
   });
 
   io.use(async (socket, next) => {
+    let decoded;
     try {
       const authHeader = socket.handshake.headers.authorization;
       const token = socket.handshake.auth?.token || (authHeader && authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null);
@@ -29,7 +33,16 @@ const socketHandler = (server) => {
         return next(new Error('Authentication required for socket connection.'));
       }
 
-      const decoded = jwt.verify(token, jwtSecret);
+      decoded = jwt.verify(token, jwtSecret, { algorithms: ['HS256'] });
+    } catch (error) {
+      return next(new Error('Invalid or expired socket token.'));
+    }
+
+    if (typeof decoded.id !== 'string' || !mongoose.isValidObjectId(decoded.id)) {
+      return next(new Error('Invalid or expired socket token.'));
+    }
+
+    try {
       const user = await User.findById(decoded.id).select('-password');
 
       if (!user) {
@@ -37,36 +50,22 @@ const socketHandler = (server) => {
       }
 
       socket.user = user;
+      socket.data.userId = user._id.toString();
       next();
     } catch (error) {
-      next(new Error('Invalid or expired socket token.'));
+      console.error('Socket authentication failed:', error.message);
+      next(new Error('Unable to authenticate socket connection.'));
     }
   });
 
   socketHandler.io = io;
 
   io.on('connection', (socket) => {
-    console.log('Socket connected:', socket.id, 'user:', socket.user?._id?.toString());
-
-    socket.on('join-room', (roomId) => {
-      if (!roomId) {
-        return;
-      }
-
-      socket.join(String(roomId));
-    });
-
-    socket.on('join-user', (userId) => {
-      if (!userId || String(socket.user._id) !== String(userId)) {
-        socket.emit('error', { message: 'Access denied' });
-        return;
-      }
-
-      socket.join(String(userId));
-    });
+    socket.join(userRoom(socket.data.userId));
 
     socket.on('join-team', async (teamId) => {
-      if (!teamId) {
+      if (typeof teamId !== 'string' || !mongoose.isValidObjectId(teamId)) {
+        socket.emit('socket-error', { message: 'Invalid team ID' });
         return;
       }
 
@@ -77,18 +76,19 @@ const socketHandler = (server) => {
         });
 
         if (!team) {
-          socket.emit('error', { message: 'You are not a member of this team' });
+          socket.emit('socket-error', { message: 'You are not a member of this team' });
           return;
         }
 
-        socket.join(String(teamId));
+        socket.join(teamRoom(team._id.toString()));
       } catch (error) {
-        socket.emit('error', { message: 'Unable to access this team' });
+        console.error('Socket team-room authorization failed:', error.message);
+        socket.emit('socket-error', { message: 'Unable to access this team' });
       }
     });
 
     socket.on('disconnect', () => {
-      console.log('Socket disconnected:', socket.id);
+      console.log('Socket disconnected:', socket.id, 'user:', socket.data.userId);
     });
   });
 
@@ -100,7 +100,7 @@ socketHandler.emitNotification = (userId, notification) => {
     return;
   }
 
-  socketHandler.io.to(String(userId)).emit('new-notification', notification);
+  socketHandler.io.to(`user:${userId}`).emit('new-notification', notification);
 };
 
 socketHandler.emitTeamMessage = (teamId, message) => {
@@ -108,7 +108,20 @@ socketHandler.emitTeamMessage = (teamId, message) => {
     return;
   }
 
-  socketHandler.io.to(String(teamId)).emit('team-message', message);
+  socketHandler.io.to(`team:${teamId}`).emit('team-message', message);
+};
+
+socketHandler.removeUserFromTeam = (teamId, userId) => {
+  if (!teamId || !userId || !socketHandler.io) {
+    return;
+  }
+
+  const room = `team:${teamId}`;
+  for (const socket of socketHandler.io.sockets.sockets.values()) {
+    if (socket.data.userId === String(userId)) {
+      socket.leave(room);
+    }
+  }
 };
 
 module.exports = socketHandler;

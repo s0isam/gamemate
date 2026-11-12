@@ -112,6 +112,7 @@ const leaveTeam = async (req, res) => {
   }
 
   await team.save();
+  socketHandler.removeUserFromTeam(team._id, req.user._id);
 
   return res.status(200).json({
     success: true,

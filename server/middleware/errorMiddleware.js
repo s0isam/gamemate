@@ -1,10 +1,18 @@
 const errorHandler = (err, req, res, next) => {
-  const statusCode = res.statusCode === 200 ? 500 : res.statusCode;
+  if (res.headersSent) {
+    return next(err);
+  }
 
-  res.status(statusCode).json({
+  const errorStatus = err.statusCode || err.status;
+  const statusCode = errorStatus >= 400 && errorStatus < 500
+    ? errorStatus
+    : (res.statusCode !== 200 ? res.statusCode : 500);
+  const message = statusCode >= 500 ? 'Something went wrong' : err.message;
+
+  return res.status(statusCode).json({
     success: false,
-    message: err.message || 'Something went wrong',
-    stack: process.env.NODE_ENV === 'production' ? undefined : err.stack,
+    message: err.type === 'entity.parse.failed' ? 'Invalid JSON request body' : (message || 'Something went wrong'),
+    ...(err.details ? { details: err.details } : {}),
   });
 };
 

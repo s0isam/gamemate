@@ -54,6 +54,9 @@ DEMO_SEED_PASSWORD=replace_with_a_private_password_at_least_12_chars
 ```
 
 Use your MongoDB Atlas connection string for `MONGO_URI` if the database is hosted. Keep `.env` files and secrets private; do not commit them.
+Replace the JWT placeholder with a random secret of at least 32 bytes before starting the API. PowerShell can generate one with `node -e "console.log(require('crypto').randomBytes(48).toString('base64'))"`.
+
+The API validates request bodies and IDs, limits authentication and sensitive write requests, and does not start listening unless MongoDB connects and the game catalog seed succeeds. Socket.IO requires the signed-in user's JWT; notification rooms are assigned by the server, and team chat rooms require current team membership. Chat history accepts `page` and `limit` query parameters (maximum 100 messages per page).
 
 The demo-seed settings are optional. Leave `SEED_DEMO_DATA=false` for normal use. `DEMO_SEED_PASSWORD` is used only when intentionally seeding demo accounts; choose a private password of at least 12 characters.
 
@@ -73,6 +76,7 @@ npm run dev --prefix client
 ```
 
 The frontend is available at `http://localhost:5173` and the API health endpoint is `http://localhost:5000/api/health`.
+Run the backend validation tests with `npm test --prefix server`.
 
 To access the app from another device on your private LAN, open the frontend using the host computer's LAN IP address, for example `http://192.168.1.10:5173`. If Vite falls back because port 5173 is busy, use the port it prints (for example, 5174). In development, the client resolves a localhost API URL to the browser's host, and the API allows localhost and private-LAN frontend origins on Vite dev ports 5173–5179.
 
